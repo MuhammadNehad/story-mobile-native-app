@@ -1,0 +1,63 @@
+<resources>
+    <string name="app_name">Story</string>
+    <string name="title_activity_login_form">LoginForm</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maincontent">maincontent</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_Prfile">Profile</string>
+
+    <string name="type_your_story_here">Type Your Story Here</string>
+    <string name="submit">Submit</string>
+    <string name="signout">Signout</string>
+    <string name="todo">TODO</string>
+    <string name="check_pdf_stories">check PDF Stories</string>
+    <string name="description">Description</string>
+    <string name="type_your_password">type your Password</string>
+    <string name="confirm">confirm</string>
+    <string name="horror">Horror</string>
+    <string name="action">Action</string>
+    <string name="politics">Politics</string>
+    <string name="religious">Religious</string>
+    <string name="type_old_password">type old password</string>
+    <string name="type_new_password">type new Password</string>
+    <string name="my_photos">My Photos</string>
+    <string name="profile_image">Profile Image</string>
+    <string name="my_stories">My Stories</string>
+    <string name="purchased_stories">purchased Stories</string>
+    <string name="file_name">File Name</string>
+    <string name="storydescription">StoryDescription</string>
+    <string name="story_description">Story Description</string>
+    <string name="storycover">StoryCover</string>
+    <string name="write_your_story_here">Write short story here</string>
+    <string name="use_pdf_story">Use PDF Story</string>
+    <string name="checkanotherway">checkanotherway</string>
+    <string name="publish">Publish</string>
+    <string name="type_price">type price</string>
+    <string name="todo_name_updates">TODO:name updates</string>
+    <string name="your_message">your message</string>
+    <string name="check_story_for_20_sec">Check story for 20 sec</string>
+    <string name="type_your_comment">type your comment</string>
+    <string name="massage_content">message content</string>
+    <string name="massage_sender">message sender</string>
+    <string name="coming_soon">Coming Soon</string>
+    <string name="type_new_name">type new name</string>
+    <string name="accept">accept</string>
+    <string name="profile_images">Profile Images</string>
+    <string name="todo_storycover">TODO:StoryCover</string>
+    <!--<string name="description">Description</string>-->
+    <string name="contentkey">content:</string>
+    <string name="contenttxt">content</string>
+    <string name="pricekey">price:</string>
+    <string name="new_pricetxt">new price</string>
+    <string name="updatebtn">update</string>
+    <string name="check_your_pdf_stories">check your pdf stories</string>
+    <string name="check_your_short_stories">check your short stories</string>
+    <string name="paypal_acc">Paypal_Acc</string>
+    <!--<string name="todo_storycover">TODO:StoryCover</string>-->
+
+</resources>

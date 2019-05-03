@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:name="mainproject.mainroject.story.ItemFragment"
+    android:layout_width="match_parent"
+    android:id="@+id/itemfragscrollview"
+    android:focusableInTouchMode="true"
+    android:layout_height="match_parent"
+    android:descendantFocusability="beforeDescendants"
+    android:paddingTop="5dp"
+    android:scrollbarSize="0dp"
+    tools:context="mainproject.mainroject.story.ItemFragment"
+    android:background="@color/Wheat">
+
+    <LinearLayout
+        android:id="@+id/pdffilesview"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:scrollbarSize="0dp"
+            android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="3dp"
+            >
+
+            <Button
+                android:id="@+id/All"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="All"
+                android:textColorHighlight="@color/Red"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/Education"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="Science"
+                android:textColorHighlight="@color/Red"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/Horror"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="@string/horror"
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
+
+            <Button
+                android:id="@+id/Action"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="@string/action"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/Politics"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="@string/politics"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/Religious"
+                android:layout_width="75dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/White"
+                android:text="@string/religious"
+                android:textSize="10sp" />
+
+        </LinearLayout>
+        </HorizontalScrollView>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+            <Button
+                android:id="@+id/Onsitestoriesviewer"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_weight="2"
+                android:layout_margin="5dp"
+                android:padding="2dp"
+                android:background="@android:color/holo_red_light"
+                android:layout_gravity="start|center"
+                android:text="text stories"
+                android:textColor="@android:color/background_light"
+                android:textColorHighlight="@android:color/holo_orange_light" />
+
+            <Button
+                    android:id="@+id/pdfstoriesviewer"
+                    android:layout_width="match_parent"
+                    android:layout_weight="2"
+
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:padding="2dp"
+                    android:background="@android:color/holo_red_light"
+                    android:layout_gravity="start|center"
+                    android:text="PDF Books"
+                    android:textColor="@android:color/background_light"
+                    android:textColorHighlight="@android:color/holo_orange_light" />
+
+
+        </LinearLayout>
+        <View
+            android:outlineProvider="bounds"
+            android:id="@+id/identityTxt2"
+            android:text="FullTxtStories"
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/pdflist"
+
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:fillViewport="true"
+            android:layout_marginBottom="5dp"
+            />
+        <!--tools:listitem="@layout/pdflistitem"-->
+        <View
+            android:id="@+id/identityTxt"
+            android:text="FullTxtStories"
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="600dp"
+            android:fillViewport="true"
+            android:paddingLeft="5dp"
+
+            tools:listitem="@layout/fragment_item"
+            />
+
+    </LinearLayout>
+</ScrollView>

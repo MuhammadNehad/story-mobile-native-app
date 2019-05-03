@@ -1,0 +1,41 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+    <style name="MyButtonStyle">
+        <!--<item name="android:strokeLineJoin" tools:targetApi="lollipop">round</item>-->
+        <!--<item name="android:strokeMiterLimit" tools:targetApi="lollipop" />-->
+        <!--<item name="android:gestureStrokeSquarenessThreshold" />-->
+        <item name="android:radius" > 111dp</item>
+        <item name="android:topRightRadius" > 11dp</item>
+        <item name="android:bottomRightRadius" > 11dp</item>
+        <item name="android:topLeftRadius" > 11dp</item>
+        <item name="android:bottomLeftRadius" > 11dp</item>
+    </style>
+    <style name="MyButtonStyle.Background">
+        <item name="android:background" > #FF4081</item>
+
+        <!--<item name="android:strokeLineJoin" tools:targetApi="lollipop">round</item>-->
+        <!--<item name="android:strokeMiterLimit" tools:targetApi="lollipop" />-->
+        <!--<item name="android:gestureStrokeSquarenessThreshold" />-->
+        <item name="android:radius" > 111dp</item>
+        <item name="android:topRightRadius" > 11dp</item>
+        <item name="android:bottomRightRadius" > 11dp</item>
+        <item name="android:topLeftRadius" > 11dp</item>
+        <item name="android:bottomLeftRadius" > 11dp</item>
+    </style>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+</resources>

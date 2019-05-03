@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Wheat"
+    android:gravity="center_vertical|center_horizontal"
+
+    android:orientation="vertical"
+    tools:context="mainproject.mainroject.story.Profile">
+
+    <!-- TODO: Update blank fragment layout -->
+    <ImageButton
+        android:id="@+id/imgupload"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center"
+        android:background="@android:drawable/ic_menu_gallery"
+        android:contentDescription="@string/profile_image" />
+
+    <TextView
+        android:id="@+id/UserName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text=""
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/totalcurrentuserimgs"
+        style="@style/FirebaseUI.Button.AccountChooser"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="photos" />
+
+    <Button
+        android:id="@+id/CurrentuserStories"
+        style="@style/FirebaseUI.Button.AccountChooser"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="owned stories" />
+
+    <Button
+        android:id="@+id/Purchasestorie"
+        style="@style/FirebaseUI.Button.AccountChooser"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="@string/purchased_stories" />
+    <Button
+        android:id="@+id/Fellows"
+        style="@style/FirebaseUI.Button.AccountChooser"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:background="@android:color/holo_red_light"
+        android:gravity="center"
+        android:text="Followees (Coming soon)" />
+
+</LinearLayout>

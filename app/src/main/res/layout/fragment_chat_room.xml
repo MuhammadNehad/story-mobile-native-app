@@ -1,0 +1,81 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Wheat"
+    tools:context="mainproject.mainroject.story.ChatRoom"
+    android:orientation="vertical">
+
+    <!-- TODO: Update blank fragment layout -->
+    <!--android:layout_above="@id/messageedit"-->
+
+
+    <android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/refreshrecycler"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_above="@id/messageedit"
+    android:layout_marginTop="50dp"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/listofchat"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:hint="@string/your_message"
+            android:fillViewport="true"
+            tools:listitem="@layout/chatcontentview" />
+
+</android.support.v4.widget.SwipeRefreshLayout>
+
+    <EditText
+        android:id="@+id/messageedit"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="40dp"
+        android:background="@color/Azure"
+        android:hint="your message" />
+
+    <ImageButton
+        android:id="@+id/sendmesg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@id/messageedit"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@android:drawable/stat_notify_chat" />
+    <RelativeLayout
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/sendmesg"
+        android:layout_alignLeft="@+id/sendmesg"
+        android:layout_alignParentRight="true"
+        android:layout_alignStart="@+id/sendmesg"
+        tools:ignore="NotSibling"
+        android:layout_alignParentEnd="true">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/notifications"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            app:srcCompat="@drawable/ic_add_black_24dp"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/notificationsnum"
+            android:layout_width="200dp"
+            android:layout_height="20dp"
+            android:textColor="@color/Red"
+            android:layout_alignLeft="@id/notifications"
+            android:layout_alignTop="@id/notifications"
+            android:gravity="center"
+            android:inputType="number"
+            tools:ignore="TextViewEdits"
+            android:layout_alignStart="@id/notifications" />
+
+    </RelativeLayout>
+</RelativeLayout>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    tools:context="mainproject.mainroject.story.signup">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        >
+
+        <EditText
+            android:id="@+id/UserName"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/Azure"
+            android:layout_margin="5dp"
+            android:hint="UserName"
+            android:layout_gravity="center"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/Name"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/Azure"
+            android:hint="YourName"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/email_sp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/Azure"
+            android:hint="Your Email"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/passwordsp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/Azure"
+            android:hint="Password"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/confirpasswordsp"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:background="@color/Azure"
+            android:hint="ConfirmPassword"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/signup_btn"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:background="@android:color/holo_red_light"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:text="SignUp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="gotoLogin"
+            android:text="If you Have Account, click here"
+            android:textColor="@color/Bisque" />
+
+        <TextView
+            android:id="@+id/errormsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/Bisque" />
+
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/msgsview"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:orientation="horizontal"
+    android:padding="5px">
+
+    <ImageView
+        android:id="@+id/chatterimg"
+        android:layout_width="50dp"
+        android:layout_height="50dp" />
+
+    <LinearLayout
+        android:id="@+id/chatcontentform"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/msgownertext"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:hint="@string/massage_sender" />
+
+        <TextView
+            android:id="@+id/msgstxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/chatingform"
+            android:fontFamily="sans-serif-condensed"
+            android:gravity="center"
+            android:hint="@string/massage_content"
+            android:padding="5dp"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+</LinearLayout>

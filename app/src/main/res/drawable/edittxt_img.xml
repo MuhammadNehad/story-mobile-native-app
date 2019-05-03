@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:width="500dp" android:height="100dp" >
+    <shape xmlns:android="http://schemas.android.com/apk/res/android"
+        android:shape="rectangle">
+        <corners android:bottomLeftRadius="10dp"
+             android:topLeftRadius="10dp"/>
+        <solid android:color="#000" />
+
+    </shape>
+
+</item>
+    <item
+        android:id="@+id/StoryImg"
+        android:width="300dp"
+        android:height="90dp"
+        android:drawable="@android:drawable/ic_menu_gallery"
+        android:gravity="center" />
+</layer-list>

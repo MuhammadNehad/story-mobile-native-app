@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/Wheat">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:text="maximize Story Info"
+            android:visibility="gone"
+            android:id="@+id/showcontents1"
+            android:textColor="@color/Whitecolor"
+            android:background="#6c000000"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/headers"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/currentstryimg"
+
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:background="@mipmap/ic_launcher" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <RatingBar
+                android:id="@+id/ratestrycontent"
+                android:numStars="5"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"><TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Author : "
+                android:layout_weight="1"/>
+
+                <TextView
+                    android:id="@+id/currentstoryAuthor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Author_Name"/></LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="storyName:"/>
+
+                <TextView
+                    android:id="@+id/currentstoryname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="storyName"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Story Description:"/>
+                <TextView
+                    android:id="@+id/currentstorydesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="None"/>
+
+            </LinearLayout>
+            <TextView
+                android:text="Minimize Story Data"
+                android:gravity="center"
+                android:id="@+id/hidecontents"
+                android:textColor="@color/Whitecolor"
+                android:background="#6c000000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+            <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+                <TextView
+                android:textIsSelectable="true"
+                android:background="@color/Whitecolor"
+                android:id="@+id/currentstorycontent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="content"/>
+</ScrollView>
+
+    </LinearLayout>
+ <!--<EditText-->
+     <!--android:id="@+id/searchword"-->
+     <!--android:layout_width="100dp"-->
+     <!--android:layout_height="50dp" />   -->
+</android.support.constraint.ConstraintLayout>
