@@ -135,6 +135,9 @@ public class ItemFragment extends Fragment {
     private double newamount=1;
     private int total_items_to_Load=2;
     int mCurrentpage=1;
+    private static int startingAt =1;
+    private static final int viewAmount =10;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -238,60 +241,26 @@ public boolean increaserate = false;
         scrollView.setFocusable(false);
 
         //TODO:SEARCH
-//        searchquery= MainCon.searchView.toString().toLowerCase().trim();
-//        MainCon.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                try {
-//                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByValue().startAt(query).endAt(query+"\uf8ff"));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByValue().startAt(query).endAt(query+"\uf8ff"));
-//
-//                    Thread.sleep(1000);
-//                    SelectType(getQuery(),getPdfquery());
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-        //
-//  FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         final LinearLayoutManager pdfrecyclerViewlayout= new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL,false);
         final RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),2);
-//        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(manager);
 
          onsiteview.setEnabled(false);
         onsiteview.setBackgroundColor(Color.GRAY);
 
-//        final LinearLayoutManager recyclerViewlayout = new LinearLayoutManager(getContext());
-//        recyclerView.setLayoutManager(recyclerViewlayout);
         pdfviewerbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(pdfrecyclerView.getVisibility() == GONE){
-                    pdfrecyclerView.setVisibility(View.VISIBLE);
+                pdfrecyclerView.setVisibility(View.VISIBLE);
                 recyclerView.setLayoutManager(null);
                 pdfrecyclerView.setLayoutManager(manager);
-
-//                }
-//               else if (pdfrecyclerView.getVisibility() ==VISIBLE)
-//                {
-                    recyclerView.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.GONE);
 
                 onsiteview.setEnabled(true);
                 pdfviewerbtn.setEnabled(false);
                 pdfviewerbtn.setBackgroundColor(Color.GRAY);
 
                 onsiteview.setBackgroundColor(Color.RED);
-                //                }
-//                }
             }
         });
 
@@ -322,78 +291,23 @@ public boolean increaserate = false;
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-//                int offset = dy - ydy;
-//                ydy = dy;git commit -m "First Commit"
-//                boolean shouldRefresh = (pdfrecyclerViewlayout.findFirstCompletelyVisibleItemPosition() == 0)
-//                        && (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) && offset > 30;
-//                if (shouldRefresh) {
-//                    //swipeRefreshLayout.setRefreshing(true);
-//                    //Refresh to load data here.
-//                    return;
-//                }
-//                boolean shouldPullUpRefresh = pdfrecyclerViewlayout.findLastCompletelyVisibleItemPosition() == pdfrecyclerViewlayout.getChildCount() - 1
-//                         && recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING && offset < -30;
-//                if (shouldPullUpRefresh) {
-//                    //swipeRefreshLayout.setRefreshing(true);
-//                    //refresh to load data here.
-//                    return;
-//                }
 
             }
         });
-//          recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//                 int ydy = 0;
-//                 @Override
-//                 public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                     super.onScrollStateChanged(recyclerView, newState);
-//
-//                 }
-//
-//                 @Override
-//                 public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                     super.onScrolled(recyclerView, dx, dy);
-//                     int offset = dy - ydy;
-//                     ydy = dy;
-//                     boolean shouldRefresh = (recyclerViewlayout.findFirstCompletelyVisibleItemPosition() == 0)
-//                             && (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING) && offset > 30;
-//                     if (shouldRefresh) {
-//                         //swipeRefreshLayout.setRefreshing(true);
-//                         //Refresh to load data here.
-//                         return;
-//                     }
-//                     boolean shouldPullUpRefresh = recyclerViewlayout.findLastCompletelyVisibleItemPosition() == recyclerViewlayout.getChildCount() - 1
-//                             && recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_DRAGGING && offset < -30;
-//                     if (shouldPullUpRefresh) {
-//                         //swipeRefreshLayout.setRefreshing(true);
-//                         //refresh to load data here.
-//                         return;
-//                     }
-//
-//                 }
-//             });
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                startingAt = startingAt + viewAmount;
 
+            }
 
-//        Runnable r =new Runnable() {
-//            @Override
-//            public void run() {
-//                long time = System.currentTimeMillis() + 10000;
-//                while (System.currentTimeMillis() < time) {
-//                  synchronized (this) {
-//                      try {
-//                          wait(time - System.currentTimeMillis());
-//                      } catch (InterruptedException e) {
-//                          e.printStackTrace();
-//                      }
-//                  }
-//                }
-//            }
-//        };
-//        Thread storyload = new Thread(r);
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
 
-        //        chatload.start();
-
-//scrollView.setTouchscreenBlocksFocus(true);
-//        recyclerView.setOnScrollListener(new End);
         option = new FirebaseRecyclerOptions.Builder<Stories>()
                 .setQuery(query, Stories.class)
                 .build();

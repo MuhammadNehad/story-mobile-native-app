@@ -153,7 +153,10 @@ String[] mimeTypes =
     ArrayAdapter<String> spinnerAdapter;
     SharedPreferences sharedPreferences;
     String selectingitem;
-
+    boolean submitShortStories=false;
+    boolean submitPDFStories=false;
+    boolean oneTimeDialog=false;
+    boolean oneTimeDialogPDFs=false;
 
     public boolean checkExistedpaypalEmail(final View view, final View inflate, final String stryDescri, final String storyNaMe){
         final boolean[] Found = {false};
@@ -166,11 +169,13 @@ String[] mimeTypes =
                     Toast.makeText(getContext(),"You havent Submitted Paypal ACCOUNT",Toast.LENGTH_LONG).show();
                     AddPaypalAccDialog();
                 }else{
-                    if(view.getId() == inflate.findViewById(R.id.submitStory).getId()) {
+                    if(submitShortStories) {
                         shortstoriesProgress();
-                    }else if(view.getId() == inflate.findViewById(R.id.submitingPDFbutton).getId())
+                        submitShortStories=false;
+                    }else if(submitPDFStories)
                     {
                         pdfFunSub(stryDescri, storyNaMe);
+                        submitPDFStories=false;
                     }
                 }
             }
@@ -350,6 +355,8 @@ String[] mimeTypes =
         btnSubmitStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                submitShortStories = true;
+                oneTimeDialog=true;
                 checkExistedpaypalEmail(v,inflate, null, null);
             }
         });
@@ -487,7 +494,9 @@ mProgress.dismiss();
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkExistedpaypalEmail(v,detaildialog,stryDescri,storyNaMe);
+               submitPDFStories =true;
+               oneTimeDialogPDFs=true;
+               checkExistedpaypalEmail(v,detaildialog,stryDescri,storyNaMe);
 //                pdfFunSub(stryDescri, storyNaMe);
 //                final String fileprice = prices.getText().toString().trim();
 //                mypdfStoryRef.addChildEventListener(new ChildEventListener() {
@@ -793,37 +802,42 @@ mProgress.dismiss();
            }
     }
     public void shortstoriesProgress(){
+
         final String prices = $pricebox.getText().toString().trim();
         final String story_content = viewpa.editText.getText().toString().trim();
         final String story_description = viewpa.storydesc.getText().toString().trim();
         story_Name = Storyname.getText().toString().trim();
-        myStoryRef.addChildEventListener(new ChildEventListener() {
+        if(oneTimeDialog) {
+            myStoryRef.addChildEventListener(new ChildEventListener() {
 
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String storiesname =String.valueOf(dataSnapshot.child("storyNaMe").getValue());
-                if(dataSnapshot.hasChild(story_Name)){
-                    Toast.makeText(getContext(), "Story is already existed, please change the Title", Toast.LENGTH_LONG).show();
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    String storiesname = String.valueOf(dataSnapshot.child("storyNaMe").getValue());
 
-                }if(!dataSnapshot.hasChild(story_Name)){
+                    if (dataSnapshot.hasChild(story_Name)) {
+                        Toast.makeText(getContext(), "Story is already existed, please change the Title", Toast.LENGTH_LONG).show();
 
-                    if (story_content.length()>3000){Toast.makeText(getContext(), "short Stories Content Should be less than or equal  3000 char(100 line)", Toast.LENGTH_SHORT).show();}
-                    else {
+                    }
+                    if (!dataSnapshot.hasChild(story_Name)) {
 
-                        if (Float.parseFloat(prices) <= 10) {
-                            final String fk1 = userName.toString().trim();
+                        if (story_content.length() > 3000) {
+                            Toast.makeText(getContext(), "short Stories Content Should be less than or equal  3000 char(100 line)", Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            if (Float.parseFloat(prices) <= 10) {
+                                final String fk1 = userName.toString().trim();
 //                                    final DatabaseReference Story_Content = myStoryRef.child(story_Name);
 //                                    final DatabaseReference Story_price = myStoryRef.child(story_Name);
 //                                    final DatabaseReference fk = myStoryRef.child(story_Name);
 //                                    final DatabaseReference Stdesc = myStoryRef.child(story_Name);
 //                                    myStoryRef.child(story_Name).setValue(story_Name);
 
-                            final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
-                            AlertDialog alertDialog1 = null;
-                            select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    addingstdataafterpaying(fk1,story_description,prices,uri.getLastPathSegment(),story_Name,story_content,"AppCreationStory",getSelectingitem());
+                                final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
+                                AlertDialog alertDialog1 = null;
+                                select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        addingstdataafterpaying(fk1, story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem());
 //                            Bundle stdata = new Bundle();
 //                            stdata.putString("Authorize",Author1);
 //                            stdata.putString("STORYNAME",storyNAME);
@@ -831,12 +845,12 @@ mProgress.dismiss();
 //                            stdata.putString("STDESCRIbE",Desc);
 //                            stdata.putString("IMGURL",ImgUrl);
 //                            stdata.putString("STSOURC",StrySrc);
-                                    amount_to_pay=String.valueOf("2.0");
-                                    PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay),"USD","Story org" ,PayPalPayment.PAYMENT_INTENT_SALE);
+                                        amount_to_pay = String.valueOf("2.0");
+                                        PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", "Story org", PayPalPayment.PAYMENT_INTENT_SALE);
 //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
 
-                                    Intent intent =new Intent(getContext(), PaymentActivity.class);
-                                    intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
+                                        Intent intent = new Intent(getContext(), PaymentActivity.class);
+                                        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config2);
 //                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
 //                            intent.putExtra("Authorize",Author1);
 //                            intent.putExtra("STORYNAME",storyNAME);
@@ -844,56 +858,57 @@ mProgress.dismiss();
 //                            intent.putExtra("STDESCRIbE",Desc);
 //                            intent.putExtra("IMGURL",ImgUrl);
 //                            intent.putExtra("STSOURC",StrySrc);
-                                    intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment);
+                                        intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
 //                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
-                                    startActivityForResult(intent,PAYPAL_REQUEST_CODE1);
+                                        startActivityForResult(intent, PAYPAL_REQUEST_CODE1);
 //ItemFragment ite = new ItemFragment();
 //ite.setArguments(stdata);
-                                    dialog.dismiss();
+                                        dialog.dismiss();
 
-                                }
-                            });
-                            select.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
+                                    }
+                                });
+                                select.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
 
 //                                            paymentDialog(Author1, Desc, price1, ImgUrl, storyNAME,storyCoNtEnT,StrySrc,price);
-                                    dialog.dismiss();
+                                        dialog.dismiss();
 
-                                }
-                            });
+                                    }
+                                });
 
 
-                            alertDialog1 = select.create();
-                                   alertDialog1.show();
-
-                        } else if (Float.parseFloat(prices) > 10) {
-                            Toast.makeText(getContext(), "Price should be lower than or equal to 10 $", Toast.LENGTH_LONG).show();
+                                alertDialog1 = select.create();
+                                alertDialog1.show();
+                                oneTimeDialog=false;
+                            } else if (Float.parseFloat(prices) > 10) {
+                                Toast.makeText(getContext(), "Price should be lower than or equal to 10 $", Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            }
+                }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            }
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
     }
 
     public void restrictdata(final String dt){
