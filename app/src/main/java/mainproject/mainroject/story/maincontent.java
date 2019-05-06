@@ -24,8 +24,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
 
 import java.util.ArrayList;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentActivity;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 public class maincontent extends AppCompatActivity {
     private static final String TAG = "Value";
@@ -107,6 +112,8 @@ ItemFragment it = new ItemFragment();
         final DatabaseReference myRef = FirebaseDatabase.getInstance().getReference().child("UserDetail");
         Intent intent2 = new Intent(this, PayPalService.class);
         intent2.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config);
+//        intent2.putExtra(PayPalService.EXTRA_RECEIVER_EMAIL,config);
+
         startService(intent2);
 //        Intent intent =getIntent();
 

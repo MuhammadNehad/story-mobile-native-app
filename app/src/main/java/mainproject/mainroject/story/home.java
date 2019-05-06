@@ -160,6 +160,7 @@ String[] mimeTypes =
 
     public boolean checkExistedpaypalEmail(final View view, final View inflate, final String stryDescri, final String storyNaMe){
         final boolean[] Found = {false};
+
         Query PaypalEmailExistance = myRef.child(currentUDN).orderByChild("userpaypalacc");
         PaypalEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -430,7 +431,7 @@ mProgress.dismiss();
                     Uri downloaduri = taskSnapshot.getDownloadUrl();
 //                    Picasso.with(getActivity()).load(downloaduri).fit().into(logoupload);
 
-                    mypdfStoryRef.child(StRurl).child("LogoUrl").setValue(downloaduri.toString());
+                    myStoryRef.child(StRurl).child("LogoUrl").setValue(downloaduri.toString());
 
                     mProgress.dismiss();
                 }
@@ -599,8 +600,9 @@ mProgress.dismiss();
 
     public void pdfFunSub(final String stryDescri, final String storyNaMe)
     {
+        if(oneTimeDialogPDFs){
         final String fileprice = prices.getText().toString().trim();
-        mypdfStoryRef.addChildEventListener(new ChildEventListener() {
+        myStoryRef.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -665,8 +667,9 @@ mProgress.dismiss();
                             Toast.makeText(getContext(), "Price Value Should be positive ", Toast.LENGTH_SHORT).show();
 
                         }}
-
                 }
+                oneTimeDialogPDFs=false;
+
             }
 
             @Override
@@ -691,6 +694,7 @@ mProgress.dismiss();
 
 
         });
+        }
     }
 
     @Override
@@ -757,23 +761,32 @@ mProgress.dismiss();
                                break;
 
                            case "PDFSTORY":
-                               final DatabaseReference Pdf_Story_Name = mypdfStoryRef.child(StorYNamE);
+//                               final DatabaseReference Pdf_Story_Name = mypdfStoryRef.child(StorYNamE);
+                               final DatabaseReference Pdf_Story_Name  = myStoryRef.child(StorYNamE);
 
                                restrictdata(StorYNamE);
                                startposting2(StorYNamE);
 
-                               Pdf_Story_Name.child("PdfstoryNaMe").setValue(StorYNamE);
-                               Pdf_Story_Name.child("PdfAuthor").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                               Pdf_Story_Name.child("storyNaMe").setValue(StorYNamE);
+                               Pdf_Story_Name.child("Author").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                Story_Content.child("story_content").setValue(FileUrl);
-                               Pdf_Story_Name.child("Pdfstory_price").setValue(pRICe);
-
-
-                               Pdf_Story_Name.child("PdfLogoSrc").setValue(uri.getLastPathSegment());
+                               Pdf_Story_Name.child("story_price").setValue(pRICe);
+                               Pdf_Story_Name.child("LogoSrc").setValue(uri.getLastPathSegment());
                                Pdf_Story_Name.child("Likes").setValue(0);
                                Pdf_Story_Name.child("disLikes").setValue(0);
                                Pdf_Story_Name.child("Reports").setValue(0);
-                               Pdf_Story_Name.child("PdfSTDESC").setValue(DescriP);
+                               Pdf_Story_Name.child("STDESC").setValue(DescriP);
                                Pdf_Story_Name.child("StrType").setValue(StryTypes);
+//                               Story_Name.child("storyNaMe").setValue(StorYNamE);
+//                               Story_Name.child("Author").setValue(AuthoRs);
+//                               Story_Name.child("story_content").setValue(StRContEnT);
+//                               Story_Name.child("story_price").setValue(pRICe);
+//                               Story_Name.child("Likes").setValue(0);
+//                               Story_Name.child("disLikes").setValue(0);
+//                               Story_Name.child("Reports").setValue(0);
+//                               Story_Name.child("StrType").setValue(StryTypes);
+//
+//                               Story_Name.child("STDESC").setValue(DescriP);
 
                                prices.setText(null);
                                Storyname.setText(null);
@@ -936,7 +949,7 @@ mProgress.dismiss();
                     downloaduri = taskSnapshot.getDownloadUrl();
 
                     String stryname =Storyname.getText().toString().trim();
-                    mypdfStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
+                    myStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
 //                    Submitingpdf(sdr,snm,downloaduri.toString());
             mProgress.dismiss();
                 }

@@ -59,6 +59,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalOAuthScopes;
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
@@ -100,7 +101,7 @@ public class ItemFragment extends Fragment {
 //    maincontent MainCon = new maincontent();
     String amount_to_pay="";
     String searchquery;
-    protected static PayPalConfiguration config = new PayPalConfiguration()
+    protected static PayPalConfiguration config3 = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .defaultUserEmail(paypalconfig.paypal_Publiser_Email);
 //    .clientId(paypalconfig.paypal_client_Id
@@ -163,7 +164,7 @@ AlertDialog.Builder StoryDetailsl;
     DatabaseReference psdb = mydatabase.getReference().child("purchasedstories");
     DatabaseReference osdb = mydatabase.getReference().child("StoriesDetails");
     DatabaseReference pdfosdb = mydatabase.getReference().child("pdfStoriesdetails");
-    DatabaseReference CurUserLinks = mydatabase.getReference().child("UserDetails");
+    DatabaseReference CurUserLinks = mydatabase.getReference().child("UserDetail");
     FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
     String curAuthDN = auth.getDisplayName();
    public static String clientpaypalid;
@@ -196,7 +197,7 @@ public boolean increaserate = false;
     private String storiesname= "";
     public boolean checkExistedpaypalEmail(String publishers){
         final boolean[] Found = {false};
-        Query PaypalEmailExistance = myRef.child(publishers).orderByChild("userpaypalacc");
+        Query PaypalEmailExistance = CurUserLinks.child(publishers).child("userpaypalacc");
         PaypalEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1162,9 +1163,9 @@ break;
 //    }
 //});
         final Intent intent1 =new Intent(getContext(), PayPalService.class);
-        intent1.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config);
+        intent1.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config3);
 
-//        final PayPalConfiguration config2 = new PayPalConfiguration()
+    //        final PayPalConfiguration config2 = new PayPalConfiguration()
 //                .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
 //                .clientId(clientpaypalid);
         price.setOnClickListener(new View.OnClickListener() {
@@ -1172,10 +1173,10 @@ break;
             public void onClick(View v) {
             mprogress = new ProgressDialog(getContext());
                  mprogress.setMessage("Purchasing...");
-                mprogress.show();
-                Thread showing_dialog = new Thread(){
-                    @Override
-                    public void run(){
+                 mprogress.show();
+//                Thread showing_dialog = new Thread(){
+//                    @Override
+//                    public void run(){
                 Query purchasername = myRef.child("story_name").orderByChild("Author").equalTo(auth.getDisplayName());
                 Query purchasername1 = psdb.orderByChild("purchasername").equalTo(auth.getDisplayName());
                 if (!Author1.equals(auth.getDisplayName()))
@@ -1195,12 +1196,10 @@ break;
 //                            stdata.putString("IMGURL",ImgUrl);
 //                            stdata.putString("STSOURC",StrySrc);
                             amount_to_pay =String.valueOf(price1);
-
                             PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay),"USD",Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
-//                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
-
+//                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE)
                             Intent intent =new Intent(getContext(), PaymentActivity.class);
-                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config);
+                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,config3);
 //                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
 //                            intent.putExtra("Authorize",Author1);
 //                            intent.putExtra("STORYNAME",storyNAME);
@@ -1226,21 +1225,21 @@ break;
                     });
                     AlertDialog alertDialog1 = select.create();
                     alertDialog1.show();
-                  Toast.makeText(getContext(),"Story have been added successfully to your purchased Stories",Toast.LENGTH_LONG).show();
+                    mprogress.dismiss();
+//                  Toast.makeText(getContext(),"Story have been added successfully to your purchased Stories",Toast.LENGTH_LONG).show();
 
 
             }if (Author1.equals(auth.getDisplayName())){
-                    Toast.makeText(getContext(),"You are the story author",Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(),"You are the story publisher",Toast.LENGTH_LONG).show();
 
                 }
 //                while (Author1 == auth.getDisplayName() || purchasername != null || purchasername1 != null){   Toast.makeText(getContext(),"You are already the story author",Toast.LENGTH_LONG).show();
 //                    break;}
 
 
-                mprogress.dismiss();
 
-                }};
-            showing_dialog.start();}
+                }
+
         });
 final Query ratesquery = mystrateRef.orderByChild("STRYname").equalTo(storyNAME);
 Query totalranks = mystrateRef.orderByKey().startAt(storyNAME);
@@ -1474,7 +1473,11 @@ if(increaserate)
         listView.setLayoutParams(par);
         listView.requestLayout();
     }
+    @Override
+    public void onPause(){
 
+        super.onPause();
+       }
     private void booksreport(DataSnapshot dataSnapshot, final String storyNAME) {
         if(dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())){
 
@@ -1761,8 +1764,8 @@ if(increaserate)
                     }
 
                 });
-                AlertDialog alertDialog = verify.create();
-                alertDialog.show();
+                AlertDialog alertDialog2 = verify.create();
+                alertDialog2.show();
             }
         });
     }
