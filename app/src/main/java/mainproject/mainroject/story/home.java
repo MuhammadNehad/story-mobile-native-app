@@ -49,6 +49,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalProfileSharingActivity;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
@@ -88,7 +89,7 @@ public class home extends Fragment {
     DatabaseReference muserref = FirebaseDatabase.getInstance().getReference().child("UserDetail");
 //    DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("PDFFILES");
 //    private Uri selectedFileURI =null;
-String[] mimeTypes =
+    String[] mimeTypes =
         {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
                 "application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
                 "application/vnd.ms-excel","application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xls & .xlsx
@@ -111,12 +112,13 @@ String[] mimeTypes =
     public static final int PAYPAL_REQUEST_CODE1 = 7171;
     PayPalConfiguration config2 = new PayPalConfiguration()
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-            .defaultUserEmail("mnmfas-facilitator@gmail.com");
+            .defaultUserEmail("mnmfas-facilitator@gmail.com").acceptCreditCards(true);
     private AlertDialog.Builder StoryDetailsl;
 
     public home() {
-    }
 
+    }
+//    paypalconfig pc = new paypalconfig();
     private DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("Images");
     final DatabaseReference mypdfStoryRef = FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails");
     final DatabaseReference myStoryRef = FirebaseDatabase.getInstance().getReference().child("StoriesDetails");
@@ -720,7 +722,7 @@ mProgress.dismiss();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                File file = new File(selectedFileURI.getPathSegments().toString());
+                File file = new File(selectedFileURI.toString());
                 Log.d("", "File : " + file.getName());
                 uploadedFileName = file.getName();
                 tokens = new StringTokenizer(uploadedFileName, ":");
@@ -754,6 +756,9 @@ mProgress.dismiss();
                                Story_Name.child("StrType").setValue(StryTypes);
                                Story_Name.child("LogoSrc").setValue(IMGUrL);
                                Story_Name.child("STDESC").setValue(DescriP);
+
+                               Story_Name.child("StorySavingsrc").setValue("AppCreationStory");
+
                                $pricebox.setText(null);
 
                                Storyname.setText(null);
@@ -777,7 +782,9 @@ mProgress.dismiss();
                                Pdf_Story_Name.child("Reports").setValue(0);
                                Pdf_Story_Name.child("STDESC").setValue(DescriP);
                                Pdf_Story_Name.child("StrType").setValue(StryTypes);
-//                               Story_Name.child("storyNaMe").setValue(StorYNamE);
+                               Pdf_Story_Name.child("StorySavingsrc").setValue("PDFSTORY");
+
+                               //                               Story_Name.child("storyNaMe").setValue(StorYNamE);
 //                               Story_Name.child("Author").setValue(AuthoRs);
 //                               Story_Name.child("story_content").setValue(StRContEnT);
 //                               Story_Name.child("story_price").setValue(pRICe);

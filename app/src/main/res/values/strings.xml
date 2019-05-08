@@ -58,6 +58,8 @@
     <string name="check_your_pdf_stories">check your pdf stories</string>
     <string name="check_your_short_stories">check your short stories</string>
     <string name="paypal_acc">Paypal_Acc</string>
+    <string name="action_search">action_search</string>
+    <string name="addbutton">add_Story</string>
     <!--<string name="todo_storycover">TODO:StoryCover</string>-->
 
 </resources>

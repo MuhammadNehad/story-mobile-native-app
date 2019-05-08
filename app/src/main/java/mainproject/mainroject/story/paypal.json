@@ -1,0 +1,87 @@
+
+//
+//controller.hears(['add paypal (.*)'], 'direct_message,direct_mention,mention', function(bot, message) {
+//var email = message.match[1];
+//controller.storage.users.get(message.user, function(err, user) {
+//// Create user if the user does not exist
+//if (!user) {
+//user = {
+//id: message.user,
+//};
+//}
+//// Extract single email from mailto string and store
+//// Source: http://www.regular-expressions.info/email.html
+//user.email = email.match(/(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/)[0];
+//
+//// Save user record
+//controller.storage.users.save(user, function(err, id) {
+//bot.reply(message, 'Your PayPal payment email will be ' + user.email + ' from now on.');
+//});
+//});
+//});
+ {
+"intent": "sale",
+"payer": {
+"payment_method": "paypal"
+},
+"transactions": [
+{
+"amount": {
+"total": "30.11",
+"currency": "USD",
+"details": {
+"subtotal": "30.00",
+"tax": "0.07",
+"shipping": "0.03",
+"handling_fee": "1.00",
+"shipping_discount": "-1.00",
+"insurance": "0.01"
+}
+},
+"description": "The payment transaction description.",
+"custom": "EBAY_EMS_90048630024435",
+"invoice_number": "48787589673",
+"payment_options": {
+"allowed_payment_method": "INSTANT_FUNDING_SOURCE"
+},
+"soft_descriptor": "ECHI5786786",
+"item_list": {
+"items": [
+{
+"name": "hat",
+"description": "Brown hat.",
+"quantity": "5",
+"price": "3",
+"tax": "0.01",
+"sku": "1",
+"currency": "USD"
+},
+{
+"name": "handbag",
+"description": "Black handbag.",
+"quantity": "1",
+"price": "15",
+"tax": "0.02",
+"sku": "product34",
+"currency": "USD"
+}
+],
+"shipping_address": {
+"recipient_name": "Brian Robinson",
+"line1": "4th Floor",
+"line2": "Unit #34",
+"city": "San Jose",
+"country_code": "US",
+"postal_code": "95131",
+"phone": "011862212345678",
+"state": "CA"
+}
+}
+}
+],
+"note_to_payer": "Contact us for any questions on your order.",
+"redirect_urls": {
+"return_url": "https://example.com/return",
+"cancel_url": "https://example.com/cancel"
+}
+}

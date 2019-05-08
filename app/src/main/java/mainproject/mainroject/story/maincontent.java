@@ -209,6 +209,8 @@ ItemFragment it = new ItemFragment();
                 fragmentTransaction.replace(R.id.content, new updateProfile(),null).addToBackStack(null).commit();
                 return true;
             case R.id.SearchIcon:
+                 ItemFragment IFR=new ItemFragment();
+
                     msg="search";
                 return  true;
         }
