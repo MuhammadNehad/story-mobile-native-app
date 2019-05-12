@@ -21,6 +21,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -58,6 +61,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.BreakIterator;
+import java.util.Calendar;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -602,12 +606,13 @@ mProgress.dismiss();
 
     public void pdfFunSub(final String stryDescri, final String storyNaMe)
     {
-        if(oneTimeDialogPDFs){
         final String fileprice = prices.getText().toString().trim();
         myStoryRef.addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                if(oneTimeDialogPDFs){
+
                 if(storyNaMe == null){Toast.makeText(getContext(), "Story should have a Title", Toast.LENGTH_LONG).show();}
                 else {
 
@@ -659,7 +664,7 @@ mProgress.dismiss();
 //                                    });
 //                                    AlertDialog alertDialog1 = select.create();
 //                                    alertDialog1.show();
-
+                            oneTimeDialogPDFs=false;
                         }
                         else if(TextUtils.isEmpty(fileprice)){
                             prices.setError("can't be Empty");
@@ -670,7 +675,8 @@ mProgress.dismiss();
 
                         }}
                 }
-                oneTimeDialogPDFs=false;
+
+                }
 
             }
 
@@ -696,7 +702,6 @@ mProgress.dismiss();
 
 
         });
-        }
     }
 
     @Override
@@ -756,8 +761,8 @@ mProgress.dismiss();
                                Story_Name.child("StrType").setValue(StryTypes);
                                Story_Name.child("LogoSrc").setValue(IMGUrL);
                                Story_Name.child("STDESC").setValue(DescriP);
-
                                Story_Name.child("StorySavingsrc").setValue("AppCreationStory");
+                               Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
 
                                $pricebox.setText(null);
 
@@ -783,6 +788,7 @@ mProgress.dismiss();
                                Pdf_Story_Name.child("STDESC").setValue(DescriP);
                                Pdf_Story_Name.child("StrType").setValue(StryTypes);
                                Pdf_Story_Name.child("StorySavingsrc").setValue("PDFSTORY");
+                               Pdf_Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
 
                                //                               Story_Name.child("storyNaMe").setValue(StorYNamE);
 //                               Story_Name.child("Author").setValue(AuthoRs);
@@ -827,11 +833,12 @@ mProgress.dismiss();
         final String story_content = viewpa.editText.getText().toString().trim();
         final String story_description = viewpa.storydesc.getText().toString().trim();
         story_Name = Storyname.getText().toString().trim();
-        if(oneTimeDialog) {
+
             myStoryRef.addChildEventListener(new ChildEventListener() {
 
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if(oneTimeDialog) {
                     String storiesname = String.valueOf(dataSnapshot.child("storyNaMe").getValue());
 
                     if (dataSnapshot.hasChild(story_Name)) {
@@ -906,7 +913,10 @@ mProgress.dismiss();
                             }
                         }
                     }
+                    }
+
                 }
+
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -928,9 +938,16 @@ mProgress.dismiss();
 
                 }
             });
-        }
     }
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.mainmenu, menu);
+        MenuItem item = menu.findItem(R.id.SearchIcon);
+        item.setVisible(false);
+    }
     public void restrictdata(final String dt){
         final String storytitle11 = Storyname.getText().toString().trim();
         String storycontent1 = storydesc2.getText().toString().trim();

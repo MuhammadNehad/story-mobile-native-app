@@ -20,6 +20,9 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -1040,7 +1043,15 @@ respectedchats.addListenerForSingleValueEvent(new ValueEventListener() {
         super.onStop();
 //    chatlist.stopListening();
     }
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.mainmenu, menu);
+        MenuItem item = menu.findItem(R.id.SearchIcon);
+        item.setVisible(false);
+    }
    public static class blogholders extends RecyclerView.ViewHolder {
         Context cxs;
         TextView pvsendermsg;

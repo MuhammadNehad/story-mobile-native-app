@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,7 @@ import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,6 +115,8 @@ public class ItemFragment extends Fragment {
     private AlertDialog.Builder Storyreports;
     int currentamount=5;
     float totalcount = 0;
+    private EditText SearchET;
+
     public void settotalcount(float total_count){
         this.totalcount = total_count;
     }
@@ -136,6 +142,7 @@ public class ItemFragment extends Fragment {
     private double newamount=1;
     private int total_items_to_Load=2;
     int mCurrentpage=1;
+
     private static int startingAt =1;
     private static final int viewAmount =10;
 
@@ -143,12 +150,26 @@ public class ItemFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
+//    maincontent mc =new maincontent();
+
     public ItemFragment() {
+    }
+    int SearchBoxVisiblity = View.GONE;
+    int SearchBoxVisiblityVisible = View.VISIBLE;
+    int SearchBoxVisiblityInVisible = View.INVISIBLE;
+
+
+    public void setRelativeLayoutVisibility(int value){
+        this.SearchBoxVisiblity=value;
+//        return this.SearchBoxVisiblity;
+    }
+    public int getSearchBoxVisiblity(){
+        return this.SearchBoxVisiblity;
     }
 
 
     // TODO: Customize parameter initialization
-AlertDialog.Builder StoryDetailsl;
+    AlertDialog.Builder StoryDetailsl;
     FirebaseRecyclerAdapter<Stories , blogholder> fbra;
     FirebaseRecyclerAdapter<PDFFILES, blogholder> fbpdfra;
     final ArrayList<comments> models = new ArrayList<comments>();
@@ -171,7 +192,7 @@ AlertDialog.Builder StoryDetailsl;
     public boolean increaserate = false;
     public boolean decreasecreaserate = false;
     public boolean reportrate = false;
-
+    private ImageButton convertingSearch;
     ProgressDialog mprogress;
     FirebaseRecyclerOptions<Stories> option;
     LinearLayout pdfrv;
@@ -218,6 +239,9 @@ AlertDialog.Builder StoryDetailsl;
         });
         return Found[0];
     }
+//    RelativeLayout SearchBox;
+    RelativeLayout SearchBox;
+    LinearLayout CategorySearch;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -231,13 +255,20 @@ AlertDialog.Builder StoryDetailsl;
         Horror=(Button)view.findViewById(R.id.Horror);
         Education=(Button)view.findViewById(R.id.Education);
         pdfrv =(LinearLayout)view.findViewById(R.id.pdffilesview);
-        pdfviewerbtn =(Button)view.findViewById(R.id.pdfstoriesviewer);
-        onsiteview=(Button)view.findViewById(id.Onsitestoriesviewer);
-        pdfrecyclerView = (RecyclerView) view.findViewById(R.id.pdflist);
+//        pdfviewerbtn =(Button)view.findViewById(R.id.pdfstoriesviewer);
+//        onsiteview=(Button)view.findViewById(id.Onsitestoriesviewer);
+//        pdfrecyclerView = (RecyclerView) view.findViewById(R.id.pdflist);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        SearchBox = view.findViewById(R.id.relLayout1);
+        SearchET =view.findViewById(R.id.input_search);
+        CategorySearch = view.findViewById(id.CategoriesSearch);
+        //
+        convertingSearch = view.findViewById(id.convertSeaching);
+//        SearchBox.setVisibility(getSearchBoxVisiblity());
         scrollView = view.findViewById(id.itemfragscrollview);
         all=(Button)view.findViewById(R.id.All);
-        pdfrecyclerView.setHasFixedSize(true);
+//        pdfrecyclerView.setHasFixedSize(true);
+
         recyclerView.setHasFixedSize(true);
         myRef.keepSynced(true);
         pdfosdb.keepSynced(true);
@@ -248,53 +279,18 @@ AlertDialog.Builder StoryDetailsl;
         final RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),2);
         recyclerView.setLayoutManager(manager);
 
-         onsiteview.setEnabled(false);
-        onsiteview.setBackgroundColor(Color.GRAY);
 
-        pdfviewerbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                pdfrecyclerView.setVisibility(View.VISIBLE);
-                recyclerView.setLayoutManager(null);
-                pdfrecyclerView.setLayoutManager(manager);
-                recyclerView.setVisibility(View.GONE);
-
-                onsiteview.setEnabled(true);
-                pdfviewerbtn.setEnabled(false);
-                pdfviewerbtn.setBackgroundColor(Color.GRAY);
-
-                onsiteview.setBackgroundColor(Color.RED);
-            }
-        });
-
-        onsiteview.setOnClickListener(new View.OnClickListener() {
+        convertingSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pdfrecyclerView.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
-                pdfrecyclerView.setLayoutManager(null);
-                recyclerView.setLayoutManager(manager);
+                if(SearchBox.getVisibility() == View.VISIBLE){
+                    SearchBox.setVisibility(View.INVISIBLE);
+                    CategorySearch.setVisibility(View.VISIBLE);
+                }else{
+                    SearchBox.setVisibility(View.VISIBLE);
+                    CategorySearch.setVisibility(View.INVISIBLE);
 
-                onsiteview.setEnabled(false);
-                pdfviewerbtn.setEnabled(true);
-                pdfviewerbtn.setBackgroundColor(Color.RED);
-
-                onsiteview.setBackgroundColor(Color.GRAY);
-
-            }
-        });
-        pdfrecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            int ydy = 0;
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
+                }
             }
         });
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -302,12 +298,15 @@ AlertDialog.Builder StoryDetailsl;
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 startingAt = startingAt + viewAmount;
-
+//                Toast.makeText(getContext(),String.valueOf(startingAt),Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+                startingAt = startingAt + viewAmount;
+                Toast.makeText(getContext(),String.valueOf(startingAt),Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -342,58 +341,74 @@ AlertDialog.Builder StoryDetailsl;
                     @Override
                     public void onClick(View v) {
                         Stories stories = fbra.getItem(finalPosition);
-                        showDetailsDialog(stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),"AppCreationStory",bookkey);
+                        showDetailsDialog(stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey);
                     }
                 });
             }
         };
 
-        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
-                .setQuery(pdfquery, PDFFILES.class)
-                .build();
-        fbpdfra =new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
-
+        SearchET.addTextChangedListener(new TextWatcher() {
             @Override
-            public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-                View view = LayoutInflater.from(parent.getContext())
-                        .inflate(layout.pdflistitem, parent, false);
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-
-                return new blogholder(view);
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final PDFFILES model) {
-
-
-                holder.setPdfAuthor(model.getPdfAuthor());
-                holder.setPdfstname(model.getPdfstoryNaMe());
-                holder.setPdfcover(getContext(),model.getLogoUrl());
-                holder.setPdfdesc(model.getStrType());
-//                holder.setContent(model.getStory_content());
-//                holder.setAuthor(model.getAuthor());
-//                holder.setStoryNAme(model.getStoryNaMe());
-////                holder.setPrice(model.getStory_price());
-//                holder.setMimgurl(getContext(),model.getLogoUrl());
-//                holder.setContent(model.getSTDESC());
-
-                final int finalPosition = position;
-                holder.mview.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        PDFFILES pdfstories = fbpdfra.getItem(finalPosition);
-
-                        showDetailsDialog(pdfstories.getPdfAuthor() ,pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(),pdfstories.getLogoUrl(),pdfstories.getPdfstoryNaMe(),pdfstories.getStory_content(),"PDFSTORY",bookkey);
-                    }
-                });
-
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                searching(SearchET.getText().toString());
             }
 
+            @Override
+            public void afterTextChanged(Editable editable) {
 
-        };
+            }
+        });
+//        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
+//                .setQuery(pdfquery, PDFFILES.class)
+//                .build();
+//        fbpdfra =new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
+//
+//            @Override
+//            public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
+//                View view = LayoutInflater.from(parent.getContext())
+//                        .inflate(layout.pdflistitem, parent, false);
+//
+//
+//                return new blogholder(view);
+//            }
+//
+//            @Override
+//            protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final PDFFILES model) {
+//
+//
+//                holder.setPdfAuthor(model.getPdfAuthor());
+//                holder.setPdfstname(model.getPdfstoryNaMe());
+//                holder.setPdfcover(getContext(),model.getLogoUrl());
+//                holder.setPdfdesc(model.getStrType());
+////                holder.setContent(model.getStory_content());
+////                holder.setAuthor(model.getAuthor());
+////                holder.setStoryNAme(model.getStoryNaMe());
+//////                holder.setPrice(model.getStory_price());
+////                holder.setMimgurl(getContext(),model.getLogoUrl());
+////                holder.setContent(model.getSTDESC());
+//
+//                final int finalPosition = position;
+//                holder.mview.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        PDFFILES pdfstories = fbpdfra.getItem(finalPosition);
+//
+//                        showDetailsDialog(pdfstories.getPdfAuthor() ,pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(),pdfstories.getLogoUrl(),pdfstories.getPdfstoryNaMe(),pdfstories.getStory_content(),"PDFSTORY",bookkey);
+//                    }
+//                });
+//
+//            }
+//
+//
+//        };
 
         recyclerView.setAdapter(fbra);
-        pdfrecyclerView.setAdapter(fbpdfra);
+//        pdfrecyclerView.setAdapter(fbpdfra);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             recyclerView.setOnContextClickListener(new View.OnContextClickListener() {
                 @Override
@@ -402,16 +417,17 @@ AlertDialog.Builder StoryDetailsl;
                 }
             });
         }
+
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                  try {
                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails"));
-                     setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails"));
+//                     setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails"));
 
                      Thread.sleep(1000);
-                     SelectType(getQuery(),getPdfquery());
+                     SelectType(getQuery());
 //                     pdfrecyclerView.setVisibility(View.GONE);
                  } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -426,11 +442,12 @@ AlertDialog.Builder StoryDetailsl;
 
                 try {
                     setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Religious"));
-                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Religious"));
+//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Religious"));
 
                     Thread.sleep(1000);
-                    SelectType(getQuery(),getPdfquery());
+                    SelectType(getQuery());
 //                    pdfrecyclerView.setVisibility(View.GONE);
+                    fbra.notifyDataSetChanged();
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -445,10 +462,10 @@ AlertDialog.Builder StoryDetailsl;
 
                 try {
                     setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Politics"));
-                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
+//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
 
                     Thread.sleep(1000);
-                    SelectType(getQuery(),getPdfquery());
+                    SelectType(getQuery());
 //                    pdfrecyclerView.setVisibility(View.GONE);
 
                 } catch (InterruptedException e) {
@@ -461,22 +478,18 @@ AlertDialog.Builder StoryDetailsl;
         Action.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
               try {
                   setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Action"));
-                  setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Action"));
 
                   Thread.sleep(1000);
-                  SelectType(getQuery(),getPdfquery());
-//                  pdfrecyclerView.setVisibility(View.GONE);
+                  SelectType(getQuery());
 
               } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                }
         });
+
         Horror.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -484,11 +497,9 @@ AlertDialog.Builder StoryDetailsl;
 
                try {
                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Horror"));
-                   setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Horror"));
 
                    Thread.sleep(1000);
-                   SelectType(getQuery(),getPdfquery());
-//                   pdfrecyclerView.setVisibility(View.GONE);
+                   SelectType(getQuery());
 
                } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -504,13 +515,14 @@ AlertDialog.Builder StoryDetailsl;
           try {
 
               setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Science"));
-              setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Science"));
+//              setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Science"));
               Thread.sleep(1000);
-              SelectType(getQuery(),getPdfquery());
+              SelectType(getQuery());
 //              pdfrecyclerView.setVisibility(View.GONE);
 
           } catch (InterruptedException e) {
                             e.printStackTrace();
+
                         }
 
                        }
@@ -568,7 +580,7 @@ AlertDialog.Builder StoryDetailsl;
         return view;
     }
 
-    public void SelectType(Query query12,Query pdfquery1){
+    public void SelectType(Query query12){
          if(query12 == null){
             loading.setMessage("no stories for that type");
             loading.show();
@@ -606,7 +618,7 @@ AlertDialog.Builder StoryDetailsl;
                         @Override
                         public void onClick(View v) {
                             Stories stories = fbra.getItem(finalPosition);
-                            showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), "AppCreationStory", bookkey);
+                            showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc()== null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
                         }
                     });
                 }
@@ -652,13 +664,20 @@ AlertDialog.Builder StoryDetailsl;
 //                }
 //            };
 //
-//        recyclerView.setAdapter(fbra);
+        recyclerView.setAdapter(fbra);
 //        pdfrecyclerView.setAdapter(fbpdfra);
+//        fbra.notifyDataSetChanged();
+//        recyclerView.
         fbra.startListening();
 //        fbpdfra.startListening();
         onStart();
     }
-    public void searching() {
+    public void searching(String searchstring) {
+        try {
+            if(searchstring.isEmpty()){
+                setQuery(query);
+            }
+        setQuery(query.orderByChild("storyNaMe").startAt(searchstring).endAt(searchstring+"\uf8ff"));
         option = new FirebaseRecyclerOptions.Builder<Stories>()
                 .setQuery(getQuery(), Stories.class)
                 .build();
@@ -688,7 +707,7 @@ AlertDialog.Builder StoryDetailsl;
                     @Override
                     public void onClick(View v) {
                         Stories stories = fbra.getItem(position);
-                        showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), "AppCreationStory", bookkey);
+                        showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null?"AppCreationStory":stories.getStorySavingsrc()), bookkey);
                     }
                 });
             }
@@ -736,10 +755,15 @@ AlertDialog.Builder StoryDetailsl;
 //
 //
 //        };
-
+        fbra.notifyDataSetChanged();
         recyclerView.setAdapter(fbra);
 //        pdfrecyclerView.setAdapter(fbpdfra);}
-    }
+        fbra.startListening();
+        onStart();
+        }catch (Exception ex){
+
+        }
+        }
     public void loadmorestories(){
             option = new FirebaseRecyclerOptions.Builder<Stories>()
                     .setQuery(getQuery(), Stories.class)
@@ -1401,10 +1425,10 @@ if(increaserate)
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
-                    report.setImageResource(R.color.BlackCo);
+//                    report.setImageResource(R.color.BlackCo);
 
                 } else if (!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
-                    report.setImageResource(R.color.Cyan);
+//                    report.setImageResource(R.color.Cyan);
                 }
             }
 
@@ -1780,7 +1804,7 @@ if(increaserate)
     public void onStart() {
         super.onStart();
         fbra.startListening();
-        fbpdfra.startListening();
+//        fbpdfra.startListening();
     }
 
     Bundle gtbund = getArguments();
@@ -1839,7 +1863,6 @@ if(increaserate)
         }
     }
 
-    SearchView searchView;
     @Override
     public void onCreateOptionsMenu(Menu menu,
                                     MenuInflater inflater) {
@@ -1847,73 +1870,31 @@ if(increaserate)
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
         MenuItem item = menu.findItem(id.SearchIcon);
-        Context mContext = getContext();
-        assert mContext != null;
+//        Context mContext = getContext();
+//        assert mContext != null;
 //        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
-        searchView = (SearchView) menu.findItem(id.SearchIcon).getActionView();
-        // Assumes current activity is the searchable activity
-//        assert searchManager != null;
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-//        searchView.setIconifiedByDefault(false);
-//        searchView.setOnQueryTextFocusChangeListener();
-//        final SearchView searchView = new SearchView(((maincontent) mContext).getSupportActionBar().getThemedContext());
-//        MenuItemCompat.setShowAsAction(item, MenuItemCompat.SHOW_AS_ACTION_COLLAPSE_ACTION_VIEW | MenuItemCompat.SHOW_AS_ACTION_IF_ROOM);
-//        MenuItemCompat.setActionView(item, searchView);
-//        searchView.setOnSearchClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                String searches= searchView.toString().toLowerCase().trim();
-//                try {
-//
-//                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("storyNaMe").startAt(query).endAt("\uf8ff"));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("PdfstoryNaMe").startAt(query).endAt("\uf8ff"));
-//
-//                    Thread.sleep(1000);
-//                    SelectType(getQuery(),getPdfquery());
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                    AlertDialog.Builder Ex = null;
-//
-//                    assert Ex != null;
-//                    Ex.setMessage(e.getMessage());
-//                    Ex.show();
-//                }
-//                return true;
-//            }
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                try {
-//
-//                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("storyNaMe").startAt(newText).endAt(newText+"\uf8ff"));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("PdfstoryNaMe").startAt(newText).endAt(newText+"\uf8ff"));
-//
-//                    Thread.sleep(1000);
-//                    SelectType(getQuery(),getPdfquery());
-//
-//                } catch (InterruptedException e) {
-//                     AlertDialog.Builder Ex = null;
-//
-//                    assert Ex != null;
-//                    Ex.setMessage(e.getMessage());
-//                     Ex.show();
-//                    }
-//                return true;
-//            }
-//        });
+//        searchView = (SearchView) menu.findItem(id.SearchIcon).getActionView();
+        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+
+                return true;
+            }
+        });
 
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (item.getItemId()){
+            case R.id.SearchIcon:
+                Toast.makeText(getContext(),"a",Toast.LENGTH_SHORT).show();
 
-        return super.onOptionsItemSelected(item);
+                return true;
+
+        }
+        return true;
     }
 
     public void processpayment(){}

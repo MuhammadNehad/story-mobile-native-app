@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -177,17 +180,16 @@ public class Profile extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
-                    String imgurl=user.getUserImg();
-                    if(!imgurl.isEmpty())
-                    {
-                        imgupload.setBackground(Drawable.createFromPath(imgurl));
-                        Picasso.with(imgupload.getContext()).load(imgurl).fit().into(imgupload);
-    //                            urlimg.setText(dataSnapshot.getValue(User.class).getName());
-                    }
-                    else
-                    {
-                        Toast.makeText(getContext(),"Profile form",Toast.LENGTH_LONG).show();
-    //    throw new IllegalArgumentException("Path must not be empty.");
+                    if(user.getUserImg()!=null) {
+                        String imgurl = user.getUserImg();
+                        if (!imgurl.isEmpty()) {
+                            imgupload.setBackground(Drawable.createFromPath(imgurl));
+                            Picasso.with(imgupload.getContext()).load(imgurl).fit().into(imgupload);
+                            //                            urlimg.setText(dataSnapshot.getValue(User.class).getName());
+                        } else {
+                            Toast.makeText(getContext(), "Profile form", Toast.LENGTH_LONG).show();
+                            //    throw new IllegalArgumentException("Path must not be empty.");
+                        }
                     }
                 }
 
@@ -213,6 +215,15 @@ public class Profile extends Fragment {
 //            }
 //        });
         return view;
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.mainmenu, menu);
+        MenuItem item = menu.findItem(R.id.SearchIcon);
+        item.setVisible(false);
     }
 
     @Override

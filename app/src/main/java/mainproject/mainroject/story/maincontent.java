@@ -1,5 +1,6 @@
 package mainproject.mainroject.story;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -13,11 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.app.SearchManager;
 import android.support.v7.widget.SearchView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView.OnQueryTextListener;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -47,7 +53,7 @@ public class maincontent extends AppCompatActivity {
     private FirebaseAuth mAuth;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager = getSupportFragmentManager();
-
+    RelativeLayout SearchBox;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -58,10 +64,11 @@ public class maincontent extends AppCompatActivity {
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragmentTransaction.replace(R.id.content, new ItemFragment(),null).addToBackStack(null).commit();
+                    fragmentTransaction.replace(R.id.content, new ItemFragment(),"itemfrags").addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+
                     return true;
                 case R.id.navigation_dashboard:
-                    fragmentTransaction.replace(R.id.content, new ChatTabs(),null).addToBackStack(null).commit();
+                    fragmentTransaction.replace(R.id.content, new ChatTabs(),null).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
                     return true;
                 case R.id.profile_nav:
                     fragmentTransaction.replace(R.id.content, new Profile(),null).addToBackStack(null).commit();
@@ -82,14 +89,16 @@ home h = new home();
     String img;
 String storytitle,price;
 ItemFragment it = new ItemFragment();
-
+//EditText SearchET;
     FrameLayout fl;
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maincontent);
-//
+//        SearchBox= findViewById(R.id.relLayout1);
+//        SearchET =findViewById(R.id.input_search);
+        //
 //        if(savedInstanceState == null){
 //    h.viewpa.editText.setHint("Type Your Story Here");
 //}else{
@@ -138,7 +147,7 @@ ItemFragment it = new ItemFragment();
 //    }
 //});
 //        FirebaseAuth.getInstance().signOut();
-        fragmentManager.beginTransaction().replace(R.id.content, new ItemFragment()).commit();
+        fragmentManager.beginTransaction().replace(R.id.content, new ItemFragment(),"itemsFrag").commit();
 
         Toolbar tb =(Toolbar)findViewById(R.id.tb);
         setSupportActionBar(tb);
@@ -155,19 +164,19 @@ ItemFragment it = new ItemFragment();
         MenuInflater menuInflater =getMenuInflater();
         menuInflater.inflate(R.menu.mainmenu,menu);
         MenuItem searchitem =menu.findItem(R.id.SearchIcon);
-        searchView = (SearchView) searchitem.getActionView();
-        searchView.setQueryHint("Search Name");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
+//        searchView = (SearchView) searchitem.getActionView();
+//        searchView.setQueryHint("Search Name");
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
 ////         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 //        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) maincontent.this);
               return true;
@@ -209,9 +218,13 @@ ItemFragment it = new ItemFragment();
                 fragmentTransaction.replace(R.id.content, new updateProfile(),null).addToBackStack(null).commit();
                 return true;
             case R.id.SearchIcon:
-                 ItemFragment IFR=new ItemFragment();
 
-                    msg="search";
+                 if(SearchBox.getVisibility() == View.VISIBLE){
+                    SearchBox.setVisibility(View.INVISIBLE);
+                }else{
+                    SearchBox.setVisibility(View.VISIBLE);
+                }
+          msg="search";
                 return  true;
         }
         return true;

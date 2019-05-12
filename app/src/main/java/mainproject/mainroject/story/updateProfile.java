@@ -8,6 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -214,6 +217,15 @@ alertDialog.show();
                 mprogress.dismiss();
             }
         });
+    }
+    @Override
+    public void onCreateOptionsMenu(Menu menu,
+                                    MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.clear();
+        inflater.inflate(R.menu.mainmenu, menu);
+        MenuItem item = menu.findItem(R.id.SearchIcon);
+        item.setVisible(false);
     }
     public void createpaypal(){
         updateDetails2 = new AlertDialog.Builder(getContext());

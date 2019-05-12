@@ -13,7 +13,9 @@
     android:scrollbarSize="0dp"
     tools:context="mainproject.mainroject.story.ItemFragment"
     android:background="@color/Wheat">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/pdffilesview"
         android:orientation="vertical"
@@ -24,14 +26,24 @@
             android:layout_width="match_parent"
             android:scrollbarSize="0dp"
             android:layout_height="wrap_content">
-
         <LinearLayout
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            >
+            android:layout_height="wrap_content">
+            <ImageButton
+                android:id="@+id/convertSeaching"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/places_ic_search"/>
 
+            <LinearLayout
+                android:id="@+id/CategoriesSearch"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+            >
+            <!--<requestFocus/>-->
             <Button
                 android:id="@+id/All"
                 android:layout_width="75dp"
@@ -108,41 +120,76 @@
                 android:textSize="10sp" />
 
         </LinearLayout>
-        </HorizontalScrollView>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
-            <Button
-                android:id="@+id/Onsitestoriesviewer"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_weight="2"
-                android:layout_margin="5dp"
-                android:padding="2dp"
-                android:background="@android:color/holo_red_light"
-                android:layout_gravity="start|center"
-                android:text="text stories"
-                android:textColor="@android:color/background_light"
-                android:textColorHighlight="@android:color/holo_orange_light" />
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginLeft="10dp"
+                android:elevation="10dp"
+                android:background="@drawable/white_border"
+                android:id="@+id/relLayout1"
+                android:layout_marginEnd="50dp"
+                android:layout_marginStart="10dp">
 
-            <Button
-                    android:id="@+id/pdfstoriesviewer"
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:id="@+id/ic_magnify"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/places_ic_search"/>
+
+                <EditText
                     android:layout_width="match_parent"
-                    android:layout_weight="2"
+                    android:layout_height="match_parent"
+                    android:layout_toRightOf="@+id/ic_magnify"
+                    android:layout_centerVertical="true"
+                    android:textSize="15sp"
+                    android:textColor="#000"
+                    android:id="@+id/input_search"
+                    android:background="@null"
+                    android:hint="search"
+                    android:imeOptions="actionSearch"/>
 
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:padding="2dp"
-                    android:background="@android:color/holo_red_light"
-                    android:layout_gravity="start|center"
-                    android:text="PDF Books"
-                    android:textColor="@android:color/background_light"
-                    android:textColorHighlight="@android:color/holo_orange_light" />
 
-
+            </RelativeLayout>
         </LinearLayout>
+        </HorizontalScrollView>
+        <!--<LinearLayout-->
+            <!--android:orientation="horizontal"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:gravity="center">-->
+            <!--&lt;!&ndash;<Button&ndash;&gt;-->
+                <!--&lt;!&ndash;android:id="@+id/Onsitestoriesviewer"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:text="text stories"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
+                <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<Button&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/pdfstoriesviewer"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:text="PDF Books"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
+
+
+        <!--</LinearLayout>-->
         <View
             android:outlineProvider="bounds"
             android:id="@+id/identityTxt2"
@@ -150,16 +197,16 @@
             android:layout_width="match_parent"
             android:layout_height="5dp" />
 
-        <android.support.v7.widget.RecyclerView
-            android:visibility="gone"
-            android:id="@+id/pdflist"
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:visibility="gone"-->
+            <!--android:id="@+id/pdflist"-->
 
-            android:padding="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:fillViewport="true"
-            android:layout_marginBottom="5dp"
-            />
+            <!--android:padding="5dp"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="600dp"-->
+            <!--android:fillViewport="true"-->
+            <!--android:layout_marginBottom="5dp"-->
+            <!--/>-->
         <!--tools:listitem="@layout/pdflistitem"-->
         <View
             android:id="@+id/identityTxt"
@@ -177,4 +224,6 @@
             />
 
     </LinearLayout>
+
+</RelativeLayout>
 </ScrollView>

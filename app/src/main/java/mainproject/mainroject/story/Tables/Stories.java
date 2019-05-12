@@ -2,7 +2,7 @@ package mainproject.mainroject.story.Tables;
 
 
 public class Stories {
-    private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch;
+    private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc,publishDate;
     int numofrankers;
 
     private int Likes,Reports;
@@ -128,6 +128,22 @@ public class Stories {
 
     public void setReports(int reports) {
         Reports = reports;
+    }
+
+    public String getStorySavingsrc() {
+        return StorySavingsrc;
+    }
+
+    public void setStorySavingsrc(String storySavingsrc) {
+        StorySavingsrc = storySavingsrc;
+    }
+
+    public String getPublishDate() {
+        return publishDate;
+    }
+
+    public void setPublishDate(String publishDate) {
+        this.publishDate = publishDate;
     }
 
 //
