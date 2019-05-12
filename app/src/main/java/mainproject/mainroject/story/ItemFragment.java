@@ -192,7 +192,7 @@ public class ItemFragment extends Fragment {
     public boolean increaserate = false;
     public boolean decreasecreaserate = false;
     public boolean reportrate = false;
-    private ImageButton convertingSearch;
+    ImageButton convertingSearch;
     ProgressDialog mprogress;
     FirebaseRecyclerOptions<Stories> option;
     LinearLayout pdfrv;
@@ -203,7 +203,7 @@ public class ItemFragment extends Fragment {
     public void setQuery(Query query) {
         this.query = query;
     }
-    Query query =FirebaseDatabase.getInstance().getReference().child("StoriesDetails");
+    Query query =FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("storyNaMe");
     public Query getPdfquery() {
         return pdfquery;
     }
@@ -255,20 +255,15 @@ public class ItemFragment extends Fragment {
         Horror=(Button)view.findViewById(R.id.Horror);
         Education=(Button)view.findViewById(R.id.Education);
         pdfrv =(LinearLayout)view.findViewById(R.id.pdffilesview);
-//        pdfviewerbtn =(Button)view.findViewById(R.id.pdfstoriesviewer);
-//        onsiteview=(Button)view.findViewById(id.Onsitestoriesviewer);
-//        pdfrecyclerView = (RecyclerView) view.findViewById(R.id.pdflist);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         SearchBox = view.findViewById(R.id.relLayout1);
         SearchET =view.findViewById(R.id.input_search);
         CategorySearch = view.findViewById(id.CategoriesSearch);
-        //
         convertingSearch = view.findViewById(id.convertSeaching);
 //        SearchBox.setVisibility(getSearchBoxVisiblity());
         scrollView = view.findViewById(id.itemfragscrollview);
         all=(Button)view.findViewById(R.id.All);
 //        pdfrecyclerView.setHasFixedSize(true);
-
         recyclerView.setHasFixedSize(true);
         myRef.keepSynced(true);
         pdfosdb.keepSynced(true);
@@ -284,11 +279,11 @@ public class ItemFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(SearchBox.getVisibility() == View.VISIBLE){
-                    SearchBox.setVisibility(View.INVISIBLE);
+                    SearchBox.setVisibility(View.GONE);
                     CategorySearch.setVisibility(View.VISIBLE);
                 }else{
                     SearchBox.setVisibility(View.VISIBLE);
-                    CategorySearch.setVisibility(View.INVISIBLE);
+                    CategorySearch.setVisibility(View.GONE);
 
                 }
             }
@@ -347,22 +342,7 @@ public class ItemFragment extends Fragment {
             }
         };
 
-        SearchET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                searching(SearchET.getText().toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
 //        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
 //                .setQuery(pdfquery, PDFFILES.class)
 //                .build();
@@ -417,6 +397,34 @@ public class ItemFragment extends Fragment {
                 }
             });
         }
+
+        SearchET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Toast.makeText(getContext(), charSequence.toString(), Toast.LENGTH_LONG).show();
+                try{
+
+                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("storyNaMe").startAt(charSequence.toString()).endAt(charSequence.toString()+"\uf8ff"));
+                    Thread.sleep(200);
+                    searching(getQuery());
+
+
+                }catch (Exception ex){
+                    Toast.makeText(getContext(),ex.getMessage(),Toast.LENGTH_SHORT).show();
+
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         all.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -672,14 +680,13 @@ public class ItemFragment extends Fragment {
 //        fbpdfra.startListening();
         onStart();
     }
-    public void searching(String searchstring) {
+    public void searching(Query searchstring) {
         try {
-            if(searchstring.isEmpty()){
-                setQuery(query);
-            }
-        setQuery(query.orderByChild("storyNaMe").startAt(searchstring).endAt(searchstring+"\uf8ff"));
+
+            Thread.sleep(100);
+
         option = new FirebaseRecyclerOptions.Builder<Stories>()
-                .setQuery(getQuery(), Stories.class)
+                .setQuery(searchstring, Stories.class)
                 .build();
         fbra = new FirebaseRecyclerAdapter<Stories, blogholder>(option) {
 
@@ -755,12 +762,14 @@ public class ItemFragment extends Fragment {
 //
 //
 //        };
-        fbra.notifyDataSetChanged();
         recyclerView.setAdapter(fbra);
 //        pdfrecyclerView.setAdapter(fbpdfra);}
-        fbra.startListening();
+            fbra.notifyDataSetChanged();
+
+            fbra.startListening();
         onStart();
         }catch (Exception ex){
+            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
 
         }
         }
