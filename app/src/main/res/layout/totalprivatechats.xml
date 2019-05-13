@@ -4,11 +4,12 @@
     android:layout_height="match_parent"
     android:layout_margin="10dp"
    >
+
     <ImageView
-        android:layout_margin="10dp"
         android:id="@+id/pvsenderimg"
         android:layout_width="50dp"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:layout_margin="10dp" />
 <LinearLayout
     android:layout_margin="10dp"
     android:orientation="vertical"
@@ -24,8 +25,8 @@
         android:id="@+id/pvmsgcont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/Goldenrod"
+        android:background="@drawable/fui_idp_button_background_twitter"
         android:padding="5dp"
-        android:text="message content"/>
+        android:text="message content" />
 </LinearLayout>
 </LinearLayout>

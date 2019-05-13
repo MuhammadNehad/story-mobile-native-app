@@ -2,14 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mainproject.mainroject.story.pdfview"
-    android:background="@color/Wheat">
+    android:background="@android:color/transparent"
+    tools:context="mainproject.mainroject.story.pdfview">
 
     <!-- TODO: Update blank fragment layout -->
     <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/pdfviewerpage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/pdfviewerpage"
-         />
+        android:animateLayoutChanges="true"
+        android:clickable="true"
+        android:clipToPadding="true"
+        android:fadeScrollbars="true"
+        android:fadingEdge="horizontal|vertical"
+        android:layerType="software"
+        android:layoutAnimation="@android:anim/slide_in_left" />
 
 </FrameLayout>

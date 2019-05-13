@@ -163,7 +163,7 @@ ItemFragment it = new ItemFragment();
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater =getMenuInflater();
         menuInflater.inflate(R.menu.mainmenu,menu);
-        MenuItem searchitem =menu.findItem(R.id.SearchIcon);
+//        MenuItem searchitem =menu.findItem(R.id.SearchIcon);
 //        searchView = (SearchView) searchitem.getActionView();
 //        searchView.setQueryHint("Search Name");
 //        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -217,16 +217,7 @@ ItemFragment it = new ItemFragment();
 
                 fragmentTransaction.replace(R.id.content, new updateProfile(),null).addToBackStack(null).commit();
                 return true;
-            case R.id.SearchIcon:
-
-                 if(SearchBox.getVisibility() == View.VISIBLE){
-                    SearchBox.setVisibility(View.INVISIBLE);
-                }else{
-                    SearchBox.setVisibility(View.VISIBLE);
-                }
-          msg="search";
-                return  true;
-        }
+             }
         return true;
     }
 viewpageradapter viewpas = new viewpageradapter(this);

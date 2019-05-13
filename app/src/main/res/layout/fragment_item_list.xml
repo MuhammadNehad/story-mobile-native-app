@@ -1,170 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/itemfragscrollview"
     android:name="mainproject.mainroject.story.ItemFragment"
     android:layout_width="match_parent"
-    android:id="@+id/itemfragscrollview"
-    android:focusableInTouchMode="true"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:descendantFocusability="beforeDescendants"
     android:paddingTop="5dp"
     android:scrollbarSize="0dp"
-    tools:context="mainproject.mainroject.story.ItemFragment"
-    android:background="@color/Wheat">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/pdffilesview"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:scrollbarSize="0dp"
-            android:layout_height="wrap_content">
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <ImageButton
-                android:id="@+id/convertSeaching"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/places_ic_search"/>
+    tools:context="mainproject.mainroject.story.ItemFragment">
 
-            <LinearLayout
-                android:id="@+id/CategoriesSearch"
-                android:orientation="horizontal"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/pdffilesview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-            >
-            <!--<requestFocus/>-->
-            <Button
-                android:id="@+id/All"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="All"
-                android:textColorHighlight="@color/Red"
-                android:textSize="10sp" />
+                android:scrollbarSize="0dp">
 
-            <Button
-                android:id="@+id/Education"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="Science"
-                android:textColorHighlight="@color/Red"
-                android:textSize="10sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/Horror"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="@string/horror"
-                android:textSize="10sp"
-                tools:ignore="SmallSp" />
+                    <ImageButton
+                        android:id="@+id/convertSeaching"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:background="@color/fui_transparent"
+                        android:src="@drawable/places_ic_search" />
 
-            <Button
-                android:id="@+id/Action"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="@string/action"
-                android:textSize="10sp" />
+                    <LinearLayout
+                        android:id="@+id/CategoriesSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:orientation="horizontal">
+                        <!--<requestFocus/>-->
+                        <Button
 
-            <Button
-                android:id="@+id/Politics"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="@string/politics"
-                android:textSize="10sp" />
+                            android:id="@+id/All"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+                            android:textColor="@color/Black"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="All"
+                            android:textColorHighlight="@color/Red"
 
-            <Button
-                android:id="@+id/Religious"
-                android:layout_width="75dp"
-                android:layout_height="50dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/White"
-                android:text="@string/religious"
-                android:textSize="10sp" />
+                            android:textSize="10sp" />
 
-        </LinearLayout>
+                        <Button
+                            android:id="@+id/Education"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
 
-        </LinearLayout>
-        </HorizontalScrollView>
-        <!--<LinearLayout-->
+                            android:layout_height="40dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="@color/Black"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="Science"
+                            android:textColorHighlight="@color/Red"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Horror"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:textColor="@color/Black"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/horror"
+                            android:textSize="10sp"
+                            tools:ignore="SmallSp" />
+
+                        <Button
+                            android:id="@+id/Action"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:textColor="@color/Black"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/action"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Politics"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:textColor="@color/Black"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/politics"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Religious"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/religious"
+                            android:textColor="@color/Black"
+                            android:textSize="10sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+            </HorizontalScrollView>
+            <!--<LinearLayout-->
             <!--android:orientation="horizontal"-->
             <!--android:layout_width="match_parent"-->
             <!--android:layout_height="wrap_content"-->
             <!--android:gravity="center">-->
             <!--&lt;!&ndash;<Button&ndash;&gt;-->
-                <!--&lt;!&ndash;android:id="@+id/Onsitestoriesviewer"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:text="text stories"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
-                <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/Onsitestoriesviewer"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="text stories"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
 
             <!--&lt;!&ndash;<Button&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:id="@+id/pdfstoriesviewer"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/pdfstoriesviewer"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
 
-                    <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:text="PDF Books"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
-                    <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:text="PDF Books"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
 
 
-        <!--</LinearLayout>-->
-        <View
-            android:outlineProvider="bounds"
-            android:id="@+id/identityTxt2"
-            android:text="FullTxtStories"
-            android:layout_width="match_parent"
-            android:layout_height="5dp" />
+            <!--</LinearLayout>-->
+            <View
+                android:id="@+id/identityTxt2"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:outlineProvider="bounds"
+                android:text="FullTxtStories"
+                tools:targetApi="lollipop" />
 
-        <!--<android.support.v7.widget.RecyclerView-->
+            <!--<android.support.v7.widget.RecyclerView-->
             <!--android:visibility="gone"-->
             <!--android:id="@+id/pdflist"-->
 
@@ -174,53 +210,52 @@
             <!--android:fillViewport="true"-->
             <!--android:layout_marginBottom="5dp"-->
             <!--/>-->
-        <!--tools:listitem="@layout/pdflistitem"-->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/list"
+            <!--tools:listitem="@layout/pdflistitem"-->
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_gravity="center"
+                android:fillViewport="true"
+                android:paddingLeft="5dp"
+                tools:listitem="@layout/fragment_item" />
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/relLayout1"
             android:layout_width="match_parent"
-            android:layout_height="600dp"
-            android:fillViewport="true"
-            android:paddingLeft="5dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/white_border"
+            android:elevation="10dp"
+            android:visibility="gone">
 
-            tools:listitem="@layout/fragment_item"
-            />
+            <ImageView
+                android:id="@+id/ic_magnify"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/places_ic_search" />
 
-    </LinearLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginLeft="50dp"
-        android:elevation="10dp"
-        android:background="@drawable/white_border"
-        android:visibility="gone"
-        android:id="@+id/relLayout1">
-
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:id="@+id/ic_magnify"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/places_ic_search"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/ic_magnify"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:singleLine="true"
-            android:id="@+id/input_search"
-            android:background="@null"
-            android:hint="search"
-            android:imeOptions="actionSearch"
-            android:layout_toEndOf="@+id/ic_magnify" />
+            <EditText
+                android:id="@+id/input_search"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@+id/ic_magnify"
+                android:layout_toRightOf="@+id/ic_magnify"
+                android:background="@null"
+                android:hint="search"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
+                android:textColor="#000"
+                android:textSize="15sp" />
 
 
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
 </ScrollView>

@@ -94,6 +94,7 @@ import static mainproject.mainroject.story.R.layout;
  */
 public class ItemFragment extends Fragment {
 
+
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
@@ -535,8 +536,8 @@ public class ItemFragment extends Fragment {
 
                        }
 
-                }
-                );
+                });
+
         //TODO: loading more
 //        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(recyclerViewlayout) {
 //            @Override
@@ -1878,31 +1879,24 @@ if(increaserate)
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
-        MenuItem item = menu.findItem(id.SearchIcon);
+//        MenuItem item = menu.findItem(id.SearchIcon);
 //        Context mContext = getContext();
 //        assert mContext != null;
 //        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
 //        searchView = (SearchView) menu.findItem(id.SearchIcon).getActionView();
-        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem menuItem) {
-
-                return true;
-            }
-        });
+//        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem menuItem) {
+//
+//                return true;
+//            }
+//        });
 
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (item.getItemId()){
-            case R.id.SearchIcon:
-                Toast.makeText(getContext(),"a",Toast.LENGTH_SHORT).show();
-
-                return true;
-
-        }
         return true;
     }
 

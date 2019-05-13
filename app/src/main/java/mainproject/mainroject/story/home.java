@@ -945,8 +945,6 @@ mProgress.dismiss();
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
-        MenuItem item = menu.findItem(R.id.SearchIcon);
-        item.setVisible(false);
     }
     public void restrictdata(final String dt){
         final String storytitle11 = Storyname.getText().toString().trim();

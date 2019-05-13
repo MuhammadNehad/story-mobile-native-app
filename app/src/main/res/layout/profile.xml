@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Wheat"
+    android:background="@color/fui_transparent"
     android:gravity="center_vertical|center_horizontal"
 
     android:orientation="vertical"
@@ -54,6 +54,7 @@
         android:background="@android:color/holo_red_light"
         android:gravity="center"
         android:text="@string/purchased_stories" />
+
     <Button
         android:id="@+id/Fellows"
         style="@style/FirebaseUI.Button.AccountChooser"

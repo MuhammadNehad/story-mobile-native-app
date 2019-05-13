@@ -1049,8 +1049,6 @@ respectedchats.addListenerForSingleValueEvent(new ValueEventListener() {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
-        MenuItem item = menu.findItem(R.id.SearchIcon);
-        item.setVisible(false);
     }
    public static class blogholders extends RecyclerView.ViewHolder {
         Context cxs;

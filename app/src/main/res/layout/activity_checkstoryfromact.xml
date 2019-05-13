@@ -15,6 +15,6 @@
             android:id="@+id/checkedstorycontent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="content"/>
+            android:text="@string/content"/>
     </ScrollView>
 </android.support.constraint.ConstraintLayout>

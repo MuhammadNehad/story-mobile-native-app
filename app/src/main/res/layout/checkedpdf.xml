@@ -6,8 +6,9 @@
     android:layout_height="match_parent"
     tools:context="mainproject.mainroject.story.checkedpdf"
     android:background="@color/Wheat">
-<com.github.barteksc.pdfviewer.PDFView
-    android:id="@+id/checkedpdfview"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/checkedpdfview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </android.support.constraint.ConstraintLayout>

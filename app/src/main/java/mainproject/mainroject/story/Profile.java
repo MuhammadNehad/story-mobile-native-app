@@ -222,8 +222,6 @@ public class Profile extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
-        MenuItem item = menu.findItem(R.id.SearchIcon);
-        item.setVisible(false);
     }
 
     @Override

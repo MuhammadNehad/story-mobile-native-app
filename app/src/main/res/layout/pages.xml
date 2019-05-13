@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent"
-        android:id="@+id/pagenum"
-        android:orientation="vertical"
-    android:background="@color/Wheat">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pagenum"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fui_transparent"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="3dp"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:text=""/>
-     <TextView
-        android:layout_weight="0"
+        android:text=""
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
+        android:layout_weight="0"
+        android:background="#b4aaaaaa"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:text="Story Description"
         android:textAppearance="?attr/textAppearanceListItem" />
 
     <EditText
-        android:layout_margin="5dp"
         android:id="@+id/strydescription"
         android:layout_width="match_parent"
         android:layout_height="80dp"
+        android:layout_margin="5dp"
         android:background="@color/Azure"
         android:defaultFocusHighlightEnabled="true"
         android:ems="3"
-        android:padding="5dp"
         android:fontFamily="@font/arima_madurai"
         android:hint="StoryDescription"
         android:inputType="textMultiLine|textImeMultiLine"
         android:lineSpacingExtra="8sp"
         android:lines="@integer/google_play_services_version"
         android:minLines="40"
+        android:padding="5dp"
         android:scrollbarAlwaysDrawVerticalTrack="true"
         android:singleLine="false"
         android:textAllCaps="false"
@@ -43,156 +49,168 @@
         tools:targetApi="o" />
 
     <!--<LinearLayout-->
-        <!--android:id="@+id/pdfform"-->
+    <!--android:id="@+id/pdfform"-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:orientation="horizontal">-->
     <!--<Button-->
-        <!--android:layout_weight="1"-->
-        <!--android:id="@+id/selectpdffile"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:text="choose pdf file"-->
+    <!--android:layout_weight="1"-->
+    <!--android:id="@+id/selectpdffile"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:text="choose pdf file"-->
     <!--android:layout_gravity="left"-->
-        <!--/>-->
+    <!--/>-->
     <!--<TextView-->
-        <!--android:id="@+id/uploadedfilename"-->
-        <!--android:layout_weight="1"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:gravity="center_vertical"-->
-        <!--android:text="FileName"/>-->
+    <!--android:id="@+id/uploadedfilename"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:gravity="center_vertical"-->
+    <!--android:text="FileName"/>-->
     <!--<Button-->
-        <!--android:id="@+id/uploadpdffile"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="50dp"-->
-        <!--android:text="upload"-->
-        <!--android:layout_gravity="left"-->
-        <!--android:layout_weight="1"-->
-        <!--/>-->
+    <!--android:id="@+id/uploadpdffile"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:text="upload"-->
+    <!--android:layout_gravity="left"-->
+    <!--android:layout_weight="1"-->
+    <!--/>-->
 
-<!--</LinearLayout>-->
-    <LinearLayout android:orientation="horizontal"
+    <!--</LinearLayout>-->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:visibility="gone">
-    <LinearLayout
-        android:id="@+id/texttools"
-        android:gravity="center"
-        android:layout_alignTop="@id/userEntry"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"><ImageButton
-        android:id="@+id/textalignleft"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:src="@drawable/align_to_left"
-        />
-        <ImageButton
-            android:id="@+id/textaligncenter"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/align_justify"
-            />
-        <ImageButton
-            android:id="@+id/textalignright"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/align_to_right"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/sizes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"><LinearLayout
-        android:orientation="vertical"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"><ListView
-        tools:listitem="@layout/textsizecont"
-        android:id="@+id/textsize"
-        android:layout_width="50dp"
-        android:layout_height="0dp"
-        android:layout_weight="0"
-        />
 
-        <Button
-            android:layout_weight="1"
-            android:id="@+id/slidesizedown"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@drawable/ic_expand_more_black_24dp" /></LinearLayout>
         <LinearLayout
-            android:orientation="vertical"
+            android:id="@+id/texttools"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignTop="@id/userEntry"
+            android:gravity="center">
+
+            <ImageButton
+                android:id="@+id/textalignleft"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/align_to_left" />
+
+            <ImageButton
+                android:id="@+id/textaligncenter"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/align_justify" />
+
+            <ImageButton
+                android:id="@+id/textalignright"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/align_to_right" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sizes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-            <ListView
-                tools:listitem="@layout/colorssrc"
-                android:id="@+id/textcolors"
-                android:layout_width="50dp"
-                android:layout_height="0dp"
-                android:layout_weight="0"/>
 
-            <Button
-                android:id="@+id/slidecolorsdown"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_expand_more_black_24dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/textsize"
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0"
+                    tools:listitem="@layout/textsizecont" />
+
+                <Button
+                    android:id="@+id/slidesizedown"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_expand_more_black_24dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ListView
+                    android:id="@+id/textcolors"
+                    android:layout_width="50dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0"
+                    tools:listitem="@layout/colorssrc" />
+
+                <Button
+                    android:id="@+id/slidecolorsdown"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ic_expand_more_black_24dp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-    </LinearLayout>
-    <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:text="Story Entry"
-            android:textAppearance="?attr/textAppearanceListItem" />
 
-        <RelativeLayout
-            android:id="@+id/editingcontenttextview"
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:background="#b4aaaaaa"
+        android:paddingLeft="5dp"
+        android:text="Story Entry"
+        android:textAppearance="?attr/textAppearanceListItem" />
+
+    <RelativeLayout
+        android:id="@+id/editingcontenttextview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/userEntry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            >
+            android:layout_margin="5dp"
+            android:background="@color/Azure"
+            android:defaultFocusHighlightEnabled="true"
+            android:ems="3"
+            android:fontFamily="sans-serif-condensed"
+            android:hint="@string/type_your_story_here"
+            android:inputType="textMultiLine|textImeMultiLine"
+            android:lineSpacingExtra="8sp"
+            android:lines="@integer/google_play_services_version"
+            android:maxLines="100"
+            android:minLines="40"
+            android:padding="5dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
+            android:singleLine="false"
+            android:textAllCaps="false"
+            android:textSize="22sp"
+            android:typeface="normal"
+            tools:targetApi="o" />
 
-            <EditText
-                android:layout_margin="5dp"
-                android:id="@+id/userEntry"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/Azure"
-                android:defaultFocusHighlightEnabled="true"
-                android:ems="3"
-                android:padding="5dp"
-                android:fontFamily="sans-serif-condensed"
-                android:hint="@string/type_your_story_here"
-                android:inputType="textMultiLine|textImeMultiLine"
-                android:lineSpacingExtra="8sp"
-                android:lines="@integer/google_play_services_version"
-                android:minLines="40"
-                android:maxLines="100"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:singleLine="false"
-                android:textAllCaps="false"
-                android:textSize="22sp"
-                android:typeface="normal"
-                tools:targetApi="o" />
-
-</RelativeLayout>
-        <!--<LinearLayout-->
-            <!--android:id="@+id/btnslayout"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"><Button-->
-            <!--android:id="@+id/strycoverbtn"-->
-            <!--android:layout_width="100dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:text="upLoad Cover Img"-->
-            <!--android:onClick="uploadcover"/></LinearLayout>-->
-        <!--<ImageButton-->
-            <!--android:baselineAlignBottom="true"-->
-            <!--android:id="@+id/storyimg"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="100dp"-->
-            <!--android:clickable="false"-->
-            <!--android:defaultFocusHighlightEnabled="true"-->
-            <!--tools:targetApi="o"/>-->
+    </RelativeLayout>
+    <!--<LinearLayout-->
+    <!--android:id="@+id/btnslayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"><Button-->
+    <!--android:id="@+id/strycoverbtn"-->
+    <!--android:layout_width="100dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="upLoad Cover Img"-->
+    <!--android:onClick="uploadcover"/></LinearLayout>-->
+    <!--<ImageButton-->
+    <!--android:baselineAlignBottom="true"-->
+    <!--android:id="@+id/storyimg"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="100dp"-->
+    <!--android:clickable="false"-->
+    <!--android:defaultFocusHighlightEnabled="true"-->
+    <!--tools:targetApi="o"/>-->
 
 
 </LinearLayout>

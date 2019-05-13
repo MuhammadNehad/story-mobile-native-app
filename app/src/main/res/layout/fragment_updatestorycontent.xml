@@ -2,111 +2,119 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/Wheat"
+    android:background="@color/fui_transparent"
     tools:context="mainproject.mainroject.story.updatestorycontent">
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 
-    <ImageButton
-        android:id="@+id/storynewimg"
-        android:layout_width="100dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:layout_margin="5dp"
-        android:contentDescription="@string/todo_storycover" />
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/titles"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-        android:gravity="center"
-        android:text="@string/hello_blank_fragment" />
-
-    <TextView
-        android:id="@+id/Desctext"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_margin="5dp"
-
-        android:gravity="center"
-        android:text="@string/description" />
-
-    <EditText
-        android:id="@+id/EditingDesc"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="5dp"
-        android:background="@color/Azure"
-        android:ems="3"
-        android:fontFamily="sans-serif-condensed"
-        android:hint="@string/description"
-        android:inputType="textMultiLine|textImeMultiLine"
-        android:lineSpacingExtra="8sp"
-        android:lines="@integer/google_play_services_version"
-        android:minLines="40"
-
-        android:padding="5dp"
-        android:scrollbarAlwaysDrawVerticalTrack="true"
-
-        android:singleLine="false"
-        android:textAllCaps="false"
-        android:textSize="24sp"
-        android:typeface="normal" />
-
-    <TextView
-        android:id="@+id/contenttext"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-
-        android:layout_margin="5dp"
-        android:padding="5dp"
-        android:text="@string/contentkey" />
-
-    <TextView
-        android:id="@+id/contents"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:fontFamily="@font/arima_madurai"
-        android:padding="5dp"
-        android:text="@string/contenttxt" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/pricetext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:padding="5dp"
+        <ImageButton
+            android:id="@+id/storynewimg"
+            android:layout_width="100dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:contentDescription="@string/todo_storycover" />
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:id="@+id/titles"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            android:text="@string/hello_blank_fragment" />
 
-        android:text="@string/pricekey" />
+        <TextView
+            android:id="@+id/Desctext"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
 
-    <EditText
-        android:id="@+id/newprice"
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:layout_gravity="right"
-        android:layout_margin="5dp"
-        android:background="@drawable/normaledittextsty"
+            android:background="#baaaaaaa"
+            android:gravity="center"
+            android:text="@string/description" />
 
-        android:fontFamily="sans-serif-condensed"
-        android:hint="@string/new_pricetxt"
-        android:inputType="number"
-        android:paddingLeft="6dp"
-        android:textSize="10sp"
-        tools:ignore="RtlHardcoded,RtlSymmetry,SmallSp" />
+        <EditText
+            android:id="@+id/EditingDesc"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_margin="5dp"
+            android:background="@color/Azure"
+            android:ems="3"
+            android:fontFamily="sans-serif-condensed"
+            android:hint="@string/description"
+            android:inputType="textMultiLine|textImeMultiLine"
+            android:lineSpacingExtra="8sp"
+            android:lines="@integer/google_play_services_version"
+            android:minLines="40"
 
-    <Button
-        android:id="@+id/updatedata"
-        style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
-        android:layout_width="100dp"
-        android:layout_height="50dp"
-        android:layout_margin="5dp"
-        android:foregroundGravity="center_vertical|center_horizontal|center"
-        android:gravity="center_vertical|center_horizontal"
+            android:padding="5dp"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
 
-        android:text="@string/updatebtn" />
-</LinearLayout>
+            android:shadowDx="11"
+            android:shadowDy="11"
+            android:singleLine="false"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:typeface="normal" />
+
+        <TextView
+            android:id="@+id/contenttext"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+
+            android:layout_margin="5dp"
+            android:background="#baaaaaaa"
+            android:padding="5dp"
+            android:text="@string/contentkey" />
+
+        <TextView
+            android:id="@+id/contents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/arima_madurai"
+            android:padding="5dp"
+            android:shadowColor="@android:color/darker_gray"
+            android:shadowDx="11"
+            android:shadowDy="11"
+            android:text="@string/contenttxt" />
+
+        <TextView
+            android:id="@+id/pricetext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="#baaaaaaa"
+
+            android:padding="5dp"
+            android:text="@string/pricekey" />
+
+        <EditText
+            android:id="@+id/newprice"
+            android:layout_width="100dp"
+            android:layout_height="20dp"
+            android:layout_gravity="right"
+            android:layout_margin="5dp"
+            android:background="@drawable/normaledittextsty"
+            android:fontFamily="sans-serif-condensed"
+            android:hint="@string/new_pricetxt"
+            android:inputType="number"
+            android:paddingLeft="6dp"
+            android:textSize="10sp"
+            tools:ignore="RtlHardcoded,RtlSymmetry,SmallSp" />
+
+        <Button
+            android:id="@+id/updatedata"
+            style="@style/FirebaseUI.Button.AccountChooser.EmailButton"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:layout_margin="5dp"
+            android:foregroundGravity="center_vertical|center_horizontal|center"
+            android:gravity="center_vertical|center_horizontal"
+
+            android:text="@string/updatebtn" />
+    </LinearLayout>
 </ScrollView>
