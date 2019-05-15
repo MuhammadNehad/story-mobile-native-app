@@ -33,7 +33,7 @@
     <string name="storydescription">StoryDescription</string>
     <string name="story_description">Story Description</string>
     <string name="storycover">StoryCover</string>
-    <string name="write_your_story_here">Write short story here</string>
+    <string name="write_your_story_here">Write your story here \n (coming soon)</string>
     <string name="use_pdf_story">Use PDF Story</string>
     <string name="checkanotherway">checkanotherway</string>
     <string name="publish">Publish</string>
@@ -63,6 +63,7 @@
     <string name="content">content</string>
     <string name="welcome">Welcome!</string>
     <string name="community">community</string>
+    <string name="publishing_stories_which_wrote_on_app_costs_2_n_and_pdf_costs_5">publishing Stories which wrote on app costs 2$   and Pdf Costs 5$</string>
     <!--<string name="todo_storycover">TODO:StoryCover</string>-->
 
 </resources>

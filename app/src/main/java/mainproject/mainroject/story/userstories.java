@@ -116,7 +116,7 @@ public class userstories extends Fragment {
                 bundle.putString("StoryAuth", model.getAuthor());
                 bundle.putString("StoryIMG", model.getLogoUrl());
                 bundle.putString("StoryPrc", model.getStory_price());
-                bundle.putString("StoryType", model.getStrType());
+                bundle.putString("StoryType", model.getStorySavingsrc());
                 FragmentManager fragmentManager1 = getFragmentManager();
                 updatestorycontent usc = new updatestorycontent();
                 usc.setArguments(bundle);

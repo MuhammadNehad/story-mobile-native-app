@@ -6,9 +6,9 @@ package mainproject.mainroject.story.Tables;
 
 public class storyratings {
     private String STRYname;
-    private String styrates;
+    private float styrates;
     private String userEmail;
-    public storyratings(String STRYname, String styrates, String userEmail) {
+    public storyratings(String STRYname, float styrates, String userEmail) {
         this.STRYname = STRYname;
         this.styrates = styrates;
         this.userEmail = userEmail;
@@ -24,11 +24,11 @@ public storyratings(){}
         this.STRYname = STRYname;
     }
 
-    public String getStyrates() {
+    public float getStyrates() {
         return styrates;
     }
 
-    public void setStyrates(String styrates) {
+    public void setStyrates(float styrates) {
         this.styrates = styrates;
     }
 

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -73,7 +74,7 @@ public class ChatRoom extends Fragment {
     RecyclerView chalist;
     MyAdapter customrecyclerviewAdapter;
     List<chatdatabaseinserver> getchatdata = new ArrayList<chatdatabaseinserver>();
-
+    RecyclerView pmNoteViewID;
 
     ImageButton sendthemessage;
     EditText writethemessage;
@@ -130,7 +131,7 @@ public class ChatRoom extends Fragment {
         View chatroom = inflater.inflate(R.layout.fragment_chat_room, container, false);
 
         // TODO:IDS
-
+        pmNoteViewID = chatroom.findViewById(R.id.pmNoteView);
         checkpvmsgs=chatroom.findViewById(R.id.notificationsnum);
         mrefreshlayout =chatroom.findViewById(R.id.refreshrecycler);
         privtemessagenum =chatroom.findViewById(R.id.notificationsnum);
@@ -252,12 +253,14 @@ public class ChatRoom extends Fragment {
                     chatdatabasechild.child("Likes").setValue(0);
                     chatdatabasechild.child("disLikes").setValue(0);
                     chatdatabasechild.child("rudness").setValue(0);
-                    chatdatabasechild.child("reports").setValue(0);
+                    chatdatabasechild.child("reports").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getContext(),"Message Sent",Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-                }
-
-
-                    if (arraynames.size()>0){
+                }else if (arraynames.size()>0){
 //                                privatechattargets = FirebaseDatabase.getInstance().getReference().child("PrivateMessages").push();
 //                                privatechattargets.child("Message").setValue(writethemessage.getText().toString());
                         chatdatabasechild = chatdatabase.push();
@@ -268,7 +271,12 @@ public class ChatRoom extends Fragment {
                         chatdatabasechild.child("Likes").setValue(0);
                         chatdatabasechild.child("disLikes").setValue(0);
                         chatdatabasechild.child("rudness").setValue(0);
-                        chatdatabasechild.child("reports").setValue(0);
+                        chatdatabasechild.child("reports").setValue(0).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(getContext(),"Message Sent",Toast.LENGTH_SHORT).show();
+                            }
+                        });;
 
                         int counter = 0;
 
@@ -312,7 +320,7 @@ public class ChatRoom extends Fragment {
             }
         });
 
-        privtemessagenum.setOnClickListener(new View.OnClickListener() {
+        pmNoteViewID.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseDatabase.getInstance().getReference().child("UserDetail"). child(firebaseUser.getDisplayName()).child("Totalpvmsgs").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -325,17 +333,17 @@ public class ChatRoom extends Fragment {
                         privtemessagenum.setText(String.valueOf(dataSnapshot.getValue()));
                         DatabaseReference sendername = chatdatabase;
                         Query msg = chatdatabase.orderByChild("Recievers");
-                        msg.addValueEventListener(new ValueEventListener() {
+                        msg.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 List<ArrayList<String>> recievers = new ArrayList<>();
                                 ArrayList<String> recieversnames = dataSnapshot.getValue(chatdatabaseinserver.class).getRecievers();
                                 chatdatabaseinserver ctdbis = dataSnapshot.getValue(chatdatabaseinserver.class);
                                 recievers.add(recieversnames);
-                                String currentreciever =new String();
-                                String currentcontet  = new String();
+                                String currentreciever = "";
+                                String currentcontet  = "";
                                 for(i=0; i<=recievers.size(); i++) {
-                                  if (recievers.get(i).contains(firebaseUser.getDisplayName())) {
+                                  if (recievers.get(i).equals(firebaseUser.getDisplayName())) {
                                        currentreciever = ctdbis.getMessageowner();
 
                                       currentcontet = ctdbis.getMessage_content();

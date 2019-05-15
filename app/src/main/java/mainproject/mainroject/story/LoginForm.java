@@ -84,7 +84,7 @@ DatabaseReference mDatabase;
 //        }
     }
 //    @Override
-
+    FirebaseDatabase fd;
     @Override
     protected void onStart() {
         super.onStart();

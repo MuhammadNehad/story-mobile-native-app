@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.barteksc.pdfviewer.PDFView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,7 +32,14 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import mainproject.mainroject.story.Tables.Stories;
+import okhttp3.internal.Util;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -38,6 +47,7 @@ import static android.app.Activity.RESULT_OK;
 public class updatestorycontent extends Fragment {
 
     private AlertDialog mProgress;
+    PDFView pdfView;
 
     public updatestorycontent() {
         // Required empty public constructor
@@ -72,6 +82,8 @@ public class updatestorycontent extends Fragment {
        View view = inflater.inflate(R.layout.fragment_updatestorycontent, container, false);
 //        assert bundle != null;
 //        mstr1 = myStorage.child("Photos").child(currentU).child("storiesCovers");
+        pdfView =(PDFView)view.findViewById(R.id.pdfContentviewerpage);
+
         mProgress = new ProgressDialog(getContext());
         img = (ImageButton)view.findViewById(R.id.storynewimg);
         titles = (TextView)view.findViewById(R.id.titles);
@@ -81,23 +93,30 @@ public class updatestorycontent extends Fragment {
         btns =(Button)view.findViewById(R.id.updatedata);
         bundle =getArguments();
         String type;
-        Picasso.with(getContext()).load(bundle.getString("StoryIMG")).into(img);
+        Picasso.with(getContext()).load(bundle.getString("StoryIMG")).fit().into(img);
         titles.setText(bundle.getString("StoryName"));
-        cotent.setText(bundle.getString("StoryCont"));
         newdesc.setText(bundle.getString("StoryDesc"));
         newpric.setText(bundle.getString("StoryPrc"));
+
+        final DatabaseReference striesdb = FirebaseDatabase.getInstance().getReference().child("StoriesDetails").child(titles.getText().toString());
+
         type = bundle.getString("StoryType");
         if(type != null) {
             if (type.equals("AppCreationStory")) {
-                final DatabaseReference striesdb = FirebaseDatabase.getInstance().getReference().child("StoriesDetails").child(titles.getText().toString());
+                cotent.setText(bundle.getString("StoryCont"));
 
-                final Query updatablestrydata = striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
+                cotent.setVisibility(View.VISIBLE);
+                pdfView.setVisibility(View.GONE);
+
+                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
 
                 btns.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         striesdb.child("STDESC").setValue(newdesc.getText().toString());
-                        striesdb.child("story_price").setValue(newpric.getText().toString());
+                        if(!newpric.getText().toString().isEmpty()) {
+                            striesdb.child("story_price").setValue(newpric.getText().toString());
+                        }
                     }
                 });
                 img.setOnClickListener(new View.OnClickListener() {
@@ -125,8 +144,36 @@ public class updatestorycontent extends Fragment {
 //            }
 //        });
             } else if (type.equals("PDFSTORY")) {
+                cotent.setVisibility(View.INVISIBLE);
+                pdfView.setVisibility(View.VISIBLE);
+                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
+                pdfView.fitToWidth(1);
+                pdfView.getCurrentPage();
+                pdfView.loadPages();
+                pdfView.isSwipeVertical();
+
+                btns.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        striesdb.child("STDESC").setValue(newdesc.getText().toString());
+                        if(!newpric.getText().toString().isEmpty()){
+                        striesdb.child("story_price").setValue(newpric.getText().toString());
+                    }
+                    }
+                });
+                img.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Intent.ACTION_PICK);
+                        intent.setType("image/*");
+                        startActivityForResult(intent, Gallery_intent);
+                    }
+                });
+
                 stype = "PDFSTORY";
-                Toast.makeText(getContext(), "coming soon", Toast.LENGTH_LONG).show();
+                new Retrievepdffile().execute(bundle.getString("StoryCont"));
+
+//                Toast.makeText(getContext(), "coming soon", Toast.LENGTH_LONG).show();
             }
         }
         else{
@@ -134,6 +181,30 @@ public class updatestorycontent extends Fragment {
         }
         return view;
 
+    }
+
+    class Retrievepdffile extends AsyncTask<String,Void,InputStream>
+    {
+
+        @Override
+        protected InputStream doInBackground(String... strings) {
+            InputStream inputStream = null;
+            try {
+                URL url = new URL(strings[0]);
+                HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
+                if(urlConnection.getResponseCode() == 200){
+                    inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                }
+            } catch (IOException e) {
+                return null;
+            }
+            return inputStream;
+        }
+
+        @Override
+        protected void onPostExecute(InputStream inputStream) {
+            pdfView.fromStream(inputStream).load();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

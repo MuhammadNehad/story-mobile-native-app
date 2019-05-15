@@ -8,14 +8,19 @@ import android.os.Bundle;
 
 import com.github.barteksc.pdfviewer.PDFView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class checkedpdf extends AppCompatActivity {
-    private static int SPLASH_TIME_OUT= 10000;
+    private static int SPLASH_TIME_OUT= 120000;
     PDFView pdfView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +29,37 @@ public class checkedpdf extends AppCompatActivity {
         pdfView =(PDFView)findViewById(R.id.checkedpdfview);
 
         Intent i = getIntent();
-        new Retrievepdffile().execute(i.getStringExtra("CoNtEnT"));
+        String content = i.getStringExtra("CoNtEnT");
+        new Retrievepdffile().execute(content);
+
+        JSONObject pdfViewing= new JSONObject();
+        JSONArray list = new JSONArray();
+        try {
+//            pdfView.documentFitsView();
+            pdfView.fitToWidth(1);
+            pdfView.getCurrentPage();
+            pdfView.loadPages();
+            pdfView.isSwipeVertical();
+
+            list.put(pdfView.getCurrentPage());
+            if(content != null ) {
+                pdfViewing.put("Content", content);
+                pdfViewing.put("Pages", list);
+                pdfViewing.put("Views", pdfView.getCurrentPage());
+            }
+            try
+            {
+                FileWriter jsonFW = new FileWriter("PDFJSON.json");
+                jsonFW.write(pdfViewing.toString());
+                jsonFW.flush();
+
+            }catch (IOException ex){
+                ex.printStackTrace();
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -23,7 +23,6 @@ import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -52,7 +51,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalProfileSharingActivity;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
@@ -62,6 +60,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.BreakIterator;
 import java.util.Calendar;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,6 +79,8 @@ public class home extends Fragment {
     private String first;
     private String file_1;
     private BreakIterator txt_file_name_1;
+    String[] stryMainCategory = {"Education","Movies","theatre","series","literature"};
+
     String[] strytypes = {"Science","Horror","Action","Religious","Politics"};
     TextView filename;
     StorageReference  myStorage = FirebaseStorage.getInstance().getReference();
@@ -118,6 +121,14 @@ public class home extends Fragment {
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .defaultUserEmail("mnmfas-facilitator@gmail.com").acceptCreditCards(true);
     private AlertDialog.Builder StoryDetailsl;
+    String[] literature= {"Drama","Fable","Fiction","Poetry","Novel","Non-fiction","Short story","Prose","Biography"
+            ,"Science Fiction"
+        ,"Essay","Autobiography","Fairy Tale","Legend","Horror fiction","Myth"
+        ,"Satire","Children's literature","Speech","Fantasy","Humor","Fable"
+        ,"Short Story","Realistic Fiction","Folklore","Historical Fiction","Horror","Tall Tale","Legend"
+            ,"Mystery","Fiction in Verse"};
+    String subCategoryName;
+
 
     public home() {
 
@@ -156,9 +167,14 @@ public class home extends Fragment {
     LinearLayout pdfform,transform,appentryprice;
     EditText storydesc2 ;
     Spinner typespinner;
+    Dictionary<String,String[]> spinnerDividers =new Hashtable<String, String[]>();
     ArrayAdapter<String> spinnerAdapter;
+    ArrayAdapter<String> spinnerDividersAdapter;
+
     SharedPreferences sharedPreferences;
     String selectingitem;
+    String selectingSubCategory;
+
     boolean submitShortStories=false;
     boolean submitPDFStories=false;
     boolean oneTimeDialog=false;
@@ -223,6 +239,20 @@ public class home extends Fragment {
         final AlertDialog alertDialog = StoryDetailsl.create();
         alertDialog.show();
     }
+    String[] Education = {"Language","Mathematical","Religion"
+            ,"healthcare administration","graphic design","psychology", "accounting"
+            ,"criminal justice","nursing"
+            ,"computer science","engineering","business administration",
+            "organizational skills","communication skills","analytical skills","detail oriented"
+            ,"compassion","critical-thinking skills","patience"};
+
+    String[] MoviesAndSeries={"Absurdist/surreal/whimsical","Action","Adventure","Comedy","Thriller","Drama","Epic","Horror","Adventure","Animation","Comedy","Crime"
+    ,"Documentary","Biography","Family","Fantasy","Film-Noir","History",
+    "Musical","Mystery","Romance","Sci-fi","Sport","War","Western","Eastern","MiddleEast"};
+
+    String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
+    ,"Historic Plays","Farce","Solo Theatre","Epic"};
+    Spinner subCategory;
     public String getSelectingitem() {
         return selectingitem;
     }
@@ -235,10 +265,16 @@ public class home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         final View inflate = inflater.inflate(R.layout.fragment_home, container, false);
         typespinner =(Spinner)inflate.findViewById(R.id.addingstoriestypes);
-//        storydesc = view.findViewById(R.id.strydescription);
+        subCategory =(Spinner)inflate.findViewById(R.id.addingSubCategories);
+        //        storydesc = view.findViewById(R.id.strydescription);
+        spinnerDividers.put(stryMainCategory[0],Education);
+        spinnerDividers.put(stryMainCategory[1],MoviesAndSeries);
+        spinnerDividers.put(stryMainCategory[2],Theatres);
+        spinnerDividers.put(stryMainCategory[3],MoviesAndSeries);
+        spinnerDividers.put(stryMainCategory[4],literature);
+
         pdfslct =(Button)inflate.findViewById(R.id.selectpdffile);
         pdfupload =(Button)inflate.findViewById(R.id.uploadpdffile);
         filename = (TextView)inflate.findViewById(R.id.uploadedfilename);
@@ -252,7 +288,8 @@ public class home extends Fragment {
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
         // TODO:StoryPages
 //        fragmentManager.beginTransaction().replace(R.id.content2, child).commit();
-        spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,strytypes);
+        spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,stryMainCategory);
+
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         typespinner.setAdapter(spinnerAdapter);
 
@@ -264,11 +301,17 @@ public class home extends Fragment {
         viewPager = (ViewPager)inflate.findViewById(R.id.storypages);
         viewpa =new viewpageradapter(getContext());
         viewPager.setAdapter(viewpa);
+        // Spinners Selected Items
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                setSelectingitem(strytypes[position]);
+                setSelectingitem(stryMainCategory[position]);
+                subCategoryName =stryMainCategory[position];
+                spinnerDividersAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,spinnerDividers.get(stryMainCategory[position].trim()));
+                spinnerDividersAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                subCategory.setAdapter(spinnerDividersAdapter);
+
             }
 
             @Override
@@ -277,7 +320,26 @@ public class home extends Fragment {
            }
 
         });
+        subCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//                Object s =subCategoryName;
+                try {
+                    selectingSubCategory = spinnerDividers.get(subCategoryName)[i];
+                }catch(Exception ex){
+                    Toast.makeText(getContext(),ex.getMessage(),Toast.LENGTH_SHORT).show();
+
+                }
+                }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
         this.selectingitem =spitems[0];
+
         int[] story = {viewpa.getItemPosition(viewPager)};
         for (  int i=0;
             i<= viewpa.getCount();
@@ -466,8 +528,8 @@ mProgress.dismiss();
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
 
-    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,StryTypes;
-    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1, String STOryNAme, String STRCOntEnT, String STRYSrC, String selectingtype)
+    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,StryTypes,subCategories;
+    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1, String STOryNAme, String STRCOntEnT, String STRYSrC, String selectingtype, String subCategoryName)
     {   this.AuthoRs =Authors;
         this.DescriP = Descrip;
         this.pRICe =price11;
@@ -476,6 +538,7 @@ mProgress.dismiss();
         this.StRContEnT = STRCOntEnT;
         this.StrYsRc = STRYSrC;
         this.StryTypes = selectingtype;
+        this.subCategories = subCategoryName;
 //        DatabaseReference psdbchild = psdb.push();
 //
 //        psdbchild.child("purchasername").setValue(auth.getDisplayName());
@@ -632,7 +695,7 @@ mProgress.dismiss();
 //                                        @Override
 //                                        public void onClick(DialogInterface dialog, int which) {
 
-                            addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),stryDescri,fileprice,uri.getLastPathSegment(),storyNaMe,selectedFileURI.getLastPathSegment(),"PDFSTORY",getSelectingitem());
+                            addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),stryDescri,fileprice,uri.getLastPathSegment(),storyNaMe,selectedFileURI.getLastPathSegment(),"PDFSTORY",getSelectingitem(),subCategoryName);
 
 //                            Bundle stdata = new Bundle();
 //                            stdata.putString("Authorize",Author1);
@@ -750,7 +813,9 @@ mProgress.dismiss();
                        switch (StrYsRc) {
                            case "AppCreationStory":
                                startposting(StorYNamE);
-                               final DatabaseReference Story_Name = myStoryRef.child(StorYNamE);
+//                               final DatabaseReference Story_Name = myStoryRef.child(StorYNamE);
+                               final DatabaseReference Story_Name = myStoryRef.push();
+
                                Story_Name.child("storyNaMe").setValue(StorYNamE);
                                Story_Name.child("Author").setValue(AuthoRs);
                                Story_Name.child("story_content").setValue(StRContEnT);
@@ -762,21 +827,20 @@ mProgress.dismiss();
                                Story_Name.child("LogoSrc").setValue(IMGUrL);
                                Story_Name.child("STDESC").setValue(DescriP);
                                Story_Name.child("StorySavingsrc").setValue("AppCreationStory");
+                               Story_Name.child("subCategory").setValue(subCategories);
                                Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
 
                                $pricebox.setText(null);
-
                                Storyname.setText(null);
                                Toast.makeText(getContext(), "Story have been Submitted successfully", Toast.LENGTH_LONG).show();
                                break;
 
                            case "PDFSTORY":
 //                               final DatabaseReference Pdf_Story_Name = mypdfStoryRef.child(StorYNamE);
-                               final DatabaseReference Pdf_Story_Name  = myStoryRef.child(StorYNamE);
-
+//                               final DatabaseReference Pdf_Story_Name  = myStoryRef.child(StorYNamE);
+                               final DatabaseReference Pdf_Story_Name  = myStoryRef.push();
                                restrictdata(StorYNamE);
                                startposting2(StorYNamE);
-
                                Pdf_Story_Name.child("storyNaMe").setValue(StorYNamE);
                                Pdf_Story_Name.child("Author").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                Story_Content.child("story_content").setValue(FileUrl);
@@ -787,6 +851,7 @@ mProgress.dismiss();
                                Pdf_Story_Name.child("Reports").setValue(0);
                                Pdf_Story_Name.child("STDESC").setValue(DescriP);
                                Pdf_Story_Name.child("StrType").setValue(StryTypes);
+                               Pdf_Story_Name.child("subCategory").setValue(subCategories);
                                Pdf_Story_Name.child("StorySavingsrc").setValue("PDFSTORY");
                                Pdf_Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
 
@@ -864,7 +929,7 @@ mProgress.dismiss();
                                 select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        addingstdataafterpaying(fk1, story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem());
+                                        addingstdataafterpaying(fk1, story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem(), subCategoryName);
 //                            Bundle stdata = new Bundle();
 //                            stdata.putString("Authorize",Author1);
 //                            stdata.putString("STORYNAME",storyNAME);

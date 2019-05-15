@@ -257,11 +257,9 @@ public class Profile extends Fragment {
 
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Toast.makeText(getContext(), "Uploading Successful", Toast.LENGTH_LONG).show();
-
                     mProgress.dismiss();
                     downloaduri = taskSnapshot.getDownloadUrl();
                     Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
-
                     child.child("ImgUrl").setValue(downloaduri.toString());
                     muserref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
 

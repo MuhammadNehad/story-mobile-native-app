@@ -2,12 +2,16 @@ package mainproject.mainroject.story;
 
 import com.google.firebase.database.PropertyName;
 
+import java.util.Date;
+
 /**
  * Created by john on 10/9/2017.
  */
 
 public class User {
     private String Email,Name,Password,UserImg,userpaypalacc,PhoneNumber, Totalpvmsgs;
+    private Date RegisterDate;
+    private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes;
     User() {
     }
 
@@ -72,5 +76,29 @@ public class User {
 
     public void setPhoneNumber(String phoneNumber) {
         this.PhoneNumber = phoneNumber;
+    }
+
+    public int getTotalHonestVotes() {
+        return TotalHonestVotes;
+    }
+
+    public void setTotalHonestVotes(int totalHonestVotes) {
+        TotalHonestVotes = totalHonestVotes;
+    }
+
+    public int getTotalVotesAgainst() {
+        return TotalVotesAgainst;
+    }
+
+    public void setTotalVotesAgainst(int totalVotesAgainst) {
+        TotalVotesAgainst = totalVotesAgainst;
+    }
+
+    public int getTotalVotesTo() {
+        return TotalVotesTo;
+    }
+
+    public void setTotalVotesTo(int totalVotesTo) {
+        TotalVotesTo = totalVotesTo;
     }
 }

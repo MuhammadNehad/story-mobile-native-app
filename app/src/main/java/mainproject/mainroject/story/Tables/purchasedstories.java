@@ -1,11 +1,14 @@
 package mainproject.mainroject.story.Tables;
 
+import java.util.Date;
+
 /**
  * Created by UNiversaL on 4/3/2018.
  */
 
 public class purchasedstories {
     private String purchasername,story_name,Story_Author,Story_Desc,Story_Content,Story_ImgUrl,StorySrc,strytype;
+    private Date purchaseDate;
     public purchasedstories(){}
     public purchasedstories(String story_name, String story_author, String story_desc, String story_content, String story_imgUrl,String strysrc) {
         this.story_name = story_name;
@@ -78,5 +81,13 @@ public class purchasedstories {
 
     public void setStrytype(String strytype) {
         this.strytype = strytype;
+    }
+
+    public Date getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(Date purchaseDate) {
+        this.purchaseDate = purchaseDate;
     }
 }

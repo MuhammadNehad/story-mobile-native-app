@@ -11,7 +11,6 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
         android:orientation="vertical">
 
         <LinearLayout
@@ -47,18 +46,32 @@
             <Spinner
                 android:id="@+id/addingstoriestypes"
                 android:layout_width="100dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:layout_gravity="right"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:background="@drawable/normaledittextsty"
                 android:dropDownSelector="@drawable/btn_homestyle"
                 android:dropDownWidth="wrap_content"
-                android:padding="5dp"
-                android:popupBackground="@android:drawable/btn_dropdown"
-                android:spinnerMode="dropdown" />
-        </LinearLayout>
+                android:padding="2dp"
+                android:popupBackground="@color/White"
+                android:spinnerMode="dropdown"
+                android:ellipsize="marquee"/>
 
+        </LinearLayout>
+        <Spinner
+            android:id="@+id/addingSubCategories"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/normaledittextsty"
+            android:dropDownSelector="@drawable/btn_homestyle"
+            android:dropDownWidth="wrap_content"
+            android:padding="5dp"
+            android:popupBackground="@color/White"
+            android:spinnerMode="dropdown"
+            android:ellipsize="marquee"/>
         <LinearLayout
             android:id="@+id/pdfform"
             android:layout_width="match_parent"
@@ -135,6 +148,12 @@
                     tools:ignore="RtlHardcoded" />
             </LinearLayout>
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
+            android:text="@string/publishing_stories_which_wrote_on_app_costs_2_n_and_pdf_costs_5"
+            android:textAppearance="?attr/textAppearanceListItem" />
 
         <LinearLayout
             android:id="@+id/transform"
@@ -152,7 +171,8 @@
                 android:layout_margin="10dp"
                 android:background="@android:color/holo_red_light"
                 android:padding="5dp"
-                android:text="@string/write_your_story_here" />
+                android:enabled="false"
+                android:text= "@string/write_your_story_here" />
 
             <Button
                 android:id="@+id/uploadingpdfform"

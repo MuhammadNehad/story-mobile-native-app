@@ -29,6 +29,7 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -68,7 +69,8 @@ public class othersprofiles_and_details extends Fragment {
     DatabaseReference StsRef = FirebaseDatabase.getInstance().getReference().child("StoriesDetails");
     private Profile.OnFragmentInteractionListener mListener;
     private Button userimgbtn;
-    private Button targetstories, followees;
+    Button targetstories;
+    ImageButton followees, voteTo,voteAgainst;
     private Button purchsedstoriesbtn;
     private ProgressDialog mProgress;
     private FirebaseRecyclerOptions<Stories> troption;
@@ -79,21 +81,29 @@ public class othersprofiles_and_details extends Fragment {
     DatabaseReference mystrateRef = mydatabase.getReference().child("storyratings");
     DatabaseReference psdb = mydatabase.getReference().child("purchasedstories");
     DatabaseReference osdb = mydatabase.getReference().child("StoriesDetails");
+    final DatabaseReference  mFollowingsRef=  mydatabase.getReference().child("Cur_User_Followings");
+
     private ProgressDialog mprogress;
+    ImageButton voteHonor;
 
     public othersprofiles_and_details() {
         // Required empty public constructor
     }
 
-Query curimg;
+    Query curimg;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View othersprofiles =  inflater.inflate(R.layout.fragment_othersprofiles_and_details, container, false);
         RecyclerView hoststories = othersprofiles.findViewById(R.id.trlist);
         hoststories.setHasFixedSize(true);
-        followees= (Button) othersprofiles.findViewById(R.id.follow);
-//        hoststories.setLayoutManager(new LinearLayoutManager(getContext()));
+        followees= (ImageButton) othersprofiles.findViewById(R.id.follow);
+        voteTo =(ImageButton) othersprofiles.findViewById(R.id.votelike);
+        voteAgainst =(ImageButton) othersprofiles.findViewById(R.id.votedislike);
+        voteHonor =(ImageButton) othersprofiles.findViewById(R.id.votehonest);
+
+        //        hoststories.setLayoutManager(new LinearLayoutManager(getContext()));
         RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),3);
         hoststories.setLayoutManager(manager);
         hoststories.setHasFixedSize(true);
@@ -190,14 +200,114 @@ Query curimg;
 
 
         };
-
+        // TODO:Setting OnClickListeners
+        // submit Following
         followees.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!un.getText().toString().equals(auth1.getDisplayName()))
                 {
-                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurUserFolloweeName").setValue(un.getText());
-                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
+                  DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings").child(un.getText().toString()+auth1.getDisplayName());
+                    mFollowings.child("CurUserFollowingName").setValue(un.getText().toString());
+                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
+//                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
+
+                }
+            }
+        });
+        voteTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!un.getText().toString().equals(auth1.getDisplayName()))
+                {
+                    final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
+                    mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.child("CurrentUserName").getValue() == auth1.getDisplayName())
+                                        {
+                                            mFollowings.child("voteTo").setValue(1);
+                                        }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+//                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
+//                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
+
+                }
+            }
+        });
+        voteAgainst.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!un.getText().toString().equals(auth1.getDisplayName()))
+                {
+                    final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
+                    mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.child("CurrentUserName").getValue() == auth1.getDisplayName())
+                            {
+                                mFollowings.child("voteAgainst").setValue(1);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+//                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
+//                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
+
+                }
+            }
+        });
+        voteHonor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!un.getText().toString().equals(auth1.getDisplayName()))
+                {
+                    final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
+                    mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if (dataSnapshot.child("CurrentUserName").getValue() == auth1.getDisplayName())
+                            {
+                                if(!dataSnapshot.hasChild("voteHonor")){
+                                    mFollowings.child("voteHonor").setValue(1).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings").child("").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+//                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
 //                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
 
                 }

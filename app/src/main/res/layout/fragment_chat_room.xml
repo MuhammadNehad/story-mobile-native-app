@@ -47,35 +47,36 @@
         android:layout_alignParentRight="true"
         android:src="@android:drawable/stat_notify_chat" />
     <RelativeLayout
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/pmNoteView"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_above="@id/sendmesg"
         android:layout_alignLeft="@+id/sendmesg"
         android:layout_alignParentRight="true"
         android:layout_alignStart="@+id/sendmesg"
-        tools:ignore="NotSibling"
         android:layout_alignParentEnd="true">
+
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/notifications"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:visibility="gone"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            app:srcCompat="@drawable/ic_add_black_24dp"
-            android:layout_alignParentEnd="true" />
+            android:foregroundTint="@color/Black"
+            app:borderWidth="0dp"
+            app:backgroundTint="@android:color/transparent"
+            app:srcCompat="@drawable/ic_add_black_24dp" />
 
         <TextView
             android:id="@+id/notificationsnum"
-            android:layout_width="200dp"
-            android:layout_height="20dp"
-            android:textColor="@color/Red"
-            android:layout_alignLeft="@id/notifications"
-            android:layout_alignTop="@id/notifications"
-            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/Black"
+            android:gravity="top|left"
             android:inputType="number"
-            tools:ignore="TextViewEdits"
-            android:layout_alignStart="@id/notifications" />
+            android:text="0"
+            />
 
     </RelativeLayout>
 </RelativeLayout>

@@ -1,8 +1,12 @@
 package mainproject.mainroject.story.Tables;
 
 
+import java.util.Date;
+
 public class Stories {
-    private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc,publishDate;
+    private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc
+            ,subCategory;
+    private Date publishDate;
     int numofrankers;
 
     private int Likes,Reports;
@@ -138,12 +142,20 @@ public class Stories {
         StorySavingsrc = storySavingsrc;
     }
 
-    public String getPublishDate() {
+    public Date getPublishDate() {
         return publishDate;
     }
 
-    public void setPublishDate(String publishDate) {
+    public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public String getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
     }
 
 //

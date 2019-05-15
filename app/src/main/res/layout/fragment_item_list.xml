@@ -23,26 +23,26 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/convertSeaching"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@color/fui_transparent"
+                    android:src="@drawable/places_ic_search" />
 
             <HorizontalScrollView
+                android:id="@+id/CategoriesSearch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scrollbarSize="0dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:id="@+id/convertSeaching"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:background="@color/fui_transparent"
-                        android:src="@drawable/places_ic_search" />
 
                     <LinearLayout
-                        android:id="@+id/CategoriesSearch"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
@@ -156,8 +156,9 @@
 
                     </LinearLayout>
 
-                </LinearLayout>
             </HorizontalScrollView>
+            </LinearLayout>
+
             <!--<LinearLayout-->
             <!--android:orientation="horizontal"-->
             <!--android:layout_width="match_parent"-->

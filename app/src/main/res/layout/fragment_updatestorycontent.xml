@@ -82,6 +82,11 @@
             android:shadowDy="11"
             android:text="@string/contenttxt" />
 
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/pdfContentviewerpage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <TextView
             android:id="@+id/pricetext"
             android:layout_width="match_parent"
