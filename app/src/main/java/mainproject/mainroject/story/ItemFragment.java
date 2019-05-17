@@ -271,6 +271,7 @@ public class ItemFragment extends Fragment {
         all=(Button)view.findViewById(R.id.All);
 //        pdfrecyclerView.setHasFixedSize(true);
         recyclerView.setHasFixedSize(true);
+
         myRef.keepSynced(true);
         pdfosdb.keepSynced(true);
         scrollView.setFocusable(false);

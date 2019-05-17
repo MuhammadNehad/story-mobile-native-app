@@ -89,7 +89,7 @@ public class othersprofiles_and_details extends Fragment {
     public othersprofiles_and_details() {
         // Required empty public constructor
     }
-
+    String dispname;
     Query curimg;
 
     @Override
@@ -112,7 +112,7 @@ public class othersprofiles_and_details extends Fragment {
         String user = String.valueOf(auth1.getUid());
         Bundle buncoe =getArguments();
         assert buncoe != null;
-        String dispname =buncoe.getString("DisplayName");
+        dispname =buncoe.getString("DisplayName");
         String dispmail =buncoe.getString("UserMail");
 
         assert dispname != null;
@@ -347,12 +347,12 @@ public class othersprofiles_and_details extends Fragment {
         ImageView comimg =(ImageView)detaildialog.findViewById(R.id.comterimg);
         final TextView comname = (TextView)detaildialog.findViewById(R.id.commentername);
         //        LinearLayout totalcom =(LinearLayout)detaildialog.findViewById(id.totalcomments);
-        Query newquery =FirebaseDatabase.getInstance().getReference().child("UserDetail").child(auth.getCurrentUser().getDisplayName()).orderByChild("UserImg");
+        Query newquery =FirebaseDatabase.getInstance().getReference().child("UserDetail").child(dispname != null ? dispname:"").orderByChild("UserImg");
         Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname").equalTo(storyNAME) ;
         FirebaseListOptions<comments> options = new FirebaseListOptions.Builder<comments>()
                 .setQuery(commentsquery, comments.class)
-                .setLayout(R.layout.comments)
-                .setLifecycleOwner(this)
+//                .setLayout(R.layout.comments)
+//                .setLifecycleOwner(this)
                 .build();
         sendcoms.setOnClickListener(new View.OnClickListener() {
             @Override

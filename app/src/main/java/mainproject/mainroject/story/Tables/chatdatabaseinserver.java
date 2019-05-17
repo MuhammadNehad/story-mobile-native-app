@@ -9,6 +9,48 @@ import java.util.ArrayList;
 public class chatdatabaseinserver {
     private String messageowner,message_content;
     private ArrayList<String> Recievers;
+    private boolean viewed;
+    private int respectful,Likes,disLikes,rudness,reports;
+
+    public int getRespectful() {
+        return respectful;
+    }
+
+    public void setRespectful(int respectful) {
+        this.respectful = respectful;
+    }
+
+    public int getLikes() {
+        return Likes;
+    }
+
+    public void setLikes(int likes) {
+        Likes = likes;
+    }
+
+    public int getDisLikes() {
+        return disLikes;
+    }
+
+    public void setDisLikes(int disLikes) {
+        this.disLikes = disLikes;
+    }
+
+    public int getRudness() {
+        return rudness;
+    }
+
+    public void setRudness(int rudness) {
+        this.rudness = rudness;
+    }
+
+    public int getReports() {
+        return reports;
+    }
+
+    public void setReports(int reports) {
+        this.reports = reports;
+    }
 
     public chatdatabaseinserver(){}
 
@@ -34,5 +76,13 @@ public class chatdatabaseinserver {
 
     public void setRecievers(ArrayList<String> recievers) {
         Recievers = recievers;
+    }
+
+    public boolean isViewed() {
+        return viewed;
+    }
+
+    public void setViewed(boolean viewed) {
+        this.viewed = viewed;
     }
 }

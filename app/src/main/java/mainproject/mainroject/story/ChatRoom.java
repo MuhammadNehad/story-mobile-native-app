@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
 import android.graphics.Color;
+import android.icu.text.RelativeDateTimeFormatter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +33,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +76,7 @@ public class ChatRoom extends Fragment {
     RecyclerView chalist;
     MyAdapter customrecyclerviewAdapter;
     List<chatdatabaseinserver> getchatdata = new ArrayList<chatdatabaseinserver>();
-    RecyclerView pmNoteViewID;
+    RelativeLayout pmNoteViewID;
 
     ImageButton sendthemessage;
     EditText writethemessage;
@@ -338,6 +340,7 @@ public class ChatRoom extends Fragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 List<ArrayList<String>> recievers = new ArrayList<>();
                                 ArrayList<String> recieversnames = dataSnapshot.getValue(chatdatabaseinserver.class).getRecievers();
+                                int recieversCount = dataSnapshot.getValue(chatdatabaseinserver.class).getRecievers().size();
                                 chatdatabaseinserver ctdbis = dataSnapshot.getValue(chatdatabaseinserver.class);
                                 recievers.add(recieversnames);
                                 String currentreciever = "";
@@ -598,10 +601,13 @@ private void refreshing(){
                     chatlist.getItem(position);
                     chatlayout.onScrollStateChanged(position);
                     chatlayout.onItemsChanged(chalist);
+
                     if(!arraynames.contains(chatername)) {
+                        if(!chatername.equals(firebaseUser.getDisplayName())){
                         arraynames.add(chatername);
 
                             holder.vmg.findViewById(R.id.chatcontentform).setBackgroundColor(Color.MAGENTA);
+                    }
                     }
                     else if(arraynames.contains(chatername)){
 
@@ -654,7 +660,6 @@ chalist.setAdapter(chatlist);
         final View chatdegreesview = getLayoutInflater().inflate(R.layout.totalpvchatsrecyclervlist, null);
         AlertDialog activatethtedialog = chatsdegree.create();
         chatsdegree.setView(chatdegreesview);
-
         final TextView pvsendername = chatdegreesview.findViewById(R.id.pvsendersname);
 
         TextView pvmsgcon = chatdegreesview.findViewById(R.id.pvmsgcont);
@@ -1560,20 +1565,27 @@ respectedchats.addListenerForSingleValueEvent(new ValueEventListener() {
         private void configureDefaultViewHolder(MyAdapter vh, int position) {
 
         }
-        private void configureViewHolder1(final blogholders vh1, int position, chatdatabaseinserver cdis) {
+
+        private void configureViewHolder1(final blogholders vh1, int position, final chatdatabaseinserver cdis) {
             if (cdis != null) {
                 vh1.setSendernamea(cdis.getMessageowner());
                 vh1.setSendermsg(cdis.getMessage_content());
 
-                Query userimgincmt = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(vh1.getSendernamea().getText().toString());
+                final Query userimgincmt = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(vh1.getSendernamea().getText().toString());
 
-                vh1.vmg.setOnClickListener(new View.OnClickListener() {
+                vh1.vmg.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public boolean onLongClick(View view) {
+                        if(!cdis.getMessageowner().equals(firebaseUser.getDisplayName())) {
 
-                        vh1.vmg.findViewById(R.id.msgsview).setBackgroundColor(Color.RED);
+                            vh1.vmg.findViewById(R.id.msgsview).setBackgroundColor(Color.RED);
+                        }
+
+                        return true;
+
                     }
-                });
+
+                   });
                 userimgincmt.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1603,7 +1615,7 @@ respectedchats.addListenerForSingleValueEvent(new ValueEventListener() {
             }
         }
 
-        private void configureViewHolder2(final blogholders2 vh2, int position, chatdatabaseinserver cdis) {
+        private void configureViewHolder2(final blogholders2 vh2, int position, final chatdatabaseinserver cdis) {
 
             if (cdis != null) {
                 vh2.setSendernamea(cdis.getMessageowner());
@@ -1611,12 +1623,18 @@ respectedchats.addListenerForSingleValueEvent(new ValueEventListener() {
 
                 Query userimgincmt = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(vh2.getSendernamea().getText().toString());
 
-                vh2.vmg.setOnClickListener(new View.OnClickListener() {
+                vh2.vmg.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
-                    public void onClick(View v) {
+                    public boolean onLongClick(View view) {
+                        if(!cdis.getMessageowner().equals(firebaseUser.getDisplayName())) {
 
-                        vh2.vmg.findViewById(R.id.msgsview).setBackgroundColor(Color.RED);
+                            vh2.vmg.findViewById(R.id.msgsview).setBackgroundColor(Color.RED);
+                        }
+
+                        return true;
+
                     }
+
                 });
                 userimgincmt.addValueEventListener(new ValueEventListener() {
                     @Override

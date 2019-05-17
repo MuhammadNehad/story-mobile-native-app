@@ -53,6 +53,7 @@
         android:layout_above="@id/sendmesg"
         android:layout_alignLeft="@+id/sendmesg"
         android:layout_alignParentRight="true"
+        android:visibility="gone"
         android:layout_alignStart="@+id/sendmesg"
         android:layout_alignParentEnd="true">
 
