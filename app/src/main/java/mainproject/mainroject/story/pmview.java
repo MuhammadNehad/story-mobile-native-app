@@ -11,12 +11,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,12 +32,20 @@ import mainproject.mainroject.story.Tables.chatdatabaseinserver;
 
 
 public class pmview extends Fragment {
-
+//    TODO: def variables
+    FirebaseUser mAuth = FirebaseAuth.getInstance().getCurrentUser();
     DatabaseReference chatdatabase = FirebaseDatabase.getInstance().getReference().child("chatMsgs");
-    TextView comingsoontxt;
-    FirebaseListOptions<String> options;
-    FirebaseListAdapter<String > fillPMs;
+    DatabaseReference userDetail = FirebaseDatabase.getInstance().getReference().child("UserDetail");
 
+    FirebaseListOptions<chatdatabaseinserver> options;
+    FirebaseListAdapter<chatdatabaseinserver> fillPMs;
+
+    Query myUnReadMessages;
+    Query getProfilesImagesQuery;
+    ListView newMessagesView;
+    TextView comingsoontxt;
+    String curUserDN;
+    String messengersDN;
     public pmview() {
         // Required empty public constructor
     }
@@ -43,7 +54,45 @@ public class pmview extends Fragment {
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.fragment_pmview, container, false);
         // Inflate the layout for this fragment
-        comingsoontxt =(TextView) view.findViewById(R.id.comingsoon1);
+//        TODO:initialize Variables values (widgets, UIS)
+//        comingsoontxt =(TextView) view.findViewById(R.id.comingsoon1);
+        curUserDN = mAuth.getDisplayName();
+        newMessagesView = view.findViewById(R.id.newMessagesViews);
+        myUnReadMessages = chatdatabase.child("Recievers").orderByValue().equalTo(curUserDN);
+        getProfilesImagesQuery = userDetail.orderByChild("UserName").equalTo(messengersDN);
+        //        options = new FirebaseListOptions<String>()
+          options = new FirebaseListOptions.Builder<chatdatabaseinserver>()
+                .setLayout(R.layout.unread_messages_listitem)//Note: The guide doesn't mention this method, without it an exception is thrown that the layout has to be set.
+                .setQuery(myUnReadMessages, chatdatabaseinserver.class)
+                .build();
+          fillPMs= new FirebaseListAdapter<chatdatabaseinserver>(options) {
+            @Override
+            protected void populateView(View v, final chatdatabaseinserver model, final int position) {
+//                TODO:Initialize Adapter Widgets and vars
+                ImageView messengerImg = v.findViewById(R.id.usersImages);
+                TextView msgSenderName = v.findViewById(R.id.msgSenderName);
+                TextView msgContents = v.findViewById(R.id.msgTextContent);
+                if((!model.getRecievers().isEmpty()) || (model.getRecievers() != null )|| (model.getRecievers().size() != 0)) {
+                    if(model.getRecievers().contains(curUserDN)) {
+                        profileImagesFetch(messengerImg);
+                        msgSenderName.setText(model.getMessageowner());
+                        msgContents.setText(model.getMessage_content());
+                        messengersDN = model.getMessageowner();
+
+                    }
+
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        chatdatabaseinserver  selectPVMSG = fillPMs.getItem(position);
+                        privatemsgscheck(selectPVMSG.getMessage_content(),selectPVMSG.getMessageowner());
+                    }
+                });
+                }
+            }
+
+        };
+
         return view;
     }
     AlertDialog.Builder chatsdegree;
@@ -87,7 +136,7 @@ public class pmview extends Fragment {
 ////                                                        if(img == null)
 ////                                                        {((ImageView)v.findViewById(id.comterimg)).setBackground(null);}
 ////                                                        else if(img != null) {
-                        Picasso.with(getContext()).load(ds).fit().into(((ImageView) chatdegreesview.findViewById(R.id.comterimg)));
+                        Picasso.with(getContext()).load(ds).fit().into(((ImageView) chatdegreesview.findViewById(R.id.pvsenderimg)));
 ////                                                        }
 ////                                                        .setImageURI(Uri.parse(commterimg));
 
@@ -111,5 +160,21 @@ public class pmview extends Fragment {
             }
         };
         activatethtedialog.show();
+    }
+//    TODO: fetch senders Images
+    public void profileImagesFetch(final ImageView messengerImage){
+        getProfilesImagesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String imgurl = String.valueOf(dataSnapshot.child("ProfileImages"));
+                Picasso.with(getContext()).load(imgurl).fit().into(messengerImage);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

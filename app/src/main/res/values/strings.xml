@@ -64,6 +64,7 @@
     <string name="welcome">Welcome!</string>
     <string name="community">community</string>
     <string name="publishing_stories_which_wrote_on_app_costs_2_n_and_pdf_costs_5">publishing Stories which wrote on app costs 2$   and Pdf Costs 5$</string>
+    <string name="message_sender_name">message sender name</string>
     <!--<string name="todo_storycover">TODO:StoryCover</string>-->
 
 </resources>
