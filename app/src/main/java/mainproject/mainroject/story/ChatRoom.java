@@ -108,7 +108,6 @@ public class ChatRoom extends Fragment {
     }
 
 
-
     public void setArraynames(ArrayList<String> arraynames) {
         this.arraynames = arraynames;
     }
@@ -407,6 +406,7 @@ private void refreshing(){
         this.mLastKey=LastKey;
 
     }
+    
     private void loadMoreData(){
         chatdatabase.orderByKey().endAt(mLastKey).limitToLast(7).addChildEventListener(new ChildEventListener() {
             @Override
@@ -466,7 +466,7 @@ private void refreshing(){
 
     public void usechildlistner(){
 
-        chatdatabase.limitToLast(mCurrentpage*total_items_to_Load ).addChildEventListener(new ChildEventListener() {
+        chatdatabase.limitToLast(mCurrentpage*total_items_to_Load).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 chatdatabaseinserver cdbis = dataSnapshot.getValue(chatdatabaseinserver.class);
@@ -480,8 +480,8 @@ private void refreshing(){
                     mPreviousKey = mLastKeyalt;
 
                 }
-                getchatdata.add(cdbis);
-
+        das:                getchatdata.add(cdbis);
+//        continue das;
 //                itempos++;
 //                chalist.scrollToPosition(getchatdata.size()-1);
 
@@ -654,6 +654,7 @@ chalist.setAdapter(chatlist);
     AlertDialog.Builder privatemsgcheckingandreply;
 
     Query chataddrank=chatdatabase;
+
     private void privatemsgscheck(final String msgcontent, final String msgsender) {
 
         chatsdegree = new AlertDialog.Builder(getContext());

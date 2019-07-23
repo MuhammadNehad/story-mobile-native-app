@@ -47,7 +47,7 @@
                 android:id="@+id/addingstoriestypes"
                 android:layout_width="100dp"
                 android:layout_height="50dp"
-                android:layout_gravity="right"
+                android:layout_gravity="end"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:background="@drawable/normaledittextsty"

@@ -159,13 +159,13 @@ public class Stories {
     }
 
 //
-//    public Stories(String Authors, String logo_src, String logourl, String content, String storyprice) {
-//        this.Author = Authors;
-//        this.Logosrc = logo_src;
-//        this.LogoUrl = logourl;
-//        this.story_content = content;
+    public Stories(String Authors, String StoryName, String logourl, String strType) {
+        this.Author = Authors;
+        this.storyNaMe= StoryName;
+        this.LogoUrl = logourl;
+        this.StrType = strType;
 //        this.story_price = storyprice;
-//
-//
-//    }
+
+
+    }
 }

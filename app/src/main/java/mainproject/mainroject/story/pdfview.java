@@ -33,7 +33,7 @@ PDFView pdfView;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pdfview, container, false);
     pdfView =(PDFView)view.findViewById(R.id.pdfviewerpage);
-
+    int pagescount = pdfView.getPageCount();
     Bundle bundle =getArguments();
     new Retrievepdffile().execute(bundle.getString("StoryCont"));
     return view;}

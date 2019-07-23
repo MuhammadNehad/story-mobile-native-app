@@ -12,7 +12,7 @@
     android:paddingTop="5dp"
     android:scrollbarSize="0dp"
     tools:context="mainproject.mainroject.story.ItemFragment">
-
+    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -30,6 +30,12 @@
 
                 <ImageButton
                     android:id="@+id/convertSeaching"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@color/fui_transparent"
+                    android:src="@drawable/places_ic_search" />
+                <ImageButton
+                    android:id="@+id/moreOptions"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@color/fui_transparent"
@@ -157,6 +163,37 @@
                     </LinearLayout>
 
             </HorizontalScrollView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <Spinner
+                        android:id="@+id/searchStoriestypes"
+                        android:layout_width="100dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="end"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/normaledittextsty"
+                        android:dropDownSelector="@drawable/btn_homestyle"
+                        android:dropDownWidth="wrap_content"
+                        android:padding="2dp"
+                        android:popupBackground="@color/White"
+                        android:spinnerMode="dropdown"
+                        android:ellipsize="marquee"/>
+                    <Spinner
+                        android:id="@+id/searchSubCategories"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/normaledittextsty"
+                        android:dropDownSelector="@drawable/btn_homestyle"
+                        android:dropDownWidth="wrap_content"
+                        android:padding="5dp"
+                        android:popupBackground="@color/White"
+                        android:spinnerMode="dropdown"
+                        android:ellipsize="marquee"/>
+                </LinearLayout>
             </LinearLayout>
 
             <!--<LinearLayout-->
@@ -256,6 +293,69 @@
                 android:textColor="#000"
                 android:textSize="15sp" />
 
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/relLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="50dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/white_border"
+            android:elevation="10dp"
+            android:visibility="gone">
+
+            <ImageButton
+                android:id="@+id/next"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/places_ic_search" />
+
+            <TextView
+                android:id="@+id/PageNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:text="1"
+                android:singleLine="true"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/OfTotalSign"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:text="/"
+                android:singleLine="true"
+                android:textColor="#000"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/TotalPagesNum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:background="@null"
+                android:text="1"
+                android:singleLine="true"
+                android:textColor="#000"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/prev"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/places_ic_search" />
 
         </RelativeLayout>
     </RelativeLayout>

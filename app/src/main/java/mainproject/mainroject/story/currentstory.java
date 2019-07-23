@@ -28,16 +28,16 @@ import com.squareup.picasso.Picasso;
  */
 
 public class currentstory extends Fragment {
-     TextView csa;
-    TextView csn;
-    TextView csc;
-    ImageView csi;
-     TextView csd;
-     Float scale = 1f;
-     ScaleGestureDetector sgd;
-     TextView hc,sc;
-RatingBar ratebar;
-android.graphics.Matrix matrix = new android.graphics.Matrix();
+        TextView csa;
+        TextView csn;
+        TextView csc;
+        ImageView csi;
+        TextView csd;
+        Float scale = 1f;
+        ScaleGestureDetector sgd;
+        TextView hc,sc;
+        RatingBar ratebar;
+        android.graphics.Matrix matrix = new android.graphics.Matrix();
 
 LinearLayout heads;
     public currentstory(){}
@@ -55,12 +55,13 @@ DatabaseReference ratedf = FirebaseDatabase.getInstance().getReference().child("
         csc = (TextView)view.findViewById(R.id.currentstorycontent);
         csd = (TextView)view.findViewById(R.id.currentstorydesc);
         csi =(ImageView)view.findViewById(R.id.currentstryimg);
+        
         csn.setText(bundle.getString("StoryName"));
         csd.setText(bundle.getString("StoryDesc"));
         csc.setText(bundle.getString("StoryCont"));
         csa.setText(bundle.getString("StoryAuth"));
         csi.setBackground(null);
-   csc.setTextIsSelectable(false);
+        csc.setTextIsSelectable(false);
         hc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +76,7 @@ DatabaseReference ratedf = FirebaseDatabase.getInstance().getReference().child("
                 sc.setVisibility(View.GONE);
             }
         });
-        Picasso.with(getContext()).load(bundle.getString("StoryIMG")).into(csi);
+        Picasso.with(getContext()).load(bundle.getString("StoryIMG")).fit().into(csi);
         DatabaseReference childs =  ratedf.child(bundle.getString("StoryName")+ FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
 

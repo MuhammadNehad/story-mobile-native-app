@@ -79,7 +79,6 @@ public class home extends Fragment {
     private String first;
     private String file_1;
     private BreakIterator txt_file_name_1;
-    String[] stryMainCategory = {"Education","Movies","theatre","series","literature"};
 
     String[] strytypes = {"Science","Horror","Action","Religious","Politics"};
     TextView filename;
@@ -96,6 +95,7 @@ public class home extends Fragment {
     DatabaseReference muserref = FirebaseDatabase.getInstance().getReference().child("UserDetail");
 //    DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("PDFFILES");
 //    private Uri selectedFileURI =null;
+
     String[] mimeTypes =
         {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
                 "application/vnd.ms-powerpoint","application/vnd.openxmlformats-officedocument.presentationml.presentation", // .ppt & .pptx
@@ -103,6 +103,31 @@ public class home extends Fragment {
                 "text/plain",
                 "application/pdf",
                 "application/zip"};
+
+// Stories Types Identifying
+    String[] stryMainCategory = {"Education","Movies","theatre","series","literature"};
+
+    String[] literature= {"Drama","Fable","Fiction","Poetry","Novel","Non-fiction","Short story","Prose","Biography"
+            ,"Science Fiction"
+            ,"Essay","Autobiography","Fairy Tale","Legend","Horror fiction","Myth"
+            ,"Satire","Children's literature","Speech","Fantasy","Humor","Fable"
+            ,"Short Story","Realistic Fiction","Folklore","Historical Fiction","Horror","Tall Tale","Legend"
+            ,"Mystery","Fiction in Verse"};
+
+    String[] Education = {"Language","Mathematical","Religion"
+            ,"healthcare administration","graphic design","psychology", "accounting"
+            ,"criminal justice","nursing"
+            ,"computer science","engineering","business administration",
+            "organizational skills","communication skills","analytical skills","detail oriented"
+            ,"compassion","critical-thinking skills","patience"};
+
+    String[] MoviesAndSeries={"Absurdist/surreal/whimsical","Action","Adventure","Comedy","Thriller","Drama","Epic","Horror","Adventure","Animation","Comedy","Crime"
+            ,"Documentary","Biography","Family","Fantasy","Film-Noir","History",
+            "Musical","Mystery","Romance","Sci-fi","Sport","War","Western","Eastern","MiddleEast"};
+
+    String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
+            ,"Historic Plays","Farce","Solo Theatre","Epic"};
+
     EditText editText;
     Button pdfupload;
     EditText prices;
@@ -121,13 +146,7 @@ public class home extends Fragment {
             .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
             .defaultUserEmail("mnmfas-facilitator@gmail.com").acceptCreditCards(true);
     private AlertDialog.Builder StoryDetailsl;
-    String[] literature= {"Drama","Fable","Fiction","Poetry","Novel","Non-fiction","Short story","Prose","Biography"
-            ,"Science Fiction"
-        ,"Essay","Autobiography","Fairy Tale","Legend","Horror fiction","Myth"
-        ,"Satire","Children's literature","Speech","Fantasy","Humor","Fable"
-        ,"Short Story","Realistic Fiction","Folklore","Historical Fiction","Horror","Tall Tale","Legend"
-            ,"Mystery","Fiction in Verse"};
-    String subCategoryName;
+      String subCategoryName;
 
 
     public home() {
@@ -239,19 +258,6 @@ public class home extends Fragment {
         final AlertDialog alertDialog = StoryDetailsl.create();
         alertDialog.show();
     }
-    String[] Education = {"Language","Mathematical","Religion"
-            ,"healthcare administration","graphic design","psychology", "accounting"
-            ,"criminal justice","nursing"
-            ,"computer science","engineering","business administration",
-            "organizational skills","communication skills","analytical skills","detail oriented"
-            ,"compassion","critical-thinking skills","patience"};
-
-    String[] MoviesAndSeries={"Absurdist/surreal/whimsical","Action","Adventure","Comedy","Thriller","Drama","Epic","Horror","Adventure","Animation","Comedy","Crime"
-    ,"Documentary","Biography","Family","Fantasy","Film-Noir","History",
-    "Musical","Mystery","Romance","Sci-fi","Sport","War","Western","Eastern","MiddleEast"};
-
-    String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
-    ,"Historic Plays","Farce","Solo Theatre","Epic"};
     Spinner subCategory;
     public String getSelectingitem() {
         return selectingitem;
