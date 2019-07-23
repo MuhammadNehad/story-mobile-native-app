@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,6 +31,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +44,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +78,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.Hashtable;
 
 import mainproject.mainroject.story.Tables.PDFFILES;
 import mainproject.mainroject.story.Tables.Stories;
@@ -119,6 +123,9 @@ public class ItemFragment extends Fragment {
     int currentamount=5;
     float totalcount = 0;
     private EditText SearchET;
+    private ArrayAdapter<String> spinnerAdapter;
+    private Spinner typespinner;
+    private LinearLayout search_btns;
 
     public void settotalcount(float total_count){
         this.totalcount = total_count;
@@ -171,6 +178,8 @@ public class ItemFragment extends Fragment {
 
     String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
             ,"Historic Plays","Farce","Solo Theatre","Epic"};
+
+    Dictionary<String,String[]> spinnerDividers =new Hashtable<String, String[]>();
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -271,9 +280,12 @@ public class ItemFragment extends Fragment {
         return Found[0];
     }
 //    RelativeLayout SearchBox;
+    String passMainCatName="";
     RelativeLayout SearchBox;
     HorizontalScrollView CategorySearch;
+    LinearLayout.LayoutParams linearlayoutParams;
     int count = 0;
+
 //    final LruCache<String,Stories> mObjectCache = new LruCache<String,Stories>(count){
 //            @Override
 //            protected int sizeOf(String key, Stories value) {
@@ -287,30 +299,56 @@ public class ItemFragment extends Fragment {
         final View view = inflater.inflate(layout.fragment_item_list, container, false);
         // TODO: RecyclerView
         loading = new ProgressDialog(getContext());
-        Religious=(Button)view.findViewById(R.id.Religious);
-        Action=(Button)view.findViewById(R.id.Action);
-        Politics=(Button)view.findViewById(R.id.Politics);
-        Horror=(Button)view.findViewById(R.id.Horror);
-        Education=(Button)view.findViewById(R.id.Education);
         pdfrv =(LinearLayout)view.findViewById(R.id.pdffilesview);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
         SearchBox = view.findViewById(R.id.relLayout1);
         SearchET =view.findViewById(R.id.input_search);
         CategorySearch = view.findViewById(id.CategoriesSearch);
         convertingSearch = view.findViewById(id.convertSeaching);
-//        SearchBox.setVisibility(getSearchBoxVisiblity());
-        
+        typespinner = view.findViewById(id.searchSubCategories);
+        search_btns = view.findViewById(id.search_btns);
+
+        /***** build LinearLayout Params ****/
+        linearlayoutParams= new LinearLayout.LayoutParams(75,40);
+        linearlayoutParams.bottomMargin = 5;
+        linearlayoutParams.leftMargin = 5;
+        linearlayoutParams.rightMargin=5;
+        linearlayoutParams.topMargin = 5;
+
+        /***** Add Dictionary Data***/
+        spinnerDividers.put(stryMainCategory[0],EducationSec);
+        spinnerDividers.put(stryMainCategory[1],MoviesAndSeries);
+        spinnerDividers.put(stryMainCategory[2],Theatres);
+        spinnerDividers.put(stryMainCategory[3],MoviesAndSeries);
+        spinnerDividers.put(stryMainCategory[4],literature);
+
+
         scrollView = view.findViewById(id.itemfragscrollview);
         all=(Button)view.findViewById(R.id.All);
 //        pdfrecyclerView.setHasFixedSize(true);
         recyclerView.setHasFixedSize(true);
+
+        /*****  Prepare Search buttons     ****/
         for (int i = 0;i<stryMainCategory.length;i++) {
             btn[i] = new Button(getContext());
+            btn[i].setText(stryMainCategory[i]);
+            btn[i].setId(i+872912);
+            btn[i].setTextColor(Color.BLACK);
+            btn[i].setBackgroundColor(Color.WHITE);
+            btn[i].setShadowLayer(1,111,111,Color.BLACK);
+            btn[i].setHighlightColor(Color.RED);
+            btn[i].setTextSize(10);
+            btn[i].setLayoutParams(linearlayoutParams);
             final int finalI = i;
             btn[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,spinnerDividers.get(stryMainCategory[finalI]));
+                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                    passMainCatName = stryMainCategory[finalI];
+                    typespinner.setAdapter(spinnerAdapter);
                     try {
+
                         setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo(stryMainCategory[finalI]));
 //                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
 
@@ -345,6 +383,29 @@ public class ItemFragment extends Fragment {
                     SearchBox.setVisibility(View.VISIBLE);
                     CategorySearch.setVisibility(View.GONE);
                 }
+            }
+        });
+
+        typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                try {
+
+                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrCatSearchObj").equalTo((passMainCatName+spinnerDividers.get(passMainCatName)[i]).trim()));
+//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
+
+                    Thread.sleep(1000);
+                    SelectType(getQuery());
+//                    pdfrecyclerView.setVisibility(View.GONE);
+
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 //        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -585,98 +646,6 @@ public class ItemFragment extends Fragment {
                 }
             }
         });
-        Religious.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                try {
-                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Religious"));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Religious"));
-
-                    Thread.sleep(1000);
-                    SelectType(getQuery());
-//                    pdfrecyclerView.setVisibility(View.GONE);
-                    fbra.notifyDataSetChanged();
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-             }});
-
-
-        Politics.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                try {
-                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Politics"));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
-
-                    Thread.sleep(1000);
-                    SelectType(getQuery());
-//                    pdfrecyclerView.setVisibility(View.GONE);
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
-        Action.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              try {
-                  setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Action"));
-
-                  Thread.sleep(1000);
-                  SelectType(getQuery());
-
-              } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-               }
-        });
-
-        Horror.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-               try {
-                   setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Horror"));
-
-                   Thread.sleep(1000);
-                   SelectType(getQuery());
-
-               } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-               }
-        });
-        Education.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-          try {
-
-              setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Science"));
-//              setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Science"));
-              Thread.sleep(1000);
-              SelectType(getQuery());
-//              pdfrecyclerView.setVisibility(View.GONE);
-
-          } catch (InterruptedException e) {
-                            e.printStackTrace();
-
-                        }
-
-                       }
-
-                });
 
         //TODO: loading more
 //        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(recyclerViewlayout) {

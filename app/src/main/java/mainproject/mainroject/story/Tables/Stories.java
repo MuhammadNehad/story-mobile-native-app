@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Stories {
     private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc
-            ,subCategory;
+            ,subCategory,StrCatSearchObj;
     private Date publishDate;
     int numofrankers;
 
@@ -167,5 +167,13 @@ public class Stories {
 //        this.story_price = storyprice;
 
 
+    }
+
+    public String getStrCatSearchObj() {
+        return StrCatSearchObj;
+    }
+
+    public void setStrCatSearchObj(String strCatSearchObj) {
+        StrCatSearchObj = strCatSearchObj;
     }
 }

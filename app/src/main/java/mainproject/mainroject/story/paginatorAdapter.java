@@ -32,7 +32,7 @@ public class paginatorAdapter {
 //            }
 //        });
 //    }
-    private void loadMoreData(DatabaseReference dbRef, final RecyclerView.Adapter<RecyclerView.ViewHolder> MyAdapter, final List getData, final String ClassName){
+    private void loadMoreData(DatabaseReference dbRef, final RecyclerView.Adapter<RecyclerView.ViewHolder> MyAdapter, final List getData){
         mCurrentpage++;
         itempos=0;
 

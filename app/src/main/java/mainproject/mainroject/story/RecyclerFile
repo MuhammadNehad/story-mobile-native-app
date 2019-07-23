@@ -1,0 +1,193 @@
+
+      <Button
+                            android:id="@+id/Education"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+
+                            android:layout_height="40dp"
+                            android:layout_marginBottom="5dp"
+                            android:textColor="@color/Black"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="Science"
+                            android:textColorHighlight="@color/Red"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Horror"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:textColor="@color/Black"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/horror"
+                            android:textSize="10sp"
+                            tools:ignore="SmallSp" />
+
+                        <Button
+                            android:id="@+id/Action"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:textColor="@color/Black"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/action"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Politics"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:textColor="@color/Black"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/politics"
+                            android:textSize="10sp" />
+
+                        <Button
+                            android:id="@+id/Religious"
+                            style="@style/FirebaseUI.Button"
+                            android:layout_width="75dp"
+                            android:layout_height="40dp"
+
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_marginTop="5dp"
+                            android:background="@color/White"
+                            android:shadowDx="111"
+                            android:shadowDy="111"
+                            android:text="@string/religious"
+                            android:textColor="@color/Black"
+                            android:textSize="10sp" />
+
+
+
+// TODO: initialize9 Old Search Buttons (ItemFragment.java)
+
+        Religious=(Button)view.findViewById(R.id.Religious);
+        Action=(Button)view.findViewById(R.id.Action);
+        Politics=(Button)view.findViewById(R.id.Politics);
+        Horror=(Button)view.findViewById(R.id.Horror);
+        Education=(Button)view.findViewById(R.id.Education);
+
+
+// TODO: Add Search Button Listeners
+
+           Religious.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        try {
+                            setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Religious"));
+        //                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Religious"));
+
+                            Thread.sleep(1000);
+                            SelectType(getQuery());
+        //                    pdfrecyclerView.setVisibility(View.GONE);
+                            fbra.notifyDataSetChanged();
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                     }});
+
+
+                Politics.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        try {
+                            setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Politics"));
+        //                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
+
+                            Thread.sleep(1000);
+                            SelectType(getQuery());
+        //                    pdfrecyclerView.setVisibility(View.GONE);
+
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                });
+                Action.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      try {
+                          setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Action"));
+
+                          Thread.sleep(1000);
+                          SelectType(getQuery());
+
+                      } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                       }
+                });
+
+                Horror.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                       try {
+                           setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Horror"));
+
+                           Thread.sleep(1000);
+                           SelectType(getQuery());
+
+                       } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                       }
+                });
+                Education.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                  try {
+
+                      setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo("Science"));
+        //              setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Science"));
+                      Thread.sleep(1000);
+                      SelectType(getQuery());
+        //              pdfrecyclerView.setVisibility(View.GONE);
+
+                  } catch (InterruptedException e) {
+                                    e.printStackTrace();
+
+                                }
+
+                               }
+
+                        });

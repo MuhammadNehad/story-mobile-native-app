@@ -821,7 +821,6 @@ mProgress.dismiss();
                                startposting(StorYNamE);
 //                               final DatabaseReference Story_Name = myStoryRef.child(StorYNamE);
                                final DatabaseReference Story_Name = myStoryRef.push();
-
                                Story_Name.child("storyNaMe").setValue(StorYNamE);
                                Story_Name.child("Author").setValue(AuthoRs);
                                Story_Name.child("story_content").setValue(StRContEnT);
@@ -835,6 +834,7 @@ mProgress.dismiss();
                                Story_Name.child("StorySavingsrc").setValue("AppCreationStory");
                                Story_Name.child("subCategory").setValue(subCategories);
                                Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
+                               Story_Name.child("StrCatSearchObj").setValue(StryTypes+subCategories);
 
                                $pricebox.setText(null);
                                Storyname.setText(null);
@@ -860,6 +860,7 @@ mProgress.dismiss();
                                Pdf_Story_Name.child("subCategory").setValue(subCategories);
                                Pdf_Story_Name.child("StorySavingsrc").setValue("PDFSTORY");
                                Pdf_Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
+                               Pdf_Story_Name.child("StrCatSearchObj").setValue(StryTypes+subCategories);
 
                                //                               Story_Name.child("storyNaMe").setValue(StorYNamE);
 //                               Story_Name.child("Author").setValue(AuthoRs);
