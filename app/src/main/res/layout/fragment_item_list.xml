@@ -30,8 +30,9 @@
 
                 <ImageButton
                     android:id="@+id/convertSeaching"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="start"
                     android:background="@color/fui_transparent"
                     android:src="@drawable/places_ic_search" />
                 <ImageButton
@@ -52,27 +53,21 @@
                     <LinearLayout
                         android:id="@+id/search_btns"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_margin="3dp"
                         android:orientation="horizontal">
                         <!--<requestFocus/>-->
                         <Button
-
                             android:id="@+id/All"
                             style="@style/FirebaseUI.Button"
                             android:layout_width="75dp"
-                            android:layout_height="40dp"
+                            android:layout_height="35dp"
                             android:textColor="@color/Black"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginStart="5dp"
-                            android:layout_marginTop="5dp"
                             android:background="@color/White"
                             android:shadowDx="111"
                             android:shadowDy="111"
                             android:text="All"
                             android:textColorHighlight="@color/Red"
-
                             android:textSize="10sp" />
 
 
@@ -90,6 +85,7 @@
                 android:dropDownSelector="@drawable/btn_homestyle"
                 android:dropDownWidth="wrap_content"
                 android:padding="5dp"
+                android:visibility="gone"
                 android:popupBackground="@color/White"
                 android:spinnerMode="dropdown"
                 android:ellipsize="marquee"/>
@@ -135,7 +131,7 @@
                 android:layout_height="5dp"
                 android:outlineProvider="bounds"
                 android:text="FullTxtStories"
-                tools:targetApi="lollipop" />
+                />
 
             <!--<android.support.v7.widget.RecyclerView-->
             <!--android:visibility="gone"-->
@@ -154,7 +150,7 @@
                 android:layout_height="600dp"
                 android:layout_gravity="center"
                 android:fillViewport="true"
-                android:paddingLeft="5dp"
+                android:paddingLeft="20dp"
                 tools:listitem="@layout/fragment_item" />
 
         </LinearLayout>
@@ -191,7 +187,13 @@
                 android:singleLine="true"
                 android:textColor="#000"
                 android:textSize="15sp" />
-
+            <ImageButton
+                android:id="@+id/close_search"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignRight="@+id/input_search"
+                android:src="@drawable/ic_dialog_close_light"/>
 
         </RelativeLayout>
         <RelativeLayout

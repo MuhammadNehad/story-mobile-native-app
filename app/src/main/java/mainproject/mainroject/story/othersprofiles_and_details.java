@@ -129,6 +129,13 @@ public class othersprofiles_and_details extends Fragment {
         Query recStrs = StsRef.orderByChild("Author").equalTo(dispname);
         un.setText(dispname);
 
+        if(un.getText().toString().equals(auth1.getDisplayName()))
+        {
+            followees.setEnabled(false);
+           voteAgainst.setEnabled(false);
+           voteHonor.setEnabled(false);
+           voteTo.setEnabled(false);
+        }
         if(curimg != null) {
             curimg.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -142,7 +149,7 @@ public class othersprofiles_and_details extends Fragment {
 //                                                        else if(img != null) {
                     Picasso.with(getContext()).load(us.getUserImg()).fit().into(visitorimgview);
 //
-//                    try {
+//              s      try {
 //                        visitorimgview .setBackground(null);
 //                        Picasso.with(getContext()).load(imgurl).into(visitorimgview );
 ////                            urlimg.setText(dataSnapshot.getValue(User.class).getName());
@@ -205,21 +212,19 @@ public class othersprofiles_and_details extends Fragment {
         followees.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!un.getText().toString().equals(auth1.getDisplayName()))
-                {
-                  DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings").child(un.getText().toString()+auth1.getDisplayName());
+                  DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings").child(un.getText().toString().trim()+"_"+auth1.getDisplayName().trim());
                     mFollowings.child("CurUserFollowingName").setValue(un.getText().toString());
                     mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
 //                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
 
-                }
+                    Toast.makeText(getContext(),"that is you",Toast.LENGTH_SHORT).show();
+
             }
         });
+
         voteTo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!un.getText().toString().equals(auth1.getDisplayName()))
-                {
                     final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
                     mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -239,14 +244,12 @@ public class othersprofiles_and_details extends Fragment {
 //                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
 //                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
 
-                }
+
             }
         });
         voteAgainst.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!un.getText().toString().equals(auth1.getDisplayName()))
-                {
                     final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
                     mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -266,14 +269,12 @@ public class othersprofiles_and_details extends Fragment {
 //                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
 //                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
 
-                }
+
             }
         });
         voteHonor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!un.getText().toString().equals(auth1.getDisplayName()))
-                {
                     final DatabaseReference  mFollowings=  FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
                     mFollowings.child(un.getText().toString()+auth1.getDisplayName()).orderByChild("CurUserFollowingName").equalTo(un.getText().toString()).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -310,7 +311,7 @@ public class othersprofiles_and_details extends Fragment {
 //                    mFollowings.child("CurrentUserName").setValue(auth1.getDisplayName());
 //                    FirebaseDatabase.getInstance().getReference().child("Cur_User_Followees").push().child("CurrentUserName").setValue(auth1.getDisplayName());
 
-                }
+
             }
         });
         hoststories.setAdapter(trfbra);

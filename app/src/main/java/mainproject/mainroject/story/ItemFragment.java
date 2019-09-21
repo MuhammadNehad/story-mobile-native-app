@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -228,7 +229,7 @@ public class ItemFragment extends Fragment {
     public boolean increaserate = false;
     public boolean decreasecreaserate = false;
     public boolean reportrate = false;
-    ImageButton convertingSearch;
+    ImageButton convertingSearch,close_search;
     ProgressDialog mprogress;
     FirebaseRecyclerOptions<Stories> option;
     LinearLayout pdfrv;
@@ -307,13 +308,12 @@ public class ItemFragment extends Fragment {
         convertingSearch = view.findViewById(id.convertSeaching);
         typespinner = view.findViewById(id.searchSubCategories);
         search_btns = view.findViewById(id.search_btns);
-
+        close_search =view.findViewById(id.close_search);
         /***** build LinearLayout Params ****/
-        linearlayoutParams= new LinearLayout.LayoutParams(75,40);
-        linearlayoutParams.bottomMargin = 5;
+        linearlayoutParams= new LinearLayout.LayoutParams(80,60);
         linearlayoutParams.leftMargin = 5;
-        linearlayoutParams.rightMargin=5;
-        linearlayoutParams.topMargin = 5;
+
+
 
         /***** Add Dictionary Data***/
         spinnerDividers.put(stryMainCategory[0],EducationSec);
@@ -340,6 +340,7 @@ public class ItemFragment extends Fragment {
             btn[i].setTextSize(10);
             btn[i].setLayoutParams(linearlayoutParams);
             final int finalI = i;
+
             btn[i].setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -347,6 +348,7 @@ public class ItemFragment extends Fragment {
                     spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                     passMainCatName = stryMainCategory[finalI];
                     typespinner.setAdapter(spinnerAdapter);
+                    typespinner.setVisibility(View.VISIBLE);
                     try {
 
                         setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo(stryMainCategory[finalI]));
@@ -361,6 +363,7 @@ public class ItemFragment extends Fragment {
                     }
                 }
             });
+            search_btns.addView(btn[i]);
         }
         myRef.keepSynced(true);
         pdfosdb.keepSynced(true);
@@ -385,7 +388,14 @@ public class ItemFragment extends Fragment {
                 }
             }
         });
+        close_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchBox.setVisibility(View.GONE);
+                CategorySearch.setVisibility(View.VISIBLE);
 
+            }
+        });
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -631,7 +641,7 @@ public class ItemFragment extends Fragment {
         all.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                typespinner.setVisibility(View.GONE);
                  try {
                    setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails"));
 //                     setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails"));
@@ -1080,7 +1090,7 @@ public class ItemFragment extends Fragment {
                 }
 
                 @Override
-                protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final PDFFILES model) {
+                protected void onBindViewHolder(@NonNull final blogholder holder, final int position, @NonNull final PDFFILES model) {
 
                     final String bookkey = getRef(position).getKey();
                     holder.setPdfAuthor(model.getPdfAuthor());
@@ -1093,7 +1103,6 @@ public class ItemFragment extends Fragment {
 ////                holder.setPrice(model.getStory_price());
 //                holder.setMimgurl(getContext(),model.getLogoUrl());
 //                holder.setContent(model.getSTDESC());
-
                     holder.mview.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -1113,7 +1122,8 @@ public class ItemFragment extends Fragment {
         };
         DatabaseReference commentsdb = mydatabase.getReference().child("comments");
     public void showDetailsDialog(final String Author1, final String Desc, final String price1, final String ImgUrl, final String storyNAME, final String storyCoNtEnT, final String StrySrc, final String bookkeys){
-      StoryDetailsl =new AlertDialog.Builder(getContext());
+        currentamount=5;
+        StoryDetailsl =new AlertDialog.Builder(getContext());
       LayoutInflater inflater = getLayoutInflater();
       final View detaildialog = inflater.inflate(R.layout.detailalertdialog,null);
 
@@ -1141,7 +1151,7 @@ else{
     }
 });
         }else{
-            Toast.makeText(getContext(),"THIS STORY HAVE BEEN DELETED",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(),"THIS STORY HAS BEEN DELETED",Toast.LENGTH_SHORT).show();
         }
         final ImageButton increase = (ImageButton)detaildialog.findViewById(id.Increasestrate);
         final ImageButton decrease = (ImageButton)detaildialog.findViewById(id.decreaseitsrate);
@@ -1154,7 +1164,7 @@ else{
         final Button price = (Button) detaildialog.findViewById(R.id.storypricetxt);
         TextView Authors = (TextView) detaildialog.findViewById(R.id.Author);
         TextView storyNAme = (TextView) detaildialog.findViewById(R.id.stname);
-        Picasso.with(getContext()).load(ImgUrl).into(cover);
+        Picasso.with(getContext()).load(ImgUrl).fit().into(cover);
         final TextView comtxt = (TextView) detaildialog.findViewById(R.id.commentstxt1);
         final ListView comlist =(ListView)detaildialog.findViewById(R.id.commentslist);
         final EditText comentry =(EditText)detaildialog.findViewById(R.id.usernewcomment);
@@ -1174,7 +1184,6 @@ else{
         comlayout.setVisibility(GONE);
         final AlertDialog alertDialog = StoryDetailsl.create();
         price.setText(price1);
-        checkExistedpaypalEmail(Author1);
         FirebaseDatabase.getInstance().getReference().child("Views").child(storyNAME+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -1258,78 +1267,76 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
 
         final TextView expandingtext =(TextView)detaildialog.findViewById(id.expandingtext);
         fbla= new FirebaseListAdapter<comments>(options) {
-            double newamount1;
 
             /**
              *
              */
 
             @Override
-                                            protected void populateView(final View v, comments model, int position) {
-                                                 String usernames = model.getUserName1();
-                                         String usercomment = model.getUsercomment();
-                                               final TextView comtername =(TextView)v.findViewById(id.commentername);
-                                         comtername.setText(usernames);
-                                                 TextView comttxt = (TextView)v.findViewById(R.id.commentstxt1);
-                                                         comttxt.setText(usercomment);
-                                                final String usermail = model.getUser___Email();
-                                                final User st = new User();
+            protected void populateView(final View v, comments model, int position) {
+                 String usernames = model.getUserName1();
+                String usercomment = model.getUsercomment();
+               final TextView comtername =(TextView)v.findViewById(id.commentername);
+         comtername.setText(usernames);
+                 TextView comttxt = (TextView)v.findViewById(R.id.commentstxt1);
+                         comttxt.setText(usercomment);
+                final String usermail = model.getUser___Email();
+                final User st = new User();
 
-                                                 ((TextView)v.findViewById(id.commentername)).setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                        public void onClick(View v) {
+                 ((TextView)v.findViewById(id.commentername)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                        public void onClick(View v) {
 
-                                                            Bundle buncom =new Bundle();
-                                                            newamount++;
-                                                            buncom.putString("DisplayName",comtername.getText().toString());
-                                                            buncom.putString("UserMail",usermail);
-                                                alertDialog.dismiss();
-                                                    FragmentManager fragmentManager1 = getFragmentManager();
-                                                    othersprofiles_and_details usc = new othersprofiles_and_details();
-                                                    usc.setArguments(buncom);
+                            Bundle buncom =new Bundle();
+                            newamount++;
+                            buncom.putString("DisplayName",comtername.getText().toString());
+                            buncom.putString("UserMail",usermail);
+                alertDialog.dismiss();
+                    FragmentManager fragmentManager1 = getFragmentManager();
+                    othersprofiles_and_details usc = new othersprofiles_and_details();
+                    usc.setArguments(buncom);
 
-                                                    fragmentManager1.beginTransaction().replace(R.id.content, usc,null).addToBackStack(null).commit();
-                                                }
+                    fragmentManager1.beginTransaction().replace(R.id.content, usc,null).addToBackStack(null).commit();
+                }
 
-                                                    });
-                                                 Query userimgincmt = mydatabase.getReference().child("UserDetail").child(comtername.getText().toString());
-                                                 userimgincmt.addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String ds = String.valueOf(dataSnapshot.child("UserImg").getValue());
-                                                        //                                                        for(DataSnapshot dss:dataSnapshot.getChildren()) {
+                    });
+                 Query userimgincmt = mydatabase.getReference().child("UserDetail").child(comtername.getText().toString());
+                 userimgincmt.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String ds = String.valueOf(dataSnapshot.child("UserImg").getValue());
+                        //                                                        for(DataSnapshot dss:dataSnapshot.getChildren()) {
 //                                                            User us = new User();
 //                                                            us.setUserImg(dss.getValue(us.getClass()).getUserImg());
 ////                                                        String img = String.valueOf(dataSnapshot.getValue(User.class));
 ////                                                        if(img == null)
 ////                                                        {((ImageView)v.findViewById(id.comterimg)).setBackground(null);}
 ////                                                        else if(img != null) {
-                                                        ((ImageView) v.findViewById(id.comterimg)).setImageDrawable(imground);
-                                                            Picasso.with(getContext()).load(ds).fit().into(((ImageView) v.findViewById(id.comterimg)));
+                        ((ImageView) v.findViewById(id.comterimg)).setImageDrawable(imground);
+                            Picasso.with(getContext()).load(ds).fit().into(((ImageView) v.findViewById(id.comterimg)));
 ////                                                        }
 ////                                                        .setImageURI(Uri.parse(commterimg));
 
-                                                    }
+                    }
 
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                                                    }
-                                                });
+                    }
+                });
 
 
-                                            }
+            }
 
             @Override
             public View getView(final int position, final View view, final ViewGroup viewGroup) {
                final View vvv=  super.getView(position, view, viewGroup);
 
-                                                 expandingtext.setOnClickListener(new View.OnClickListener() {
+                 expandingtext.setOnClickListener(new View.OnClickListener() {
 //ViewGroup.LayoutParams params =new ViewGroup.LayoutParams();
                     @Override
                     public void onClick(View v) {
                         setcurrentamount(currentamount+5);
-
                         if(comlist.getHeight()>fbla.getView(0,view,viewGroup).getMeasuredHeight()) {
                             comlist.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, comlist.getMeasuredHeight()*4/3));
 
@@ -1465,23 +1472,24 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
         price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            mprogress = new ProgressDialog(getContext());
-                 mprogress.setMessage("Purchasing...");
-                 mprogress.show();
+                if (checkExistedpaypalEmail(Author1)) {
+
+                    mprogress = new ProgressDialog(getContext());
+                    mprogress.setMessage("Purchasing...");
+                    mprogress.show();
 //                Thread showing_dialog = new Thread(){
 //                    @Override
 //                    public void run(){
-                Query purchasername = myRef.child("story_name").orderByChild("Author").equalTo(auth.getDisplayName());
-                Query purchasername1 = psdb.orderByChild("purchasername").equalTo(auth.getDisplayName());
-                if (!Author1.equals(auth.getDisplayName()))
-                 {
+                    Query purchasername = myRef.child("story_name").orderByChild("Author").equalTo(auth.getDisplayName());
+                    Query purchasername1 = psdb.orderByChild("purchasername").equalTo(auth.getDisplayName());
+                    if (!Author1.equals(auth.getDisplayName())) {
 
 
-                    final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
-                    select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            addingstdataafterpaying(Author1, Desc, price1, ImgUrl,storyNAME ,storyCoNtEnT, StrySrc);
+                        final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
+                        select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                addingstdataafterpaying(Author1, Desc, price1, ImgUrl, storyNAME, storyCoNtEnT, StrySrc);
 //                            Bundle stdata = new Bundle();
 //                            stdata.putString("Authorize",Author1);
 //                            stdata.putString("STORYNAME",storyNAME);
@@ -1489,54 +1497,59 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
 //                            stdata.putString("STDESCRIbE",Desc);
 //                            stdata.putString("IMGURL",ImgUrl);
 //                            stdata.putString("STSOURC",StrySrc);
-                            amount_to_pay =String.valueOf(price1);
-                            PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay),"USD",Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
+                                PayPalPayment payPalPayment;
+                                String user_country = getContext().getResources().getConfiguration().locale.getCountry();
+                                amount_to_pay = String.valueOf(price1);
+                                if (user_country.equals("egy")) {
+                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "egp", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
+
+                                }
+                                payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
 //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE)
-                            payPalPayment.payeeEmail(paypalconfig.paypal_Publiser_Email);
+                                payPalPayment.payeeEmail(paypalconfig.paypal_Publiser_Email);
 //                            payPalPayment;
 
-                            Intent intent =new Intent(getContext(), PaymentActivity.class);
-                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config3);
-                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,config3);
+                                Intent intent = new Intent(getContext(), PaymentActivity.class);
+                                intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config3);
+                                intent.putExtra(PaymentActivity.EXTRA_PAYMENT, config3);
 //                            intent.putExtra("Authorize",Author1);
 //                            intent.putExtra("STORYNAME",storyNAME);
 //                            intent.putExtra("STCONTENT",storyCoNtEnT);
 //                            intent.putExtra("STDESCRIbE",Desc);
 //                            intent.putExtra("IMGURL",ImgUrl);
 //                            intent.putExtra("STSOURC",StrySrc);
-                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment);
+                                intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
 //                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
-                            startActivityForResult(intent,PAYPAL_REQUEST_CODE);
+                                startActivityForResult(intent, PAYPAL_REQUEST_CODE);
 //ItemFragment ite = new ItemFragment();
 //ite.setArguments(stdata);
-                            dialog.dismiss();
-                        }
-                    });
-                    select.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        select.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                            // paymentDialog(Author1, Desc, price1, ImgUrl, storyNAME,storyCoNtEnT,StrySrc,price);
-                        dialog.dismiss();
-                        }
-                    });
-                    AlertDialog alertDialog1 = select.create();
-                    alertDialog1.show();
-                    mprogress.dismiss();
+                                // paymentDialog(Author1, Desc, price1, ImgUrl, storyNAME,storyCoNtEnT,StrySrc,price);
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog1 = select.create();
+                        alertDialog1.show();
+                        mprogress.dismiss();
 //                  Toast.makeText(getContext(),"Story have been added successfully to your purchased Stories",Toast.LENGTH_LONG).show();
 
 
-            }else if (Author1.equals(auth.getDisplayName())){
-                    Toast.makeText(getContext(),"You are the story publisher",Toast.LENGTH_LONG).show();
+                    } else if (Author1.equals(auth.getDisplayName())) {
+                        Toast.makeText(getContext(), "You are the story publisher", Toast.LENGTH_LONG).show();
 
-                }
+                    }
 //                while (Author1 == auth.getDisplayName() || purchasername != null || purchasername1 != null){   Toast.makeText(getContext(),"You are already the story author",Toast.LENGTH_LONG).show();
 //                    break;}
 
 
-
                 }
-
+            }
         });
 final Query ratesquery = mystrateRef.orderByChild("STRYname").equalTo(storyNAME);
 Query totalranks = mystrateRef.orderByKey().startAt(storyNAME);
@@ -1547,7 +1560,7 @@ ratesquery.addListenerForSingleValueEvent(new ValueEventListener() {
 
 
 for(DataSnapshot ds: dataSnapshot.getChildren()) {
-        float countsrate = Float.parseFloat(String.valueOf(ds.child("styrates").getValue()));
+        double countsrate = Double.parseDouble(String.valueOf(ds.child("styrates").getValue()));
         totalcount += countsrate;
 //       settotalcount(totalcount += countsrate);
 
@@ -2350,14 +2363,14 @@ class holderls extends ListViewAutoScrollHelper {
 
        public void setStoryNAme(String storyNAMe) {
            storyNAme = (TextView)mview.findViewById(id.stname);
-           storyNAme.setText("Story Name:"+" " + storyNAMe);
+           storyNAme.setText(storyNAMe);
 
        }
 
 
        public void setStodesc(String stodesc1) {
            stodesc =(TextView)mview.findViewById(id.normaltype);
-           stodesc.setText("Type" + stodesc1);
+           stodesc.setText(stodesc1);
        }
 
        public void setStrate(String strate1) {
