@@ -107,12 +107,14 @@ DatabaseReference ratedf = FirebaseDatabase.getInstance().getReference().child("
         childs.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-if(!dataSnapshot.child("styrates").getValue().equals(null)) {
+    if(dataSnapshot.hasChild("styrates")){
+                if(!dataSnapshot.child("styrates").getValue().equals(null)) {
     float rates = Float.parseFloat(String.valueOf(dataSnapshot.child("styrates").getValue()));
     ratebar.setRating(rates);
 }else {
     ratebar.setRating(0);
 }
+    }
             }
 
             @Override

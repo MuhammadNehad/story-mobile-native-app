@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.os.ConfigurationCompat;
 import android.support.v4.widget.ListViewAutoScrollHelper;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -80,6 +82,7 @@ import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import mainproject.mainroject.story.Tables.PDFFILES;
 import mainproject.mainroject.story.Tables.Stories;
@@ -298,6 +301,16 @@ public class ItemFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View view = inflater.inflate(layout.fragment_item_list, container, false);
+//        String user_country0 = getContext().getResources().getConfiguration().getLocales().toString();
+        String user_country1 = getContext().getResources().getConfiguration().locale.getDisplayCountry();
+        String user_country2 = getContext().getResources().getConfiguration().locale.getISO3Country();
+        String user_country3 = getContext().getResources().getConfiguration().locale.getDisplayLanguage();
+//        String user_country4 = getContext().getResources().getConfiguration().locale.getDisplayScript();
+
+        String user_country = getContext().getResources().getConfiguration().locale.getCountry();
+    Locale loc = ConfigurationCompat.getLocales(Resources.getSystem().getConfiguration()).get(0);
+
+//    Toast.makeText(getContext(),loc.getCountry()+" "+user_country +" "+" "+user_country1+" "+user_country2+" "+user_country3+" ",Toast.LENGTH_SHORT).show();
         // TODO: RecyclerView
         loading = new ProgressDialog(getContext());
         pdfrv =(LinearLayout)view.findViewById(R.id.pdffilesview);
@@ -484,7 +497,7 @@ public class ItemFragment extends Fragment {
                 @Override
                 protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
 
-                    bookkey = getRef(viewAmount - 1).getKey();
+                    bookkey = getRef(position).getKey();
 //                    Toast.makeText(getContext(), bookkey, Toast.LENGTH_SHORT).show();
 
 //                bookkey = storiesListener.getSnapshot(position++).getKey();
@@ -757,7 +770,7 @@ public class ItemFragment extends Fragment {
             protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
 
                 try{
-                bookkey = getRef(viewAmount-1).getKey();
+                bookkey = getRef(position).getKey();
                 Toast.makeText(getContext(),bookkey,Toast.LENGTH_SHORT).show();
                 }catch (Exception ex){
 
@@ -872,6 +885,7 @@ public class ItemFragment extends Fragment {
 //                      mObjectCache.put("Category",model.getStrType());
 
                     bookkey = getRef(position).getKey();
+                    Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
 
                     dictionary.put("publisher",model.getAuthor());
                     dictionary.put("storyName",model.getStoryNaMe());
@@ -968,6 +982,7 @@ public class ItemFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final Stories model) {
                 final String bookkey = getRef(position).getKey();
+                Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
 
 //                holder.setContent(model.getStory_content());
                 holder.setAuthor(model.getAuthor());
@@ -1057,6 +1072,7 @@ public class ItemFragment extends Fragment {
                 @Override
                 protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final Stories model) {
                     final String bookkey = getRef(position).getKey();
+                    Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
 
 //                holder.setContent(model.getStory_content());
                     holder.setAuthor(model.getAuthor());
@@ -1093,6 +1109,7 @@ public class ItemFragment extends Fragment {
                 protected void onBindViewHolder(@NonNull final blogholder holder, final int position, @NonNull final PDFFILES model) {
 
                     final String bookkey = getRef(position).getKey();
+                  Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
                     holder.setPdfAuthor(model.getPdfAuthor());
                     holder.setPdfstname(model.getPdfstoryNaMe());
                     holder.setPdfcover(getContext(),model.getLogoUrl());
@@ -1184,10 +1201,10 @@ else{
         comlayout.setVisibility(GONE);
         final AlertDialog alertDialog = StoryDetailsl.create();
         price.setText(price1);
-        FirebaseDatabase.getInstance().getReference().child("Views").child(storyNAME+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())&& dataSnapshot.hasChild(storyNAME)) {
+                if(!dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())&& dataSnapshot.hasChild(bookkeys)) {
                 checkingbtn.setEnabled(false);
                     checkingbtn.setText("You Have Checked it once");
                 }
@@ -1202,10 +1219,10 @@ else{
         checkingbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference().child("Views").child(storyNAME+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
-            if(!dataSnapshot.hasChild(storyNAME+StrySrc))
+            if(!dataSnapshot.hasChild(bookkeys+StrySrc))
                if(StrySrc.equals("AppCreationStory"))
                {
                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
@@ -1239,7 +1256,7 @@ else{
             }
         });
         Query newquery =mydatabase.getReference().child("UserDetail").child(auth.getDisplayName()).orderByChild("UserImg");
-Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname").equalTo(storyNAME).limitToLast(getCurrentamount());
+Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname").equalTo(storyNAME).limitToLast(getCurrentamount());
 
 
         FirebaseListOptions<comments> options = new FirebaseListOptions.Builder<comments>()
@@ -1251,7 +1268,7 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
                 @Override
                 public void onClick(View v) {
                     String curusercomment = comentry.getText().toString().trim();
-                    DatabaseReference commentschild = commentsdb.child(storyNAME);
+                    DatabaseReference commentschild = commentsdb.child(bookkeys);
                     DatabaseReference commentschildrows = commentschild.push();
                     commentschildrows.child("username1").setValue(auth.getDisplayName());
                     commentschildrows.child("usercomment").setValue(curusercomment);
@@ -1362,13 +1379,14 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
         comlist.setAdapter(fbla);
         comlist.setSelection(comlist.getAdapter().getCount());
 
-        Query Ownedstoriescheck = osdb.child(storyNAME);
+        Query Ownedstoriescheck = osdb.child(bookkeys);
 
         Ownedstoriescheck.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 String values = String.valueOf(dataSnapshot.child("Author").getValue());
+
                 for(DataSnapshot ds: dataSnapshot.getChildren()){
                     if (String.valueOf(ds.child("Author").getValue()) != auth.getDisplayName()) {
                         price.setEnabled(true);
@@ -1386,7 +1404,7 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
 
     });
 
-        Query purchasedstoriescheck = psdb.orderByChild("story_name").equalTo(storyNAME);
+        Query purchasedstoriescheck = psdb.orderByChild("StoryKey").equalTo(bookkeys);
         purchasedstoriescheck.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -1410,7 +1428,7 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
         newquery.addChildEventListener(new ChildEventListener() {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String img = String.valueOf(dataSnapshot.getValue());
-                if(img == null)
+                if(img == null || img.isEmpty())
                 {commenterimg.setBackground(null);}
                 else{
                     Picasso.with(getContext()).load(img).fit().into(commenterimg);
@@ -1443,7 +1461,6 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
         exitcoms.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 comlayout.setVisibility(GONE);
                 comments1.setVisibility(View.VISIBLE);
             }
@@ -1489,7 +1506,7 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
                         select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                addingstdataafterpaying(Author1, Desc, price1, ImgUrl, storyNAME, storyCoNtEnT, StrySrc);
+                                addingstdataafterpaying(Author1, Desc, price1, ImgUrl, storyNAME, storyCoNtEnT, StrySrc,bookkeys);
 //                            Bundle stdata = new Bundle();
 //                            stdata.putString("Authorize",Author1);
 //                            stdata.putString("STORYNAME",storyNAME);
@@ -1500,12 +1517,18 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
                                 PayPalPayment payPalPayment;
                                 String user_country = getContext().getResources().getConfiguration().locale.getCountry();
                                 amount_to_pay = String.valueOf(price1);
-                                if (user_country.equals("egy")) {
-                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "egp", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
+                                double priceinDouble =(Double.parseDouble(price1));
+                                if (user_country.equals("EG")) {
+                                    amount_to_pay = String.valueOf((priceinDouble * 16.3));
+                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "EGP", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
 
+                                }else if(user_country.equals("GB")) {
+                                    amount_to_pay = String.valueOf((priceinDouble * 0.81));
+                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
+                                }else{
+                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
                                 }
-                                payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
-//                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE)
+                                //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE)
                                 payPalPayment.payeeEmail(paypalconfig.paypal_Publiser_Email);
 //                            payPalPayment;
 
@@ -1551,8 +1574,8 @@ Query commentsquery = commentsdb.child(storyNAME).orderByChild("currentstoryname
                 }
             }
         });
-final Query ratesquery = mystrateRef.orderByChild("STRYname").equalTo(storyNAME);
-Query totalranks = mystrateRef.orderByKey().startAt(storyNAME);
+final Query ratesquery = mystrateRef.orderByChild("bookkeys").equalTo(bookkeys);
+//Query totalranks = mystrateRef.ch.startAt(bookkeys);
 //                Toast.makeText(getContext(),"You Rated Story By"+" "+ (int)rating+" "+ "stars",Toast.LENGTH_LONG).show();
 ratesquery.addListenerForSingleValueEvent(new ValueEventListener() {
     @Override
@@ -1577,14 +1600,14 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
 //        Toast.makeText(getContext(), "You Rated Story By" + " " + getTotalrate() + " " + "stars", Toast.LENGTH_SHORT).show();
 }
 
-        totalrate = (totalcount /dataSnapshot.getChildrenCount());
+        totalrate = dataSnapshot.getChildrenCount()>0? (totalcount /dataSnapshot.getChildrenCount()):0;
             // final float finalTotalrate = getTotalrate();
             // final float finalTotalcount = getTotalcount();
         ratebar.setRating(totalrate);
 
             // ratebar.setRating(totalrate);
 
-        myRef.child(storyNAME).child("stRating").setValue(String.valueOf(totalrate));
+        myRef.child(bookkeys).child("stRating").setValue((String.valueOf(totalrate) != "NaN" ? totalrate:0));
 
     }
 
@@ -1593,18 +1616,24 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
 
     }
 });
+        ratebar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
+
+            }
+        });
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 setrate(rating);
                 ratingBar.setRating(rating);
                 Toast.makeText(getContext(), "You Rated Story By" + " " + rating+ " " + "stars", Toast.LENGTH_SHORT).show();
-                DatabaseReference Story_rate= mystrateRef.child(storyNAME+curAuthDN);
+                DatabaseReference Story_rate= mystrateRef.child(bookkeys+curAuthDN);
                 Story_rate.child("STRYname").setValue(storyNAME);
                 Story_rate.child("styrates").setValue(rating);
                 Story_rate.child("userEmail").setValue(auth.getEmail());
-
+                Story_rate.child("bookkeys").setValue(bookkeys);
             }
         });
 
@@ -1632,8 +1661,8 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
         price.setText(price1);
         alertDialog.show();
 //
-        booklikes= FirebaseDatabase.getInstance().getReference().child("Likes");
-        bookdislikes= FirebaseDatabase.getInstance().getReference().child("disLikes");
+        booklikes= FirebaseDatabase.getInstance().getReference().child("likes");
+        bookdislikes= FirebaseDatabase.getInstance().getReference().child("dislikes");
         reports= FirebaseDatabase.getInstance().getReference().child("Reports");
         reports.keepSynced(true);
         booklikes.keepSynced(true);
@@ -1648,7 +1677,7 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
                 reports.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        booksreport(dataSnapshot, storyNAME);
+                        booksreport(dataSnapshot, bookkeys);
 
                     }
 
@@ -1672,7 +1701,7 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
                 bookdislikes.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        adddislike(dataSnapshot, storyNAME);
+                        adddislike(dataSnapshot, bookkeys);
 
                     }
 
@@ -1697,7 +1726,7 @@ if(increaserate)
         booklikes.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                addlike(dataSnapshot ,storyNAME);
+                addlike(dataSnapshot ,bookkeys);
 
             }
 
@@ -1796,24 +1825,24 @@ if(increaserate)
 
         super.onPause();
        }
-    private void booksreport(DataSnapshot dataSnapshot, final String storyNAME) {
-        if(dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())){
+    private void booksreport(DataSnapshot dataSnapshot, final String rbookskeys) {
+        if(dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
 
 //            reports.child(storyNAME).child(auth.getDisplayName()).removeValue();
-            reportcontent(storyNAME);
+            reportcontent(rbookskeys);
 
-            myRef.child(storyNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     if (!dataSnapshot.child("Reports").exists()) {
                         int reportsCount = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
 
-                        myRef.child(storyNAME).child("Reports").setValue(1);
+                        myRef.child(rbookskeys).child("Reports").setValue(1);
                     }
                     else if (dataSnapshot.child("Reports").exists()) {
                         int reportsCount  = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
-                        myRef.child(storyNAME).child("Reports").setValue(reportsCount + 1);
+                        myRef.child(rbookskeys).child("Reports").setValue(reportsCount + 1);
                    }
                 }
                 @Override
@@ -1823,15 +1852,15 @@ if(increaserate)
             });
 
             increaserate =false;
-        }else if(!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())){
-            reportcontent(storyNAME);
-            reports.child(storyNAME).child(auth.getDisplayName()).setValue("RandomValue");
-            myRef.child(storyNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+        }else if(!dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
+            reportcontent(rbookskeys);
+            reports.child(rbookskeys).child(auth.getDisplayName()).setValue("RandomValue");
+            myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                 int i = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
-                myRef.child(storyNAME).child("Reports").setValue(i + 1);
+                myRef.child(rbookskeys).child("Reports").setValue(i + 1);
 
                 }
 
@@ -1844,22 +1873,22 @@ if(increaserate)
         }
     }
 
-    private void adddislike(DataSnapshot dataSnapshot, final String storyNAME) {
-        if(dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())){
+    private void adddislike(DataSnapshot dataSnapshot, final String rbookskeys) {
+        if(dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
 
-            bookdislikes.child(storyNAME).child(auth.getDisplayName()).removeValue();
+            bookdislikes.child(rbookskeys).child(auth.getDisplayName()).removeValue();
 
-            myRef.child(storyNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.child("disLikes").exists()) {
-                        myRef.child(storyNAME).child("disLikes").setValue(0);
+                    if (!dataSnapshot.child("dislikes").exists()) {
+                        myRef.child(rbookskeys).child("dislikes").setValue(0);
                     }
-                    if (dataSnapshot.child("disLikes").exists()) {
+                    if (dataSnapshot.child("dislikes").exists()) {
 
-                        int i = Integer.parseInt(String.valueOf(dataSnapshot.child("disLikes").getValue()));
+                        int i = Integer.parseInt(String.valueOf(dataSnapshot.child("dislikes").getValue()));
                         if (i>0){
-                        myRef.child(storyNAME).child("disLikes").setValue(i - 1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(i - 1);
                         }
                         }
                     }
@@ -1871,41 +1900,41 @@ if(increaserate)
             });
 
             increaserate =false;
-        }else if(!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())){
+        }else if(!dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
 
-            booklikes.child(storyNAME).child(auth.getDisplayName()).removeValue();
-            bookdislikes.child(storyNAME).child(auth.getDisplayName()).setValue("RandomValue");
-            myRef.child(storyNAME).addListenerForSingleValueEvent(new ValueEventListener() {
+            booklikes.child(rbookskeys).child(auth.getDisplayName()).removeValue();
+            bookdislikes.child(rbookskeys).child(auth.getDisplayName()).setValue("RandomValue");
+            myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChild("disLikes") && dataSnapshot.hasChild("Likes")){
-                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("disLikes").getValue()));
-                    int ii = Integer.parseInt(String.valueOf(dataSnapshot.child("Likes").getValue()));
+                    if(dataSnapshot.hasChild("dislikes") && dataSnapshot.hasChild("likes")){
+                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("dislikes").getValue()));
+                    int ii = Integer.parseInt(String.valueOf(dataSnapshot.child("likes").getValue()));
 
-                    myRef.child(storyNAME).child("disLikes").setValue(i+1);
+                    myRef.child(rbookskeys).child("dislikes").setValue(i+1);
                     if(dataSnapshot.hasChild("likes")&& dataSnapshot.hasChild("dislikes") ) {
 
-                        myRef.child(storyNAME).child("Likes").setValue(i + 1);
+                        myRef.child(rbookskeys).child("likes").setValue(i + 1);
                         if(ii>0) {
-                            myRef.child(storyNAME).child("disLikes").setValue(ii - 1);
+                            myRef.child(rbookskeys).child("dislikes").setValue(ii - 1);
                         }}else if(!dataSnapshot.hasChild("likes")&& dataSnapshot.hasChild("dislikes")){
-                        myRef.child(storyNAME).child("likes").setValue(1);
-                        myRef.child(storyNAME).child("dislikes").setValue(ii-1);
+                        myRef.child(rbookskeys).child("likes").setValue(1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(ii-1);
                     }else if(dataSnapshot.hasChild("likes")&& !dataSnapshot.hasChild("dislikes")){
-                        myRef.child(storyNAME).child("likes").setValue(i+1);
-                        myRef.child(storyNAME).child("dislikes").setValue(0);
+                        myRef.child(rbookskeys).child("likes").setValue(i+1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(0);
                     }
                     else{
-                        myRef.child(storyNAME).child("likes").setValue(1);
-                        myRef.child(storyNAME).child("dislikes").setValue(0);
+                        myRef.child(rbookskeys).child("likes").setValue(1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(0);
                     }
                     }
                     else{
-                        if (!dataSnapshot.hasChild("disLikes"))
-                        {myRef.child(storyNAME).child("disLikes").setValue(1);
+                        if (!dataSnapshot.hasChild("dislikes"))
+                        {myRef.child(rbookskeys).child("dislikes").setValue(1);
                         }
-                        if(!dataSnapshot.hasChild("Likes")){
-                            myRef.child(storyNAME).child("Likes").setValue(0);
+                        if(!dataSnapshot.hasChild("likes")){
+                            myRef.child(rbookskeys).child("likes").setValue(0);
                         }
                     }
                 }
@@ -1950,20 +1979,20 @@ if(increaserate)
     reportdialogs.show();
 
 }
-    public void addlike(DataSnapshot ds , final String storynaMe){
-        if(ds.child(storynaMe).hasChild(auth.getDisplayName())){
+    public void addlike(DataSnapshot ds , final String rbookskeys){
+        if(ds.child(rbookskeys).hasChild(auth.getDisplayName())){
 
-        booklikes.child(storynaMe).child(auth.getDisplayName()).removeValue();
-        myRef.child(storynaMe).addListenerForSingleValueEvent(new ValueEventListener() {
+        booklikes.child(rbookskeys).child(auth.getDisplayName()).removeValue();
+        myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.child("Likes").exists()) {
-                    myRef.child(storynaMe).child("Likes").setValue(0);
+                if (!dataSnapshot.child("likes").exists()) {
+                    myRef.child(rbookskeys).child("likes").setValue(0);
                 }
-                if (dataSnapshot.child("Likes").exists()) {
+                if (dataSnapshot.child("likes").exists()) {
 
-                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("Likes").getValue()));
-                    myRef.child(storynaMe).child("Likes").setValue(i - 1);
+                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("likes").getValue()));
+                    myRef.child(rbookskeys).child("likes").setValue(i - 1);
                 }
                 }
 
@@ -1974,41 +2003,41 @@ if(increaserate)
         });
 
         increaserate =false;
-    }else if(!ds.child(storynaMe).hasChild(auth.getDisplayName())){
-        booklikes.child(storynaMe).child(auth.getDisplayName()).setValue("RandomValue");
-        bookdislikes.child(storynaMe).child(auth.getDisplayName()).removeValue();
+    }else if(!ds.child(rbookskeys).hasChild(auth.getDisplayName())){
+        booklikes.child(rbookskeys).child(auth.getDisplayName()).setValue("RandomValue");
+        bookdislikes.child(rbookskeys).child(auth.getDisplayName()).removeValue();
 
-        myRef.child(storynaMe).addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("disLikes") && dataSnapshot.hasChild("Likes")) {
+                if(dataSnapshot.hasChild("dislikes") && dataSnapshot.hasChild("likes")) {
 
-                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("Likes").getValue()));
-                    int ii = Integer.parseInt(String.valueOf(dataSnapshot.child("disLikes").getValue()));
+                    int i = Integer.parseInt(String.valueOf(dataSnapshot.child("likes").getValue()));
+                    int ii = Integer.parseInt(String.valueOf(dataSnapshot.child("dislikes").getValue()));
 
                     if (dataSnapshot.hasChild("likes") && dataSnapshot.hasChild("dislikes")) {
 
-                        myRef.child(storynaMe).child("Likes").setValue(i + 1);
+                        myRef.child(rbookskeys).child("likes").setValue(i + 1);
                         if (ii > 0) {
-                            myRef.child(storynaMe).child("disLikes").setValue(ii - 1);
+                            myRef.child(rbookskeys).child("dislikes").setValue(ii - 1);
                         }
                     } else if (!dataSnapshot.hasChild("likes") && dataSnapshot.hasChild("dislikes")) {
-                        myRef.child(storynaMe).child("likes").setValue(1);
-                        myRef.child(storynaMe).child("dislikes").setValue(ii - 1);
+                        myRef.child(rbookskeys).child("likes").setValue(1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(ii - 1);
                     } else if (dataSnapshot.hasChild("likes") && !dataSnapshot.hasChild("dislikes")) {
-                        myRef.child(storynaMe).child("likes").setValue(i + 1);
-                        myRef.child(storynaMe).child("dislikes").setValue(0);
+                        myRef.child(rbookskeys).child("likes").setValue(i + 1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(0);
                     } else {
-                        myRef.child(storynaMe).child("likes").setValue(1);
-                        myRef.child(storynaMe).child("dislikes").setValue(0);
+                        myRef.child(rbookskeys).child("likes").setValue(1);
+                        myRef.child(rbookskeys).child("dislikes").setValue(0);
                     }
                 }
                 else{
-                    if (!dataSnapshot.hasChild("disLikes"))
-                    {myRef.child(storynaMe).child("disLikes").setValue(0);
+                    if (!dataSnapshot.hasChild("dislikes"))
+                    {myRef.child(rbookskeys).child("dislikes").setValue(0);
                     }
-                    if(!dataSnapshot.hasChild("Likes")){
-                        myRef.child(storynaMe).child("Likes").setValue(1);
+                    if(!dataSnapshot.hasChild("likes")){
+                        myRef.child(rbookskeys).child("likes").setValue(1);
                     }
 
                 }
@@ -2023,9 +2052,9 @@ if(increaserate)
     }
     }
     public void putimg(DataSnapshot ds ,String storynaMe){}
-    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc;
+    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,bookskeys;
 
-    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1,String STOryNAme ,String STRCOntEnT, String STRYSrC)
+    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1,String STOryNAme ,String STRCOntEnT, String STRYSrC,String bookkey)
     {   this.AuthoRs =Authors;
         this.DescriP = Descrip;
         this.pRICe =price11;
@@ -2033,6 +2062,7 @@ if(increaserate)
         this.StorYNamE = STOryNAme;
         this.StRContEnT = STRCOntEnT;
         this.StrYsRc = STRYSrC;
+        this.bookkey =bookskeys;
 //        DatabaseReference psdbchild = psdb.push();
 //
 //        psdbchild.child("purchasername").setValue(auth.getDisplayName());
@@ -2137,6 +2167,8 @@ if(increaserate)
                 psdbchild.child("Story_Content").setValue(StRContEnT);
                 psdbchild.child("Story_ImgUrl").setValue(IMGUrL);
                 psdbchild.child("StorySrc").setValue(StrYsRc);
+                psdbchild.child("StoryKey").setValue(bookskeys);
+
 
                 Toast.makeText(getContext(), "Payment approved"+"\n" +"Story have been added", Toast.LENGTH_SHORT).show();
                 }

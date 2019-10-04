@@ -1,16 +1,27 @@
 package mainproject.mainroject.story;
 
+import android.Manifest;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.TokenWatcher;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,7 +43,10 @@ import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
 import com.paypal.android.sdk.payments.PayPalPayment;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
@@ -40,6 +54,7 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 public class maincontent extends AppCompatActivity {
     private static final String TAG = "Value";
+    private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1 ;
     private ListView data;
     SearchView searchView;
     Toolbar tb;
@@ -51,6 +66,9 @@ public class maincontent extends AppCompatActivity {
     private ArrayList<String> keys = new ArrayList<>();
     private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
+    private LocationManager locationManager;
+    String country_name;
+    Geocoder geocoder;
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager = getSupportFragmentManager();
     RelativeLayout SearchBox;
@@ -60,53 +78,101 @@ public class maincontent extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-             fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    fragmentTransaction.replace(R.id.content, new ItemFragment(),"itemfrags").addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+                    fragmentTransaction.replace(R.id.content, new ItemFragment(), "itemfrags").addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
 
                     return true;
                 case R.id.navigation_dashboard:
-                    fragmentTransaction.replace(R.id.content, new ChatTabs(),null).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
+                    fragmentTransaction.replace(R.id.content, new ChatTabs(), null).addToBackStack(null).setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).commit();
                     return true;
                 case R.id.profile_nav:
-                    fragmentTransaction.replace(R.id.content, new Profile(),null).addToBackStack(null).commit();
+                    fragmentTransaction.replace(R.id.content, new Profile(), null).addToBackStack(null).commit();
                     return true;
             }
             return true;
-}
-
+        }
 
 
     };
 
     public maincontent() {
     }
-home h = new home();
-    ItemFragment itemFragment= new ItemFragment();
+
+    home h = new home();
+    ItemFragment itemFragment = new ItemFragment();
 
     String img;
-String storytitle,price;
-ItemFragment it = new ItemFragment();
-//EditText SearchET;
+    String storytitle, price;
+    ItemFragment it = new ItemFragment();
+    //EditText SearchET;
     FrameLayout fl;
+
     @Override
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maincontent);
-//        SearchBox= findViewById(R.id.relLayout1);
-//        SearchET =findViewById(R.id.input_search);
-        //
-//        if(savedInstanceState == null){
-//    h.viewpa.editText.setHint("Type Your Story Here");
-//}else{
-//            String content  = savedInstanceState.getString("contentfromapp");
-//
-//    h.viewpa.editText.setText(content);
-//}
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        geocoder = new Geocoder(getApplicationContext());
+
         mDatabase = FirebaseDatabase.getInstance().getReference("UserDetail");
+        for (String provider :
+                locationManager.getAllProviders()) {
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION))
+                {}
+                else{
+                    ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
+
+
+                    );
+                }
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                Toast.makeText(this,String.valueOf(provider),Toast.LENGTH_LONG).show();
+
+                continue;
+            }
+            @SuppressWarnings("ResourseType") Location location = locationManager.getLastKnownLocation(provider);
+
+
+            if(location != null)
+            {
+                try{
+                    List<Address> addresses = geocoder.getFromLocation(location.getLatitude(),location.getLongitude(),1);
+                    if(addresses != null && addresses.size()>0)
+                    {
+                        country_name =addresses.get(0).getCountryName();
+//                        Log.d(TAG,"Location: "+country_name);
+                        Toast.makeText(this,country_name,Toast.LENGTH_LONG).show();
+                    }
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+            Log.d(TAG,"Location ");
+        }
 
         fl =(FrameLayout)findViewById(R.id.content);
 
@@ -227,6 +293,22 @@ viewpageradapter viewpas = new viewpageradapter(this);
 
         super.onSaveInstanceState(outState, outPersistentState);
         outState.putString("contentfromapp", h.viewpa.editText.getText().toString());
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode)
+        {
+            case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:{
+                if(grantResults.length>0 &&  grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this,"Permission Granted",Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(this,"Permission Failed",Toast.LENGTH_LONG).show();
+
+                }
+                return;
+            }
+        }
     }
 
     @Override

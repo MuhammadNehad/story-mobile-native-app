@@ -68,6 +68,13 @@
             android:onClick="gotosignup"
             android:text="If You would like to signup, please click here"
             android:textColor="@color/Bisque" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="gotoEmailVerify"
+            android:text="If You would like to signup, please click here"
+            android:textColor="@color/Bisque" />
     </LinearLayout>
 
 </RelativeLayout>

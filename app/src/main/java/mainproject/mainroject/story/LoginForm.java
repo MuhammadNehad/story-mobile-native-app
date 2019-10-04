@@ -21,7 +21,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.Buffer;
+import java.security.NoSuchAlgorithmException;
+
+import static java.security.spec.MGF1ParameterSpec.SHA1;
+import static mainproject.mainroject.story.HashCode.SHA1;
 
 public class LoginForm extends AppCompatActivity {
     private static final String TAG = "Login" ;
@@ -104,7 +109,7 @@ DatabaseReference mDatabase;
         else{
 
 try {
-    mAuth.signInWithEmailAndPassword(Email, password1).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+    mAuth.signInWithEmailAndPassword(Email,SHA1(password1)).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
         @Override
         public void onComplete(@NonNull Task<AuthResult> task) {
             if (!task.isSuccessful()) {
@@ -117,7 +122,12 @@ try {
 //    throw GooglePlayServicesNotAvailableException'A';
     StringBuffer buffer =new StringBuffer();
     buffer.append("Add Google acc to your phone");
-}}
+} catch (NoSuchAlgorithmException e) {
+    e.printStackTrace();
+} catch (UnsupportedEncodingException e) {
+    e.printStackTrace();
+}
+        }
 
 
 //            FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -215,6 +225,10 @@ try {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
         finish();
+
+    }
+
+    public void gotoEmailVerify(View view) {
 
     }
 /*

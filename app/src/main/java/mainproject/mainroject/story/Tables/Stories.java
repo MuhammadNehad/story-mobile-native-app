@@ -9,25 +9,25 @@ public class Stories {
     private Date publishDate;
     int numofrankers;
 
-    private int Likes,Reports;
-     private int disLikes;
+    private int likes,Reports;
+     private int dislikes;
 
     public Stories(){}
 
     public int getLikes() {
-        return Likes;
+        return likes;
     }
 
     public void setLikes(int likes) {
-        this.Likes = likes;
+        this.likes = likes;
     }
 
     public int getDislikes() {
-        return disLikes;
+        return dislikes;
     }
 
     public void setDislikes(int dislikes) {
-        this.disLikes = dislikes;
+        this.dislikes = dislikes;
     }
 
     public String getAuthor() {
