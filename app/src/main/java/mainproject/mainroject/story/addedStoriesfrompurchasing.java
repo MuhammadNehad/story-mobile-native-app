@@ -96,32 +96,6 @@ ProgressDialog pd;
          bundle.putString("StoryIMG", model.getStory_ImgUrl());
 
          sendstory(model.getStorySrc(), bundle);
-//         if(model.getStorySrc()=="AppCreationStory") {
-//             pd.setMessage("Loading");
-//             pd.show();
-//             FragmentManager fragmentManager1 = getActivity().getSupportFragmentManager();
-//             currentstory css = new currentstory();
-//             css.setArguments(bundle);
-//             fragmentManager1.beginTransaction().replace(R.id.content, css, null).addToBackStack(null).commit();
-//         pd.dismiss();
-//         }else if(model.getStorySrc()=="PDFSTORY"){
-////             Bundle bundle = new Bundle();
-//             pd.setMessage("Loading...");
-//             pd.show();
-//
-//             FragmentManager fragmentManager2 = getActivity().getSupportFragmentManager();
-//             pdfview pdfv = new pdfview();
-//             pdfv.setArguments(bundle);
-//             fragmentManager2.beginTransaction().replace(R.id.content, pdfv, null).addToBackStack(null).commit();
-//         pd.dismiss();
-//         }
-//         sendstory(model.getStory_Author(), model.getStory_Desc(), model.getStory_ImgUrl(), model.getStory_name());
-
-         //         //
-//         csa.setText(model.getStory_Author());
-//         csn.setText(model.getStory_name());
-//         csc.setText(model.getStory_Content());
-//         ((TextView)v.findViewById(R.id.currentstoryAuthor)).setText(model.getStory_Author());
 
      }
  });
@@ -274,8 +248,8 @@ ProgressDialog pd;
 
 
         public void setStodesc(String stodesc1) {
-            sto_desc =(TextView)mview.findViewById(R.id.puchasedstoryType);
-            sto_desc.setText(stodesc1);
+//            sto_desc =(TextView)mview.findViewById(R.id.puchasedstoryType);
+//            sto_desc.setText(stodesc1);
         }
 
         public void setStrate(String strate1) {

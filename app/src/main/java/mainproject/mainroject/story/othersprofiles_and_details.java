@@ -330,7 +330,7 @@ public class othersprofiles_and_details extends Fragment {
         ImageView cover = (ImageView) detaildialog.findViewById(R.id.story__img);
         TextView Descr = (TextView) detaildialog.findViewById(R.id.description);
         final Button price = (Button) detaildialog.findViewById(R.id.storypricetxt);
-        TextView Authors = (TextView) detaildialog.findViewById(R.id.Author);
+        TextView Authors = (TextView) detaildialog.findViewById(R.id.Authors);
         TextView storyNAme = (TextView) detaildialog.findViewById(R.id.stname);
         Picasso.with(getContext()).load(ImgUrl).into(cover);
         final TextView comtxt = (TextView) detaildialog.findViewById(R.id.commentstxt1);

@@ -3,11 +3,14 @@ package mainproject.mainroject.story;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.IconCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.util.FitPolicy;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -91,16 +95,19 @@ public class updatestorycontent extends Fragment {
         newdesc = (EditText)view.findViewById(R.id.EditingDesc);
         newpric = (EditText)view.findViewById(R.id.newprice);
         btns =(Button)view.findViewById(R.id.updatedata);
+        mProgress.setMessage("updating...");
         bundle =getArguments();
         String type;
         Picasso.with(getContext()).load(bundle.getString("StoryIMG")).fit().into(img);
         titles.setText(bundle.getString("StoryName"));
         newdesc.setText(bundle.getString("StoryDesc"));
         newpric.setText(bundle.getString("StoryPrc"));
-
-        final DatabaseReference striesdb = FirebaseDatabase.getInstance().getReference().child("StoriesDetails").child(titles.getText().toString());
+        String sKey  = bundle.getString("StoryKey");
+        Log.d("content",bundle.getString("StoryCont").isEmpty() || bundle.getString("StoryCont") == null  ? "no content":bundle.getString("StoryCont"));
+        final DatabaseReference striesdb = FirebaseDatabase.getInstance().getReference().child("StoriesDetails").child(sKey);
 
         type = bundle.getString("StoryType");
+        Log.d("Type",type);
         if(type != null) {
             if (type.equals("AppCreationStory")) {
                 cotent.setText(bundle.getString("StoryCont"));
@@ -108,16 +115,24 @@ public class updatestorycontent extends Fragment {
                 cotent.setVisibility(View.VISIBLE);
                 pdfView.setVisibility(View.GONE);
 
-                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
+//                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
 
                 btns.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        striesdb.child("STDESC").setValue(newdesc.getText().toString());
-                        if(!newpric.getText().toString().isEmpty()) {
-                            striesdb.child("story_price").setValue(newpric.getText().toString());
-                        }
-                    }
+                        mProgress.show();
+                        Thread mthread = new Thread() {
+                            @Override
+                            public void run() {
+                                striesdb.child("STDESC").setValue(newdesc.getText().toString());
+                                if (!newpric.getText().toString().isEmpty()) {
+                                    striesdb.child("story_price").setValue(newpric.getText().toString());
+                                }
+                                mProgress.dismiss();
+                            }
+                        };
+                        mthread.start();
+                            }
                 });
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -144,22 +159,37 @@ public class updatestorycontent extends Fragment {
 //            }
 //        });
             } else if (type.equals("PDFSTORY")) {
-                cotent.setVisibility(View.INVISIBLE);
+                cotent.setVisibility(View.GONE);
                 pdfView.setVisibility(View.VISIBLE);
-                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
-                pdfView.fitToWidth(1);
-                pdfView.getCurrentPage();
-                pdfView.loadPages();
-                pdfView.isSwipeVertical();
+//                striesdb.orderByChild("storyNaMe").equalTo(titles.getText().toString());
+//                pdfView.fitToWidth(1);
+//                pdfView.getCurrentPage();
+//                pdfView.loadPages();
+//                pdfView.isSwipeVertical();
+                mProgress.show();
+                new Retrievepdffile().execute(bundle.getString("StoryCont"));
+
+                mProgress.dismiss();
 
                 btns.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        striesdb.child("STDESC").setValue(newdesc.getText().toString());
-                        if(!newpric.getText().toString().isEmpty()){
-                        striesdb.child("story_price").setValue(newpric.getText().toString());
+                    mProgress.show();
+                        Thread mthread = new Thread() {
+                            @Override
+                            public void run() {
+
+                                striesdb.child("STDESC").setValue(newdesc.getText().toString());
+                                if (!newpric.getText().toString().isEmpty()) {
+                                    striesdb.child("story_price").setValue(newpric.getText().toString());
+                                }
+                                mProgress.dismiss();
+                            }
+                            };
+                        mthread.start();
+
                     }
-                    }
+
                 });
                 img.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -171,7 +201,7 @@ public class updatestorycontent extends Fragment {
                 });
 
                 stype = "PDFSTORY";
-                new Retrievepdffile().execute(bundle.getString("StoryCont"));
+
 
 //                Toast.makeText(getContext(), "coming soon", Toast.LENGTH_LONG).show();
             }
@@ -203,7 +233,7 @@ public class updatestorycontent extends Fragment {
 
         @Override
         protected void onPostExecute(InputStream inputStream) {
-            pdfView.fromStream(inputStream).load();
+            pdfView.fromStream(inputStream).pageFitPolicy(FitPolicy.WIDTH).load();
         }
     }
 
@@ -217,24 +247,31 @@ public class updatestorycontent extends Fragment {
             uri =data.getData();
 //            Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
 //            child = mimgref.push();
-                StorageReference mstr = myStorage.child("Photos").child(userEmail).child("storylogo").child(bundle.getString("StoryName")+"/").child(uri.getLastPathSegment());
-                mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+               Thread mthread = new Thread(){
+                   @Override
+                   public void run(){
+                       StorageReference mstr = myStorage.child("Photos").child(userEmail).child("storylogo").child(bundle.getString("StoryName")+"/").child(uri.getLastPathSegment());
+                       mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-                    @Override
+                           @Override
 
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Toast.makeText(getContext(), "Updating Successful", Toast.LENGTH_LONG).show();
+                           public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                               Toast.makeText(getContext(), "Updating Successful", Toast.LENGTH_LONG).show();
 
-                        mProgress.dismiss();
-                        downloaduri = taskSnapshot.getDownloadUrl();
-                        Picasso.with(getActivity()).load(downloaduri).fit().into(img);
+                               downloaduri = taskSnapshot.getDownloadUrl();
+                               Picasso.with(getActivity()).load(downloaduri).fit().into(img);
 
-                        muserstoriesref.child(bundle.getString("StoryName")).child("LogoUrl").setValue(downloaduri.toString());
+                               muserstoriesref.child(bundle.getString("StoryKey")).child("LogoUrl").setValue(downloaduri.toString());
 //                    muserstoriesref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
+//                                mProgress.setIcon();
+                               mProgress.dismiss();
 
-                    }
-                });
+                           }
+                       });
 
+                   }
+               };
+            mthread.start();
 //            imgpath = uri.getLastPathSegment();
 //            child.child("OwnerEmail").setValue(currentU);
 //            child.child("ImageName").setValue(imgpath);

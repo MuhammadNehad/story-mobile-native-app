@@ -153,92 +153,11 @@ public class ChatRoom extends Fragment {
         LayoutInflater vi1= getLayoutInflater();
         chalist.setItemAnimator(new DefaultItemAnimator());
         chalist.addItemDecoration(new DividerItemDecoration(getContext(),LinearLayoutManager.VERTICAL));
-
         customrecyclerviewAdapter = new MyAdapter(chalist,ChatRoom.this,getchatdata);
 
-//        mrefreshlayout.setEnabled(false);
         chalist.setAdapter(customrecyclerviewAdapter);
         usechildlistner();
         refreshing();
-
-//        chalist.addOnScrollListener(new EndlessRecyclerOnScrollListener(chatlayout) {
-//    @Override
-//    public void onLoadMore(int current_page) {
-//        mCurrentpage = current_page;
-//        usechildlistner();
-//    }
-//});
-//        mrefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mCurrentpage++;
-//                itempos=0;
-//
-//                loadMoreData();
-//
-//            }
-//        });
-        //        ChatRoom cr = new ChatRoom()
-
-//        Runnable r =new Runnable() {
-//            @Override
-//            public void run() {
-//                long time = System.currentTimeMillis() + 10000;
-//                while (System.currentTimeMillis() < time) {
-//                  synchronized (this) {
-//                      try {
-//                          wait(time - System.currentTimeMillis());
-//                      } catch (InterruptedException e) {
-//                          e.printStackTrace();
-//                      }
-//                  }
-//                }
-//            }
-//        };
-//        Thread chatload = new Thread(r);
-//        chatload.start();
-//        chatlist.notifyDataSetChanged();
-
-
-        //        chatload.start();
-//        chatload.isAlive();
-//        Thread.sleep(32131);
-//        chatload.join();
-
-        //.limitToLast(pages*limit+total)
-//        chalist.setOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//            if(newState== AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-//                isScroll=true;
-//            }
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-////                total+=pages*limit;
-////
-////               pages= chatlayout.getChildCount();
-////               total= chatlayout.getItemCount();
-////               limit= chatlayout.findFirstVisibleItemPosition();
-////               if((isScroll) && (pages+limit == total))
-////               {
-////                    isScroll=false;
-//////                   chatitemdesign();
-////                   mCurrentpage++;
-////
-//                   chats();
-//        chalist.setAdapter(chatlist);
-//         chatlist.notifyDataSetChanged();
-//////chatlayout.removeAndRecycleAllViews(chalist.Recycler());
-////               }
-//
-//
-//            }
-//        });
-//        chalist.setSelection(chalist.getAdapter().getCount());
 
         sendthemessage.setOnClickListener(new View.OnClickListener() {
 
@@ -373,22 +292,10 @@ public class ChatRoom extends Fragment {
 
             }
         });
-//        usechildlistner();
-
-//    final RelativeLayout.LayoutParams forlist = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//
-//                 forlist.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-
-
-
-
-//        chalist.getMaxScrollAmount();
-//        chalist.smoothScrollToPosition(chatlist.getCount());
-
-//
 
         return chatroom;
     }
+
 private void refreshing(){
     mrefreshlayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
         @Override

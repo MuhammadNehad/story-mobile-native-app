@@ -72,6 +72,19 @@
             android:popupBackground="@color/White"
             android:spinnerMode="dropdown"
             android:ellipsize="marquee"/>
+
+        <EditText
+            android:id="@+id/BookAuthors"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:hint="BookAuthor"
+            android:background="@drawable/custom_edittext"
+            android:defaultFocusHighlightEnabled="true"
+            android:ems="3"
+            android:fontFamily="sans-serif-condensed"
+            android:singleLine="true"
+
+            />
         <LinearLayout
             android:id="@+id/pdfform"
             android:layout_width="match_parent"
@@ -146,6 +159,29 @@
                     android:layout_marginRight="20dp"
                     android:background="@drawable/ic_file_upload_black_24dp"
                     tools:ignore="RtlHardcoded" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/generate"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="left|center"
+
+                    android:layout_marginEnd="20dp"
+
+                    android:layout_marginRight="20dp"
+                    tools:ignore="RtlHardcoded" />
+                <EditText
+                    android:id="@+id/ISBN"
+                    android:layout_width="100dp"
+                    android:layout_height="30dp"
+                    android:onClick="readISBN"
+
+                    />
             </LinearLayout>
         </LinearLayout>
         <TextView

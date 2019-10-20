@@ -4,7 +4,7 @@ package mainproject.mainroject.story.Tables;
 import java.util.Date;
 
 public class Stories {
-    private String Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc
+    private String publishers, Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc
             ,subCategory,StrCatSearchObj;
     private Date publishDate;
     int numofrankers;
@@ -175,5 +175,13 @@ public class Stories {
 
     public void setStrCatSearchObj(String strCatSearchObj) {
         StrCatSearchObj = strCatSearchObj;
+    }
+
+    public String getPublishers() {
+        return publishers;
+    }
+
+    public void setPublishers(String publishers) {
+        this.publishers = publishers;
     }
 }

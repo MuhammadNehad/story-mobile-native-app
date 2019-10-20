@@ -24,7 +24,7 @@
             android:gravity="center"
             android:orientation="vertical">
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
@@ -56,7 +56,7 @@
                         android:layout_height="50dp"
                         android:layout_margin="3dp"
                         android:orientation="horizontal">
-                        <!--<requestFocus/>-->
+
                         <Button
                             android:id="@+id/All"
                             style="@style/FirebaseUI.Button"
@@ -91,40 +91,6 @@
                 android:ellipsize="marquee"/>
 
 
-            <!--<LinearLayout-->
-            <!--android:orientation="horizontal"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:gravity="center">-->
-            <!--&lt;!&ndash;<Button&ndash;&gt;-->
-            <!--&lt;!&ndash;android:id="@+id/Onsitestoriesviewer"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:text="text stories"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
-
-            <!--&lt;!&ndash;<Button&ndash;&gt;-->
-            <!--&lt;!&ndash;android:id="@+id/pdfstoriesviewer"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_weight="2"&ndash;&gt;-->
-
-            <!--&lt;!&ndash;android:layout_height="30dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_margin="5dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:padding="2dp"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:background="@android:color/holo_red_light"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:layout_gravity="start|center"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:text="PDF Books"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:textColor="@android:color/background_light"&ndash;&gt;-->
-            <!--&lt;!&ndash;android:textColorHighlight="@android:color/holo_orange_light" />&ndash;&gt;-->
-
-
-            <!--</LinearLayout>-->
             <View
                 android:id="@+id/identityTxt2"
                 android:layout_width="match_parent"
@@ -132,18 +98,15 @@
                 android:outlineProvider="bounds"
                 android:text="FullTxtStories"
                 />
-
-            <!--<android.support.v7.widget.RecyclerView-->
-            <!--android:visibility="gone"-->
-            <!--android:id="@+id/pdflist"-->
-
-            <!--android:padding="5dp"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="600dp"-->
-            <!--android:fillViewport="true"-->
-            <!--android:layout_marginBottom="5dp"-->
-            <!--/>-->
-            <!--tools:listitem="@layout/pdflistitem"-->
+                <TextView
+                    android:id="@+id/nobookText"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    android:text="No Books Available"
+                    android:visibility="gone"
+                    />
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/list"
                 android:layout_width="match_parent"

@@ -73,8 +73,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:onClick="gotoEmailVerify"
-            android:text="If You would like to signup, please click here"
-            android:textColor="@color/Bisque" />
+            android:text="forgot password?"
+            android:textColor="@color/Bisque"
+            android:visibility="gone"/>
     </LinearLayout>
 
 </RelativeLayout>

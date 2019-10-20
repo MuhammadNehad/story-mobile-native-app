@@ -58,6 +58,7 @@ public class pmview extends Fragment {
 //        comingsoontxt =(TextView) view.findViewById(R.id.comingsoon1);
         curUserDN = mAuth.getDisplayName();
         newMessagesView = view.findViewById(R.id.newMessagesViews);
+        comingsoontxt = view.findViewById(R.id.comingsoonTxt);
         myUnReadMessages = chatdatabase.child("Recievers").orderByValue().equalTo(curUserDN);
         getProfilesImagesQuery = userDetail.orderByChild("UserName").equalTo(messengersDN);
         //        options = new FirebaseListOptions<String>()
@@ -129,16 +130,7 @@ public class pmview extends Fragment {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String ds = String.valueOf(dataSnapshot.child("UserImg").getValue());
-                        //                                                        for(DataSnapshot dss:dataSnapshot.getChildren()) {
-//                                                            User us = new User();
-//                                                            us.setUserImg(dss.getValue(us.getClass()).getUserImg());
-////                                                        String img = String.valueOf(dataSnapshot.getValue(User.class));
-////                                                        if(img == null)
-////                                                        {((ImageView)v.findViewById(id.comterimg)).setBackground(null);}
-////                                                        else if(img != null) {
                         Picasso.with(getContext()).load(ds).fit().into(((ImageView) chatdegreesview.findViewById(R.id.pvsenderimg)));
-////                                                        }
-////                                                        .setImageURI(Uri.parse(commterimg));
 
                     }
 

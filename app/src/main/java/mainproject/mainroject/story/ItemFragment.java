@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,6 +26,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -59,6 +61,7 @@ import com.firebase.ui.database.FirebaseListOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.SnapshotParser;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -104,8 +107,8 @@ public class ItemFragment extends Fragment {
 
 
     // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private static final String TAG = "itemFragment";
+    private static final String TAG4 = "get_Data";
     private static int UPDOWN = 0;
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -113,13 +116,13 @@ public class ItemFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private ArrayAdapter<String> arrayAdapter;
     public static final int PAYPAL_REQUEST_CODE = 7171;
-//    maincontent MainCon = new maincontent();
     String amount_to_pay="";
-    String searchquery;
     protected static PayPalConfiguration config3 = new PayPalConfiguration()
-            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-            .defaultUserEmail(paypalconfig.paypal_Publiser_Email);
-//    .clientId(paypalconfig.paypal_client_Id
+            .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
+            .acceptCreditCards(true)
+            .clientId(paypalconfig.paypal_client_live_Id_key)
+            .defaultUserEmail(paypalconfig.Live_paypal_Publiser_Email);
+
     private DatabaseReference booklikes;
     private DatabaseReference bookdislikes;
     private DatabaseReference reports;
@@ -130,23 +133,9 @@ public class ItemFragment extends Fragment {
     private ArrayAdapter<String> spinnerAdapter;
     private Spinner typespinner;
     private LinearLayout search_btns;
-
-    public void settotalcount(float total_count){
-        this.totalcount = total_count;
-    }
-    public float getTotalcount(){return totalcount;}
-
     float totalrate = 0;
-    public void settotalrate(float total_rate){
-        this.totalrate = total_rate;
-    }
     float rates;
-    public void setrate(float userRate){
-        this.rates = userRate;
-    }
-    public float getrate(){return rates;}
 
-    public float getTotalrate(){return totalrate;}
     public void setcurrentamount(int currentamounts){
         this.currentamount = currentamounts;
     }
@@ -188,24 +177,13 @@ public class ItemFragment extends Fragment {
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
-     */
-//    maincontent mc =new maincontent();
+     */;
 
     public ItemFragment() {
     }
     int SearchBoxVisiblity = View.GONE;
     int SearchBoxVisiblityVisible = View.VISIBLE;
     int SearchBoxVisiblityInVisible = View.INVISIBLE;
-
-
-    public void setRelativeLayoutVisibility(int value){
-        this.SearchBoxVisiblity=value;
-//        return this.SearchBoxVisiblity;
-    }
-    public int getSearchBoxVisiblity(){
-        return this.SearchBoxVisiblity;
-    }
-
 
     // TODO: Customize parameter initialization
     AlertDialog.Builder StoryDetailsl;
@@ -222,13 +200,11 @@ public class ItemFragment extends Fragment {
     DatabaseReference myRef = mydatabase.getReference().child("StoriesDetails");
     DatabaseReference mystrateRef = mydatabase.getReference().child("storyratings");
     DatabaseReference psdb = mydatabase.getReference().child("purchasedstories");
-    DatabaseReference osdb = mydatabase.getReference().child("StoriesDetails");
     DatabaseReference pdfosdb = mydatabase.getReference().child("pdfStoriesdetails");
     DatabaseReference CurUserLinks = mydatabase.getReference().child("UserDetail");
     FirebaseUser auth = FirebaseAuth.getInstance().getCurrentUser();
     String curAuthDN = auth.getDisplayName();
     Button btn[] = new Button[stryMainCategory.length];
-    public static String clientpaypalid;
     public boolean increaserate = false;
     public boolean decreasecreaserate = false;
     public boolean reportrate = false;
@@ -260,28 +236,34 @@ public class ItemFragment extends Fragment {
     int itpos = 0;
     ProgressDialog loading;
     ScrollView scrollView;
+    boolean Found = false;
+
     private String storiesname= "";
-    public boolean checkExistedpaypalEmail(String publishers){
-        final boolean[] Found = {false};
-        Query PaypalEmailExistance = CurUserLinks.child(publishers).child("userpaypalacc");
-        PaypalEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Found[0] = true;
-                if(!dataSnapshot.exists()){
-                    Toast.makeText(getContext(),"You havent Submitted Paypal ACCOUNT",Toast.LENGTH_LONG).show();
-                }else{
-                    paypalconfig.paypal_Publiser_Email =dataSnapshot.getValue() == null? null : dataSnapshot.getValue().toString();
+    public void checkExistedpaypalEmail(String publishers){
+        final Query PaypalEmailExistance = CurUserLinks.child(publishers);
+                PaypalEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                }
-            }
+                        if(dataSnapshot.hasChild("userpaypalacc")){
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                            paypalconfig.paypal_Publiser_Email =dataSnapshot.child("userpaypalacc").getValue() == null? null : dataSnapshot.child("userpaypalacc").getValue().toString();
+                            Found = true;
 
-            }
-        });
-        return Found[0];
+                        }else{
+                            Found = false;
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+
     }
 //    RelativeLayout SearchBox;
     String passMainCatName="";
@@ -289,13 +271,7 @@ public class ItemFragment extends Fragment {
     HorizontalScrollView CategorySearch;
     LinearLayout.LayoutParams linearlayoutParams;
     int count = 0;
-
-//    final LruCache<String,Stories> mObjectCache = new LruCache<String,Stories>(count){
-//            @Override
-//            protected int sizeOf(String key, Stories value) {
-//                return super.sizeOf(key, value);
-//            }
-//        };
+    TextView nobookText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -308,6 +284,7 @@ public class ItemFragment extends Fragment {
 //        String user_country4 = getContext().getResources().getConfiguration().locale.getDisplayScript();
 
         String user_country = getContext().getResources().getConfiguration().locale.getCountry();
+
     Locale loc = ConfigurationCompat.getLocales(Resources.getSystem().getConfiguration()).get(0);
 
 //    Toast.makeText(getContext(),loc.getCountry()+" "+user_country +" "+" "+user_country1+" "+user_country2+" "+user_country3+" ",Toast.LENGTH_SHORT).show();
@@ -322,8 +299,9 @@ public class ItemFragment extends Fragment {
         typespinner = view.findViewById(id.searchSubCategories);
         search_btns = view.findViewById(id.search_btns);
         close_search =view.findViewById(id.close_search);
+        nobookText = view.findViewById(id.nobookText);
         /***** build LinearLayout Params ****/
-        linearlayoutParams= new LinearLayout.LayoutParams(80,60);
+        linearlayoutParams= new LinearLayout.LayoutParams(100,60);
         linearlayoutParams.leftMargin = 5;
 
 
@@ -365,11 +343,9 @@ public class ItemFragment extends Fragment {
                     try {
 
                         setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("StrType").equalTo(stryMainCategory[finalI]));
-//                    setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("StrType").equalTo("Politics"));
 
                         Thread.sleep(1000);
                         SelectType(getQuery());
-//                    pdfrecyclerView.setVisibility(View.GONE);
 
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -384,7 +360,7 @@ public class ItemFragment extends Fragment {
         
         //TODO:SEARCH
         final LinearLayoutManager pdfrecyclerViewlayout= new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL,false);
-        final RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),2);
+        final RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),3);
         recyclerView.setLayoutManager(manager);
 
 
@@ -431,54 +407,6 @@ public class ItemFragment extends Fragment {
 
             }
         });
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(final RecyclerView recyclerView, int newState) {
-//
-////                viewAmount += viewAmount + 10;
-////                Toast.makeText(getContext(),String.valueOf(viewAmount),Toast.LENGTH_SHORT).show();
-//                //               try {
-////
-////
-//                switch (newState) {
-//                    case RecyclerView.SCROLL_STATE_IDLE:
-//                        System.out.println("The RecyclerView is not scrolling");
-//                        break;
-//                    case RecyclerView.SCROLL_STATE_DRAGGING:
-//                        System.out.println("Scrolling now");
-//                        break;
-//                    case RecyclerView.SCROLL_STATE_SETTLING:
-//                        System.out.println("Scroll Settling");
-//                        break;
-//
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                dx=0;
-//                if (dx > 0) {
-//                    System.out.println("Scrolled Right");
-//                } else if (dx < 0) {
-//                    System.out.println("Scrolled Left");
-//                } else {
-//                    System.out.println("No Horizontal Scrolled");
-//                }
-//                if (dy >= recyclerView.getBottom()) {
-//                    System.out.println("Scrolled Downwards");
-//                    UPDOWN= 1;
-//                    loadingOtherData();
-//                } else if (dy <= recyclerView.getTop()) {
-//                    System.out.println("Scrolled Upwards");
-//                    UPDOWN= 2;
-////                    loadingOtherData();
-//
-//                } else {
-//                    System.out.println("No Vertical Scrolled");
-//                }
-//            }
-//        });
 
             option = new FirebaseRecyclerOptions.Builder<Stories>()
                     .setQuery(query, Stories.class)
@@ -497,16 +425,14 @@ public class ItemFragment extends Fragment {
                 @Override
                 protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
 
-                    bookkey = getRef(position).getKey();
-//                    Toast.makeText(getContext(), bookkey, Toast.LENGTH_SHORT).show();
-
-//                bookkey = storiesListener.getSnapshot(position++).getKey();
-//                holder.setContent(model.getStory_content());
-//                      mObjectCache.put(model.getAuthor() + "" + model.getStoryNaMe(),new Stories(model.getAuthor(),model.getStoryNaMe(),model.getLogoUrl(),model.getStrType()));
-//                      mObjectCache.put("storyName",model.getStoryNaMe());
-//                      mObjectCache.put("Img",model.getLogoUrl());
-//                      mObjectCache.put("Category",model.getStrType());
-
+                    if(fbra.getItemCount()==0)
+                    {
+                        nobookText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(GONE);
+                    }else{
+                        nobookText.setVisibility(GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
                     holder.setAuthor(model.getAuthor());
                     holder.setStoryNAme(model.getStoryNaMe());
 //                holder.setPrice(model.getStory_price());
@@ -514,114 +440,21 @@ public class ItemFragment extends Fragment {
                     holder.setStodesc(model.getStrType());
 
                     final int finalPosition = position;
+
                     holder.mview.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Toast.makeText(getContext(), bookkey, Toast.LENGTH_SHORT).show();
-
                             Stories stories = fbra.getItem(finalPosition);
-                            showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
+                            bookkey = getRef(finalPosition).getKey();
+
+                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
                         }
                     });
                 }
             };
 
-//        option = new FirebaseRecyclerOptions.Builder<Stories>()
-//                .setQuery(query, Stories.class)
-//                .build();
-//        fbra =new FirebaseRecyclerAdapter<Stories, blogholder>(option) {
-//
-//            @Override
-//            public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                View view = LayoutInflater.from(parent.getContext())
-//                        .inflate(layout.fragment_item, parent, false);
-//
-//                return new blogholder(view);
-//            }
-//
-//            @Override
-//            protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
-//
-//                bookkey = getRef(10).getKey();
-//                Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-//
-////                bookkey = storiesListener.getSnapshot(position++).getKey();
-////                holder.setContent(model.getStory_content());
-//                holder.setAuthor(model.getAuthor());
-//                holder.setStoryNAme(model.getStoryNaMe());
-////                holder.setPrice(model.getStory_price());
-//                holder.setMimgurl(getContext(),model.getLogoUrl());
-//                holder.setStodesc(model.getStrType());
-//
-//                final int finalPosition = position;
-//                holder.mview.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-//
-//                        Stories stories = fbra.getItem(finalPosition);
-//                        showDetailsDialog(stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey);
-//                    }
-//                });
-//            }
-//        };
-
-
-//        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
-//                .setQuery(pdfquery, PDFFILES.class)
-//                .build();
-//        fbpdfra =new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
-//
-//            @Override
-//            public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                View view = LayoutInflater.from(parent.getContext())
-//                        .inflate(layout.pdflistitem, parent, false);
-//
-//
-//                return new blogholder(view);
-//            }
-//
-//            @Override
-//            protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final PDFFILES model) {
-//
-//
-//                holder.setPdfAuthor(model.getPdfAuthor());
-//                holder.setPdfstname(model.getPdfstoryNaMe());
-//                holder.setPdfcover(getContext(),model.getLogoUrl());
-//                holder.setPdfdesc(model.getStrType());
-////                holder.setContent(model.getStory_content());
-////                holder.setAuthor(model.getAuthor());
-////                holder.setStoryNAme(model.getStoryNaMe());
-//////                holder.setPrice(model.getStory_price());
-////                holder.setMimgurl(getContext(),model.getLogoUrl());
-////                holder.setContent(model.getSTDESC());
-//
-//                final int finalPosition = position;
-//                holder.mview.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        PDFFILES pdfstories = fbpdfra.getItem(finalPosition);
-//
-//                        showDetailsDialog(pdfstories.getPdfAuthor() ,pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(),pdfstories.getLogoUrl(),pdfstories.getPdfstoryNaMe(),pdfstories.getStory_content(),"PDFSTORY",bookkey);
-//                    }
-//                });
-//
-//            }
-//
-//
-//        };
-
         recyclerView.setAdapter(fbra);
 
-        //        pdfrecyclerView.setAdapter(fbpdfra);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            recyclerView.setOnContextClickListener(new View.OnContextClickListener() {
-                @Override
-                public boolean onContextClick(View v) {
-                    return false;
-                }
-            });
-        }
 
         SearchET.addTextChangedListener(new TextWatcher() {
             @Override
@@ -631,7 +464,7 @@ public class ItemFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                Toast.makeText(getContext(), charSequence.toString(), Toast.LENGTH_LONG).show();
+                Log.d(TAG, "Searching: "+charSequence.toString());
                 try{
 
                     setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("storyNaMe").startAt(charSequence.toString()).endAt(charSequence.toString()+"\uf8ff"));
@@ -640,7 +473,7 @@ public class ItemFragment extends Fragment {
 
 
                 }catch (Exception ex){
-                    Toast.makeText(getContext(),ex.getMessage(),Toast.LENGTH_SHORT).show();
+                    Log.e(TAG,ex.getMessage());
 
                 }
             }
@@ -669,51 +502,6 @@ public class ItemFragment extends Fragment {
                 }
             }
         });
-
-        //TODO: loading more
-//        recyclerView.setOnScrollListener(new EndlessRecyclerOnScrollListener(recyclerViewlayout) {
-//            @Override
-//            public void onLoadMore(int current_page) {
-//                setQuery(FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByKey().endAt(bookkey).limitToFirst(2));
-//                setPdfquery(FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByKey().endAt(bookkey).limitToFirst(2));
-//                mCurrentpage++;
-//                loadmorestories();
-//            }
-//        });
-        //TODO:
-//        // Set the adapter
-//        if (view instanceof RecyclerView) {
-//            Context context = view.getContext();
-//            if (mColumnCount <= 1) {
-//                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-//            } else {
-//                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-//            }
-//            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, (OnListFragmentInteractionListener) musername));
-//        }
-
-
-//
-//        FirebaseListOptions<String> options = new FirebaseListOptions.Builder<String>()
-//                .setQuery(query, String.class)
-//                .setLayout()
-//                .build();
-//        FirebaseListAdapter<String> firebaseListAdapter = new FirebaseListAdapter<String>(options) {
-//            @Override
-//            protected void populateView(View v, String  model, int position) {
-//                TextView text = (TextView)view.findViewById(R.id.id);
-////                text.setText(model);
-//            }
-//        };
-//
-//        FirebaseRecyclerAdapter_LifecycleAdapter<String> option = new FirebaseListOptions.Builder<Stories>()
-//                .setQuery(query, Stories.class)
-//                .setLayout(android.R.layout.simple_list_item_1)
-//                .build();
-        FirebaseRecyclerOptions<String> option1 =
-                new FirebaseRecyclerOptions.Builder<String>()
-                        .setQuery(query, String.class)
-                        .build();
 
 
 
@@ -769,12 +557,6 @@ public class ItemFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
 
-                try{
-                bookkey = getRef(position).getKey();
-                Toast.makeText(getContext(),bookkey,Toast.LENGTH_SHORT).show();
-                }catch (Exception ex){
-
-                }
 //                bookkey = storiesListener.getSnapshot(position++).getKey();
 //                holder.setContent(model.getStory_content());
                 holder.setAuthor(model.getAuthor());
@@ -787,10 +569,15 @@ public class ItemFragment extends Fragment {
                 holder.mview.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
 
                         Stories stories = fbra.getItem(finalPosition);
-                        showDetailsDialog(stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey);
+                        try{
+                            bookkey = getRef(finalPosition).getKey();
+                        }catch (Exception ex){
+
+                        }
+
+                        showDetailsDialog(stories.getPublishers(),stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey);
                     }
                 });
             }
@@ -843,22 +630,6 @@ public class ItemFragment extends Fragment {
             }
         };
         assert query12 != null;
-   
-        // final LruCache<String,Stories> mObjectCache = new LruCache<String,Stories>(count){
-   
-        //     @Override
-        //     protected int sizeOf(String key, Stories value) {
-        //         return super.sizeOf(key, value);
-        //     }
-        // };
-////
-//        SnapshotParser<Stories> snapshotParser= new SnapshotParser<Stories>() {
-//            @NonNull
-//            @Override
-//            public Stories parseSnapshot(@NonNull DataSnapshot snapshot) {
-//                return mObjectCache.get(snapshot.getKey());
-//            }
-//        };
 
         option = new FirebaseRecyclerOptions.Builder<Stories>()
 //                .setIndexedQuery(query12,osdb,snapshotParser)
@@ -877,21 +648,19 @@ public class ItemFragment extends Fragment {
 
                 @Override
                 protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
-//                    mObjectCache.put(model.getAuthor() + "" + model.getStoryNaMe(),new Stories(model.getAuthor(),model.getStoryNaMe(),model.getLogoUrl(),model.getStrType()));
 
-//                      mObjectCache.put("publisher",model.getAuthor());
-//                      mObjectCache.put("storyName",model.getStoryNaMe());
-//                      mObjectCache.put("Img",model.getLogoUrl());
-//                      mObjectCache.put("Category",model.getStrType());
-
-                    bookkey = getRef(position).getKey();
-                    Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-
-                    dictionary.put("publisher",model.getAuthor());
+                    dictionary.put("publisher",model.getPublishers());
                     dictionary.put("storyName",model.getStoryNaMe());
                     dictionary.put("Img",model.getLogoUrl());
                     dictionary.put("Category",model.getStrType());
-
+                    if(fbra.getItemCount()==0)
+                    {
+                        nobookText.setVisibility(View.VISIBLE);
+                        recyclerView.setVisibility(GONE);
+                    }else{
+                        nobookText.setVisibility(GONE);
+                        recyclerView.setVisibility(View.VISIBLE);
+                    }
 //                bookkey = storiesListener.getSnapshot(position++).getKey();
 //                holder.setContent(model.getStory_content());
                     holder.setAuthor(model.getAuthor());
@@ -904,60 +673,18 @@ public class ItemFragment extends Fragment {
                         @Override
                         public void onClick(View v) {
                             Stories stories = fbra.getItem(finalPosition);
-                            showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc()== null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
+                            bookkey = getRef(finalPosition).getKey();
+
+                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc()== null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
                         }
                     });
                 }
             };
         View parentLayout = null;
-//        if(pdfquery1 ==null)
-//        {
-//            Toast.makeText(getContext(),"there are no books of this type", Toast.LENGTH_LONG);
-//        }
-//        assert pdfquery1 != null;
-//        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
-//                    .setQuery(pdfquery1, PDFFILES.class)
-//                    .build();
-//            fbpdfra = new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
-//                @Override
-//                public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                    View view = LayoutInflater.from(parent.getContext())
-//                            .inflate(layout.pdflistitem, parent, false);
-//                    return new blogholder(view);
-//                }
-//                @Override
-//                protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final PDFFILES model) {
-//                    holder.setPdfAuthor(model.getPdfAuthor());
-//                    holder.setPdfstname(model.getPdfstoryNaMe());
-//                    holder.setPdfcover(getContext(), model.getLogoUrl());
-//                    holder.setPdfdesc(model.getStrType());
-////                holder.setContent(model.getStory_content());
-////                holder.setAuthor(model.getAuthor());
-////                holder.setStoryNAme(model.getStoryNaMe());
-//////                holder.setPrice(model.getStory_price());
-////                holder.setMimgurl(getContext(),model.getLogoUrl());
-////                holder.setContent(model.getSTDESC());
-//
-//                    final int finalPosition = position;
-//                    holder.mview.setOnClickListener(new View.OnClickListener() {
-//                        @Override
-//                        public void onClick(View v) {
-//                            PDFFILES pdfstories = fbpdfra.getItem(finalPosition);
-//
-//                            showDetailsDialog(pdfstories.getPdfAuthor(), pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(), pdfstories.getLogoUrl(), pdfstories.getPdfstoryNaMe(), pdfstories.getStory_content(), "PDFSTORY", bookkey);
-//                        }
-//                    });
-//                }
-//            };
-//
 
         recyclerView.setAdapter(fbra);
-//        pdfrecyclerView.setAdapter(fbpdfra);
-//        fbra.notifyDataSetChanged();
-//        recyclerView.
 
         fbra.startListening();
-//        fbpdfra.startListening();
         onStart();
     }
     public void searching(Query searchstring) {
@@ -969,6 +696,8 @@ public class ItemFragment extends Fragment {
                 .setQuery(searchstring, Stories.class)
                 .build();
         fbra = new FirebaseRecyclerAdapter<Stories, blogholder>(option) {
+
+
 
             @Override
             public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -982,9 +711,16 @@ public class ItemFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final Stories model) {
                 final String bookkey = getRef(position).getKey();
-                Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-
+                if(fbra.getItemCount()==0)
+                {
+                    nobookText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(GONE);
+                }else{
+                    nobookText.setVisibility(GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+                }
 //                holder.setContent(model.getStory_content());
+
                 holder.setAuthor(model.getAuthor());
                 holder.setStoryNAme(model.getStoryNaMe());
 //                holder.setPrice(model.getStory_price());
@@ -995,151 +731,32 @@ public class ItemFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Stories stories = fbra.getItem(position);
-                        showDetailsDialog(stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null?"AppCreationStory":stories.getStorySavingsrc().trim()), bookkey);
+                        showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null?"AppCreationStory":stories.getStorySavingsrc().trim()), bookkey);
                     }
                 });
             }
+
         };
 
-//        pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
-//                .setQuery(getPdfquery(), PDFFILES.class)
-//                .build();
-//        fbpdfra =new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
-//
-//            @Override
-//            public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-//                View view = LayoutInflater.from(parent.getContext())
-//                        .inflate(layout.pdflistitem, parent, false);
-//
-//
-//                return new blogholder(view);
-//            }
-
-//            @Override
-//            protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final PDFFILES model) {
-//
-//                final String bookkey = getRef(position).getKey();
-//                holder.setPdfAuthor(model.getPdfAuthor());
-//                holder.setPdfstname(model.getPdfstoryNaMe());
-//                holder.setPdfcover(getContext(),model.getLogoUrl());
-//                holder.setPdfdesc(model.getStrType());
-////                holder.setContent(model.getStory_content());
-////                holder.setAuthor(model.getAuthor());
-////                holder.setStoryNAme(model.getStoryNaMe());
-//////                holder.setPrice(model.getStory_price());
-////                holder.setMimgurl(getContext(),model.getLogoUrl());
-////                holder.setContent(model.getSTDESC());
-//
-//                holder.mview.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        PDFFILES pdfstories = fbpdfra.getItem(position);
-//
-//                        showDetailsDialog(pdfstories.getPdfAuthor() ,pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(),pdfstories.getLogoUrl(),pdfstories.getPdfstoryNaMe(),pdfstories.getStory_content(),"PDFSTORY",bookkey);
-//                    }
-//                });
-//
-//            }
-//
-//
-//        };
         recyclerView.setAdapter(fbra);
-//        pdfrecyclerView.setAdapter(fbpdfra);}
             fbra.notifyDataSetChanged();
 
             fbra.startListening();
         onStart();
         }catch (Exception ex){
-            Toast.makeText(getContext(), ex.getMessage(), Toast.LENGTH_LONG).show();
+            Log.d(TAG, ex.getMessage());
 
         }
         }
-    public void loadmorestories(){
-            option = new FirebaseRecyclerOptions.Builder<Stories>()
-                    .setQuery(getQuery(), Stories.class)
-                    .build();
-            fbra =new FirebaseRecyclerAdapter<Stories, blogholder>(option) {
 
-                @Override
-                public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext())
-                            .inflate(layout.fragment_item, parent, false);
-
-
-                    return new blogholder(view);
-                }
-
-                @Override
-                protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final Stories model) {
-                    final String bookkey = getRef(position).getKey();
-                    Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-
-//                holder.setContent(model.getStory_content());
-                    holder.setAuthor(model.getAuthor());
-                    holder.setStoryNAme(model.getStoryNaMe());
-//                holder.setPrice(model.getStory_price());
-                    holder.setMimgurl(getContext(),model.getLogoUrl());
-                    holder.setStodesc(model.getStrType());
-
-                    holder.mview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Stories stories = fbra.getItem(position);
-                            showDetailsDialog(stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),"AppCreationStory",bookkey);
-                        }
-                    });
-                }
-            };
-
-            pdfoption = new FirebaseRecyclerOptions.Builder<PDFFILES>()
-                    .setQuery(getPdfquery(), PDFFILES.class)
-                    .build();
-            fbpdfra =new FirebaseRecyclerAdapter<PDFFILES, blogholder>(pdfoption) {
-
-                @Override
-                public blogholder onCreateViewHolder(ViewGroup parent, int viewType) {
-                    View view = LayoutInflater.from(parent.getContext())
-                            .inflate(layout.pdflistitem, parent, false);
-
-
-                    return new blogholder(view);
-                }
-
-                @Override
-                protected void onBindViewHolder(@NonNull final blogholder holder, final int position, @NonNull final PDFFILES model) {
-
-                    final String bookkey = getRef(position).getKey();
-                  Toast.makeText(getContext(),bookkey,Toast.LENGTH_LONG).show();
-                    holder.setPdfAuthor(model.getPdfAuthor());
-                    holder.setPdfstname(model.getPdfstoryNaMe());
-                    holder.setPdfcover(getContext(),model.getLogoUrl());
-                    holder.setPdfdesc(model.getStrType());
-//                holder.setContent(model.getStory_content());
-//                holder.setAuthor(model.getAuthor());
-//                holder.setStoryNAme(model.getStoryNaMe());
-////                holder.setPrice(model.getStory_price());
-//                holder.setMimgurl(getContext(),model.getLogoUrl());
-//                holder.setContent(model.getSTDESC());
-                    holder.mview.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            PDFFILES pdfstories = fbpdfra.getItem(position);
-
-                            showDetailsDialog(pdfstories.getPdfAuthor() ,pdfstories.getPdfSTDESC(), pdfstories.getPdfstory_price(),pdfstories.getLogoUrl(),pdfstories.getPdfstoryNaMe(),pdfstories.getStory_content(),"PDFSTORY",bookkey);
-                        }
-                    });
-
-                }
-
-
-            };
-
-            recyclerView.setAdapter(fbra);
-            pdfrecyclerView.setAdapter(fbpdfra);
-        };
         DatabaseReference commentsdb = mydatabase.getReference().child("comments");
-    public void showDetailsDialog(final String Author1, final String Desc, final String price1, final String ImgUrl, final String storyNAME, final String storyCoNtEnT, final String StrySrc, final String bookkeys){
+    public void showDetailsDialog(final String publishers,final String Author1, final String Desc, final String price1, final String ImgUrl, final String storyNAME, final String storyCoNtEnT, final String StrySrc, final String bookkeys){
+        checkExistedpaypalEmail(publishers);
+        final String[] publisherData= new String[6];
+
+
         currentamount=5;
+
         StoryDetailsl =new AlertDialog.Builder(getContext());
       LayoutInflater inflater = getLayoutInflater();
       final View detaildialog = inflater.inflate(R.layout.detailalertdialog,null);
@@ -1148,28 +765,7 @@ public class ItemFragment extends Fragment {
         boolean like = true;
 
       //TODO: Identify IDS
-        if (FirebaseDatabase.getInstance().getReference().child("UserDetail").child(Author1) != null){
-        Query paypalquery = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(Author1);
-paypalquery.addValueEventListener(new ValueEventListener() {
-    @Override
-    public void onDataChange(DataSnapshot dataSnapshot) {
-        String paypalcliendid = String.valueOf(dataSnapshot.child("userpaypalacc").getValue());
-if(paypalcliendid.equals(null)){
-    Toast.makeText(getContext(),"you cant pay for this book",Toast.LENGTH_SHORT).show();
-}
-else{
-//  clientpaypalid.equals(paypalcliendid);
-}
-    }
 
-    @Override
-    public void onCancelled(DatabaseError databaseError) {
-
-    }
-});
-        }else{
-            Toast.makeText(getContext(),"THIS STORY HAS BEEN DELETED",Toast.LENGTH_SHORT).show();
-        }
         final ImageButton increase = (ImageButton)detaildialog.findViewById(id.Increasestrate);
         final ImageButton decrease = (ImageButton)detaildialog.findViewById(id.decreaseitsrate);
         final ImageButton report = (ImageButton)detaildialog.findViewById(id.reportbook);
@@ -1179,7 +775,8 @@ else{
         ImageView cover = (ImageView) detaildialog.findViewById(R.id.story__img);
         TextView Descr = (TextView) detaildialog.findViewById(R.id.description);
         final Button price = (Button) detaildialog.findViewById(R.id.storypricetxt);
-        TextView Authors = (TextView) detaildialog.findViewById(R.id.Author);
+        final TextView publishersText = (TextView) detaildialog.findViewById(R.id.publishers);
+        TextView Authors = (TextView) detaildialog.findViewById(id.Authors);
         TextView storyNAme = (TextView) detaildialog.findViewById(R.id.stname);
         Picasso.with(getContext()).load(ImgUrl).fit().into(cover);
         final TextView comtxt = (TextView) detaildialog.findViewById(R.id.commentstxt1);
@@ -1192,19 +789,35 @@ else{
         final LinearLayout comlayout =(LinearLayout) detaildialog.findViewById(R.id.commentsview);
         final Button comments1 = (Button) detaildialog.findViewById(R.id.commentsbtn);
 
-        final TextView[] comtername = {(TextView) detaildialog.findViewById(id.commentername)};
-        final TextView[] comttxt = {(TextView) detaildialog.findViewById(id.commentstxt1)};
-        ImageView comimg =(ImageView)detaildialog.findViewById(id.comterimg);
-        final TextView comname = (TextView)detaildialog.findViewById(id.commentername);
         final Button checkingbtn =(Button)detaildialog.findViewById(id.checkingbtn);
-        //        LinearLayout totalcom =(LinearLayout)detaildialog.findViewById(id.totalcomments);
+
+
+        price.setText(price1);
+        CurUserLinks.orderByKey().equalTo(publishers).addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                publisherData [0] = String.valueOf(dataSnapshot.child(publishers).child("userpaypalacc").getValue());
+                publisherData [1] = String.valueOf(dataSnapshot.child(publishers).getKey());
+                publisherData [2] = String.valueOf(dataSnapshot.child(publishers).child("Email").getValue());
+                publisherData [3] =String.valueOf(dataSnapshot.child(publishers).child("Name").getValue());
+                publishersText.setText(String.format("publishers : %s", publisherData[3]));
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         comlayout.setVisibility(GONE);
         final AlertDialog alertDialog = StoryDetailsl.create();
         price.setText(price1);
         FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())&& dataSnapshot.hasChild(bookkeys)) {
+                if(!dataSnapshot.hasChild(curAuthDN)&& dataSnapshot.hasChild(bookkeys)) {
                 checkingbtn.setEnabled(false);
                     checkingbtn.setText("You Have Checked it once");
                 }
@@ -1222,29 +835,32 @@ else{
                 FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
-            if(!dataSnapshot.hasChild(bookkeys+StrySrc))
-               if(StrySrc.equals("AppCreationStory"))
-               {
-                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+            if(!dataSnapshot.hasChild(bookkeys+StrySrc)) {
+                if (StrySrc.equals("AppCreationStory")) {
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(StrySrc);
-                   Intent shortappstory = new Intent(getContext(),checkstoryfromact.class);
-                   shortappstory.putExtra("CoNtEnT",storyCoNtEnT);
-                   shortappstory.putExtra("StRyNaMe",storyCoNtEnT);
-                   startActivity(shortappstory);
+                    Intent shortappstory = new Intent(getContext(), checkstoryfromact.class);
+                    shortappstory.putExtra("CoNtEnT", storyCoNtEnT);
+                    shortappstory.putExtra("StRyNaMe", storyCoNtEnT);
+                    shortappstory.putExtra("bookKey", bookkeys);
+                    startActivity(shortappstory);
 
-               }
-               if(StrySrc.equals("PDFSTORY")){
-                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-//                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(storyNAME);
-//                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(StrySrc);
+                }
+                if (StrySrc.equals("PDFSTORY")) {
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
-                   Intent shortpdfstory = new Intent(getContext(),checkedpdf.class);
-                   shortpdfstory.putExtra("CoNtEnT",storyCoNtEnT);
-                   shortpdfstory.putExtra("StRyNaMe",storyCoNtEnT);
-                   startActivity(shortpdfstory);
+                    Intent shortpdfstory = new Intent(getContext(), checkedpdf.class);
+                    shortpdfstory.putExtra("CoNtEnT", storyCoNtEnT);
+                    shortpdfstory.putExtra("StRyNaMe", storyCoNtEnT);
+                    shortpdfstory.putExtra("bookKey", bookkeys);
 
-               }
+                    startActivity(shortpdfstory);
+
+                }
+            }else {
+                Toast.makeText(getContext(),"you have already viewed this book",Toast.LENGTH_LONG).show();
+            }
            }
 
            @Override
@@ -1255,6 +871,7 @@ else{
 
             }
         });
+
         Query newquery =mydatabase.getReference().child("UserDetail").child(auth.getDisplayName()).orderByChild("UserImg");
 Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname").equalTo(storyNAME).limitToLast(getCurrentamount());
 
@@ -1274,6 +891,7 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                     commentschildrows.child("usercomment").setValue(curusercomment);
                     commentschildrows.child("user___Email").setValue(auth.getEmail());
                     commentschildrows.child("currentstoryname").setValue(storyNAME);
+
                 }
 
             });
@@ -1298,6 +916,8 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                  TextView comttxt = (TextView)v.findViewById(R.id.commentstxt1);
                          comttxt.setText(usercomment);
                 final String usermail = model.getUser___Email();
+                final String userformalname = model.getUser___Email();
+
                 final User st = new User();
 
                  ((TextView)v.findViewById(id.commentername)).setOnClickListener(new View.OnClickListener() {
@@ -1317,19 +937,13 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                 }
 
                     });
+
                  Query userimgincmt = mydatabase.getReference().child("UserDetail").child(comtername.getText().toString());
                  userimgincmt.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String ds = String.valueOf(dataSnapshot.child("UserImg").getValue());
-                        //                                                        for(DataSnapshot dss:dataSnapshot.getChildren()) {
-//                                                            User us = new User();
-//                                                            us.setUserImg(dss.getValue(us.getClass()).getUserImg());
-////                                                        String img = String.valueOf(dataSnapshot.getValue(User.class));
-////                                                        if(img == null)
-////                                                        {((ImageView)v.findViewById(id.comterimg)).setBackground(null);}
-////                                                        else if(img != null) {
-                        ((ImageView) v.findViewById(id.comterimg)).setImageDrawable(imground);
+                 ((ImageView) v.findViewById(id.comterimg)).setImageDrawable(imground);
                             Picasso.with(getContext()).load(ds).fit().into(((ImageView) v.findViewById(id.comterimg)));
 ////                                                        }
 ////                                                        .setImageURI(Uri.parse(commterimg));
@@ -1362,9 +976,9 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                     }
                 });
 
-                while  (((fbla.getCount()*50*1.3)) <= comlist.getHeight()){
+                if  (((fbla.getCount()*50*1.3)) <= comlist.getHeight()){
                     expandingtext.setVisibility(GONE);
-                    break;
+
                 }
 
 
@@ -1373,50 +987,47 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
 
         };
 
-//        comlist.getMeasuredHeightAndState();
         comlist.requestFocusFromTouch();
         justifyListViewHeightBasedOnChildren(comlist);
         comlist.setAdapter(fbla);
         comlist.setSelection(comlist.getAdapter().getCount());
 
-        Query Ownedstoriescheck = osdb.child(bookkeys);
+        if (FirebaseDatabase.getInstance().getReference().child("UserDetail").child(publishers) == null){
+            Toast.makeText(getContext(),"THIS STORY publisher Not Registered Or Has Been Deleted",Toast.LENGTH_SHORT).show();
+            price.setEnabled(false);
+        }
 
-        Ownedstoriescheck.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (publishers.trim().equals(curAuthDN)) {
+            price.setText("it's yours");
 
-                String values = String.valueOf(dataSnapshot.child("Author").getValue());
-
-                for(DataSnapshot ds: dataSnapshot.getChildren()){
-                    if (String.valueOf(ds.child("Author").getValue()) != auth.getDisplayName()) {
-                        price.setEnabled(true);
-                    } else if (String.valueOf(ds.child("Author").getValue())==auth.getDisplayName()) {
-                    price.setEnabled(false);
-                    price.setText("it's yours");
-                }
-                }
+            try {
+                Thread.sleep(400);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            price.setEnabled(false);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-
-    });
+        }
 
         Query purchasedstoriescheck = psdb.orderByChild("StoryKey").equalTo(bookkeys);
         purchasedstoriescheck.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getChildren().iterator().hasNext()) {
+                    String pskey = String.valueOf(dataSnapshot.getChildren().iterator().next().getKey());
 
-                String values = String.valueOf(dataSnapshot.child("purchasername").getValue());
-                for(DataSnapshot ds : dataSnapshot.getChildren()){
-                    if(ds.child("purchasername").getValue().equals(auth.getDisplayName())) {
-                        price.setEnabled(false);
-                        price.setText("purchased");
-                    }}
+                    String values = String.valueOf(dataSnapshot.child(pskey).child("purchasername").getValue());
+                    Log.d(TAG, String.valueOf(values) + " " + curAuthDN);
+                    if (values != null) {
+                        if (values.equals(curAuthDN)) {
+                            price.setEnabled(false);
+                            price.setText("purchased");
+                        }
+                    }
+                }
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -1482,70 +1093,54 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
 //});
         final Intent intent1 =new Intent(getContext(), PayPalService.class);
         intent1.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config3);
-
     //        final PayPalConfiguration config2 = new PayPalConfiguration()
 //                .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
 //                .clientId(clientpaypalid);
         price.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkExistedpaypalEmail(Author1)) {
+
+                if (Found) {
 
                     mprogress = new ProgressDialog(getContext());
                     mprogress.setMessage("Purchasing...");
                     mprogress.show();
-//                Thread showing_dialog = new Thread(){
-//                    @Override
-//                    public void run(){
-                    Query purchasername = myRef.child("story_name").orderByChild("Author").equalTo(auth.getDisplayName());
+
+                    Query purchasername = myRef.child("story_name").orderByChild("publishers").equalTo(auth.getDisplayName());
                     Query purchasername1 = psdb.orderByChild("purchasername").equalTo(auth.getDisplayName());
-                    if (!Author1.equals(auth.getDisplayName())) {
 
 
                         final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
                         select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                addingstdataafterpaying(Author1, Desc, price1, ImgUrl, storyNAME, storyCoNtEnT, StrySrc,bookkeys);
-//                            Bundle stdata = new Bundle();
-//                            stdata.putString("Authorize",Author1);
-//                            stdata.putString("STORYNAME",storyNAME);
-//                            stdata.putString("STCONTENT",storyCoNtEnT);
-//                            stdata.putString("STDESCRIbE",Desc);
-//                            stdata.putString("IMGURL",ImgUrl);
-//                            stdata.putString("STSOURC",StrySrc);
+                                addingstdataafterpaying(Author1,publishers, Desc, price1, ImgUrl, storyNAME, storyCoNtEnT, StrySrc,bookkeys);
                                 PayPalPayment payPalPayment;
                                 String user_country = getContext().getResources().getConfiguration().locale.getCountry();
                                 amount_to_pay = String.valueOf(price1);
                                 double priceinDouble =(Double.parseDouble(price1));
-                                if (user_country.equals("EG")) {
-                                    amount_to_pay = String.valueOf((priceinDouble * 16.3));
-                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "EGP", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
+                                payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", publishers, PayPalPayment.PAYMENT_INTENT_SALE);
 
-                                }else if(user_country.equals("GB")) {
-                                    amount_to_pay = String.valueOf((priceinDouble * 0.81));
-                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
-                                }else{
-                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", Author1, PayPalPayment.PAYMENT_INTENT_SALE);
-                                }
-                                //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE)
-                                payPalPayment.payeeEmail(paypalconfig.paypal_Publiser_Email);
+//                                if (user_country.equals("EG")) {
+//                                    amount_to_pay = String.valueOf((priceinDouble * 16.3));
+//                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "EGP", publishers, PayPalPayment.PAYMENT_INTENT_SALE);
+//
+//                                }else if(user_country.equals("GB")) {
+//                                    amount_to_pay = String.valueOf((priceinDouble * 0.81));
+//                                    payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "GBP", publishers, PayPalPayment.PAYMENT_INTENT_SALE);
+//                                }
+
+                                //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+publishers ,PayPalPayment.PAYMENT_INTENT_SALE)
+                                payPalPayment.payeeEmail(publisherData[0]);
 //                            payPalPayment;
 
                                 Intent intent = new Intent(getContext(), PaymentActivity.class);
                                 intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config3);
                                 intent.putExtra(PaymentActivity.EXTRA_PAYMENT, config3);
-//                            intent.putExtra("Authorize",Author1);
-//                            intent.putExtra("STORYNAME",storyNAME);
-//                            intent.putExtra("STCONTENT",storyCoNtEnT);
-//                            intent.putExtra("STDESCRIbE",Desc);
-//                            intent.putExtra("IMGURL",ImgUrl);
-//                            intent.putExtra("STSOURC",StrySrc);
                                 intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
-//                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
+
                                 startActivityForResult(intent, PAYPAL_REQUEST_CODE);
-//ItemFragment ite = new ItemFragment();
-//ite.setArguments(stdata);
+
                                 dialog.dismiss();
                             }
                         });
@@ -1553,28 +1148,25 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
-                                // paymentDialog(Author1, Desc, price1, ImgUrl, storyNAME,storyCoNtEnT,StrySrc,price);
                                 dialog.dismiss();
                             }
                         });
                         AlertDialog alertDialog1 = select.create();
                         alertDialog1.show();
                         mprogress.dismiss();
-//                  Toast.makeText(getContext(),"Story have been added successfully to your purchased Stories",Toast.LENGTH_LONG).show();
+                  Toast.makeText(getContext(),"Story have been added successfully to your purchased Stories",Toast.LENGTH_LONG).show();
 
 
-                    } else if (Author1.equals(auth.getDisplayName())) {
-                        Toast.makeText(getContext(), "You are the story publisher", Toast.LENGTH_LONG).show();
-
-                    }
-//                while (Author1 == auth.getDisplayName() || purchasername != null || purchasername1 != null){   Toast.makeText(getContext(),"You are already the story author",Toast.LENGTH_LONG).show();
+//                while (publishers == auth.getDisplayName() || purchasername != null || purchasername1 != null){   Toast.makeText(getContext(),"You are already the story author",Toast.LENGTH_LONG).show();
 //                    break;}
 
 
                 }
             }
         });
+        final boolean[] RateAbletoChange = {false};
 final Query ratesquery = mystrateRef.orderByChild("bookkeys").equalTo(bookkeys);
+
 //Query totalranks = mystrateRef.ch.startAt(bookkeys);
 //                Toast.makeText(getContext(),"You Rated Story By"+" "+ (int)rating+" "+ "stars",Toast.LENGTH_LONG).show();
 ratesquery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -1582,33 +1174,20 @@ ratesquery.addListenerForSingleValueEvent(new ValueEventListener() {
     public void onDataChange(DataSnapshot dataSnapshot) {
 
 
+
 for(DataSnapshot ds: dataSnapshot.getChildren()) {
         double countsrate = Double.parseDouble(String.valueOf(ds.child("styrates").getValue()));
         totalcount += countsrate;
-//       settotalcount(totalcount += countsrate);
-
-
-//        settotalrate(totalcount / dataSnapshot.getChildrenCount());
-//        if (StrySrc.equals("AppCreationStory")) {
-//                final float finalTotalrate = totalrate;
-
-
-//        }
-//        if (StrySrc.equals("PDFSTORY")) {
-//            FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").child(storyNAME).child("stRating").setValue(String.valueOf(getTotalrate()));
-//        }
-//        Toast.makeText(getContext(), "You Rated Story By" + " " + getTotalrate() + " " + "stars", Toast.LENGTH_SHORT).show();
+        Log.d(TAG4,"checking rate Count" +String.valueOf(totalcount));
 }
 
         totalrate = dataSnapshot.getChildrenCount()>0? (totalcount /dataSnapshot.getChildrenCount()):0;
-            // final float finalTotalrate = getTotalrate();
-            // final float finalTotalcount = getTotalcount();
         ratebar.setRating(totalrate);
 
-            // ratebar.setRating(totalrate);
 
-        myRef.child(bookkeys).child("stRating").setValue((String.valueOf(totalrate) != "NaN" ? totalrate:0));
-
+        myRef.child(bookkeys).child("stRating").setValue(String.valueOf(totalrate));
+        RateAbletoChange[0] =true;
+        totalcount=0;
     }
 
     @Override
@@ -1616,49 +1195,27 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
 
     }
 });
-        ratebar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-
-            }
-        });
         ratebar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                setrate(rating);
-                ratingBar.setRating(rating);
-                Toast.makeText(getContext(), "You Rated Story By" + " " + rating+ " " + "stars", Toast.LENGTH_SHORT).show();
-                DatabaseReference Story_rate= mystrateRef.child(bookkeys+curAuthDN);
-                Story_rate.child("STRYname").setValue(storyNAME);
-                Story_rate.child("styrates").setValue(rating);
-                Story_rate.child("userEmail").setValue(auth.getEmail());
-                Story_rate.child("bookkeys").setValue(bookkeys);
+                if(RateAbletoChange[0]) {
+//                    setrate(rating);
+                    ratingBar.setRating(rating);
+                    DatabaseReference Story_rate = mystrateRef.child(bookkeys + curAuthDN);
+                    Story_rate.child("STRYname").setValue(storyNAME);
+                    Story_rate.child("styrates").setValue(rating);
+                    Story_rate.child("userEmail").setValue(auth.getEmail());
+                    Story_rate.child("bookkeys").setValue(bookkeys);
+                }
+
             }
         });
 
-                //                int total=0;
-//                for(int i = 0; i <= total; i++) {
-//                if(fromUser == true){
-//
-//
-//                    total += (int) rating;
-//if(i>0) {
-//    myRef.child(storyNAME).child("stRating").setValue(String.valueOf(total));
-//}
-//                }
-//                }
-
-//                DatabaseReference childs =  mystrateRef.child(storyNAME+auth.getDisplayName());
-//                childs.child("STRYname").setValue(storyNAME);
-//                childs.child("styrates").setValue(String.valueOf(rating));
-//                childs.child("userEmail").setValue(auth.getEmail());
-//            }
 
         storyNAme.setText(String.format("Story Name: %s", storyNAME));
-        Authors.setText(String.format("author : %s", Author1));
-        Descr.setText(String.format("story Description %s", Desc));
-        price.setText(price1);
+        Authors.setText(String.format("Authors : %s", Author1));
+        Descr.setText(String.format("story Description: %s", Desc));
         alertDialog.show();
 //
         booklikes= FirebaseDatabase.getInstance().getReference().child("likes");
@@ -1741,10 +1298,10 @@ if(increaserate)
         reports.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                if (dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
 //                    report.setImageResource(R.color.BlackCo);
 
-                } else if (!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                } else if (!dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
 //                    report.setImageResource(R.color.Cyan);
                 }
             }
@@ -1759,10 +1316,10 @@ if(increaserate)
         bookdislikes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                if (dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
                     decrease.setImageResource(R.drawable.dislike);
 
-                } else if (!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                } else if (!dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
                     decrease.setImageResource(R.drawable.dislike2);
                 }
             }
@@ -1776,10 +1333,10 @@ if(increaserate)
         booklikes.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                if (dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
                     increase.setImageResource(R.drawable.like_symbol);
 
-                } else if (!dataSnapshot.child(storyNAME).hasChild(auth.getDisplayName())) {
+                } else if (!dataSnapshot.child(bookkeys).hasChild(auth.getDisplayName())) {
                     increase.setImageResource(R.drawable.like_thumb);
                   }
             }
@@ -2052,10 +1609,11 @@ if(increaserate)
     }
     }
     public void putimg(DataSnapshot ds ,String storynaMe){}
-    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,bookskeys;
+    String AuthoRs,stpublishers,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,bookskeys;
 
-    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1,String STOryNAme ,String STRCOntEnT, String STRYSrC,String bookkey)
+    public void addingstdataafterpaying(String Authors,String StPublishers, String Descrip, String price11, String ImgUrl1,String STOryNAme ,String STRCOntEnT, String STRYSrC,String bookkey)
     {   this.AuthoRs =Authors;
+        this.stpublishers = StPublishers;
         this.DescriP = Descrip;
         this.pRICe =price11;
         this.IMGUrL = ImgUrl1;
@@ -2075,7 +1633,7 @@ if(increaserate)
 
     }
 
-    private void paymentDialog(final String Author1, final String Desc, String price1, final String ImgUrl, final String storyNAME, final String stryContent , final String StrSrc, final Button prices){
+    private void paymentDialog(final String publishers, final String Desc, String price1, final String ImgUrl, final String storyNAME, final String stryContent , final String StrSrc, final Button prices){
         StoryDetailsl =new AlertDialog.Builder(getContext());
         LayoutInflater inflater = getLayoutInflater();
         final View detaildialog2 = inflater.inflate(layout.paymentdialog,null);
@@ -2099,7 +1657,7 @@ if(increaserate)
 
                         psdbchild.child("purchasername").setValue(auth.getDisplayName());
                         psdbchild.child("story_name").setValue(storyNAME);
-                        psdbchild.child("Story_Author").setValue(Author1);
+                        psdbchild.child("Story_Author").setValue(publishers);
                         psdbchild.child("Story_Desc").setValue(Desc);
                         psdbchild.child("Story_Content").setValue(stryContent);
                         psdbchild.child("Story_ImgUrl").setValue(ImgUrl);
@@ -2138,20 +1696,6 @@ if(increaserate)
             if (resultCode == RESULT_OK) {
                 PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
 
-                //                intent.putExtra("Authorize",Author1);
-//                intent.putExtra("STORYNAME",storyNAME);
-//                intent.putExtra("STCONTENT",storyCoNtEnT);
-//                intent.putExtra("STDESCRIbE",Desc);
-//                intent.putExtra("IMGURL",ImgUrl);
-//                intent.putExtra("STSOURC",StrySrc);
-//                data = getIntent();
-
-//                String Auth = gtbund.getString("Authorize");
-//                String SORNME = gtbund.getString("STORYNAME");
-//                String STCNTT = gtbund.getString("STCONTENT");
-//                String STDESCB = gtbund.getString("STDESCRIbE");
-//                String IMAGEUL = gtbund.getString("IMGURL");
-//                String STRSORC = gtbund.getString("STSOURC");
 
                 if (confirmation != null) {
             String sate =confirmation.getProofOfPayment().getState();
@@ -2163,6 +1707,7 @@ if(increaserate)
                 psdbchild.child("purchasername").setValue(auth.getDisplayName());
                 psdbchild.child("story_name").setValue(StorYNamE);
                 psdbchild.child("Story_Author").setValue(AuthoRs);
+                psdbchild.child("Story_Publishers").setValue(stpublishers);
                 psdbchild.child("Story_Desc").setValue(DescriP);
                 psdbchild.child("Story_Content").setValue(StRContEnT);
                 psdbchild.child("Story_ImgUrl").setValue(IMGUrL);
@@ -2195,18 +1740,6 @@ if(increaserate)
         super.onCreateOptionsMenu(menu, inflater);
         menu.clear();
         inflater.inflate(R.menu.mainmenu, menu);
-//        MenuItem item = menu.findItem(id.SearchIcon);
-//        Context mContext = getContext();
-//        assert mContext != null;
-//        SearchManager searchManager = (SearchManager) mContext.getSystemService(Context.SEARCH_SERVICE);
-//        searchView = (SearchView) menu.findItem(id.SearchIcon).getActionView();
-//        item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem menuItem) {
-//
-//                return true;
-//            }
-//        });
 
     }
 
@@ -2317,6 +1850,14 @@ class holderls extends ListViewAutoScrollHelper {
 
         public void setPdfcover(final Context ctxs, final String pdfcover1) {
             pdfcover =(ImageView) mview.findViewById(id.pdfstory__img);
+//            DisplayMetrics displayMetrics = new DisplayMetrics();
+//            ((Activity) ctxs).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+//            int screenwidth = displayMetrics.widthPixels;
+//            if(screenwidth <= 450)
+//            {
+//                pdfcover.setMinimumWidth(((screenwidth/3)-7));
+//                pdfcover.setMinimumHeight((pdfcover.getWidth()* 4/3));
+//            }
             Picasso.with(ctxs).load(pdfcover1).networkPolicy(NetworkPolicy.OFFLINE).into(pdfcover, new Callback() {
                 @Override
                 public void onSuccess() {
@@ -2362,18 +1903,21 @@ class holderls extends ListViewAutoScrollHelper {
 
        public void setMimgurl(final Context ctx, final String mimgurl) {
            cover= (ImageView) mview.findViewById(id.story__img);
-           cover.setBackground(null);
-           Picasso.with(ctx).load(mimgurl).networkPolicy(NetworkPolicy.OFFLINE).fit().into(cover, new Callback() {
-               @Override
-               public void onSuccess() {
+          if(!mimgurl.isEmpty() && !mimgurl.equals(" ") && !mimgurl.equals(null)) {
+              cover.setBackground(null);
 
-               }
+              Picasso.with(ctx).load(mimgurl).networkPolicy(NetworkPolicy.OFFLINE).fit().into(cover, new Callback() {
+                  @Override
+                  public void onSuccess() {
 
-               @Override
-               public void onError() {
-                   Picasso.with(ctx).load(mimgurl).into(cover);
-               }
-           });
+                  }
+
+                  @Override
+                  public void onError() {
+                      Picasso.with(ctx).load(mimgurl).into(cover);
+                  }
+              });
+          }
        }
 
 
@@ -2389,8 +1933,8 @@ class holderls extends ListViewAutoScrollHelper {
 
 
        public void setAuthor(String author) {
-           Authors = (TextView)mview.findViewById(id.Author);
-           Authors.setText("Author :" + " " + author);
+//           Authors = (TextView)mview.findViewById(id.Author);
+//           Authors.setText("Author :" + " " + author);
        }
 
        public void setStoryNAme(String storyNAMe) {
@@ -2401,8 +1945,8 @@ class holderls extends ListViewAutoScrollHelper {
 
 
        public void setStodesc(String stodesc1) {
-           stodesc =(TextView)mview.findViewById(id.normaltype);
-           stodesc.setText(stodesc1);
+//           stodesc =(TextView)mview.findViewById(id.normaltype);
+//           stodesc.setText(stodesc1);
        }
 
        public void setStrate(String strate1) {

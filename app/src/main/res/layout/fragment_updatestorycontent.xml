@@ -2,13 +2,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/fui_transparent"
+    android:fillViewport="true"
     tools:context="mainproject.mainroject.story.updatestorycontent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        >
 
         <ImageButton
             android:id="@+id/storynewimg"
@@ -16,7 +19,8 @@
             android:layout_height="150dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:contentDescription="@string/todo_storycover" />
+            android:contentDescription="@string/todo_storycover"
+            tools:ignore="MissingConstraints" />
         <!-- TODO: Update blank fragment layout -->
         <TextView
             android:id="@+id/titles"
@@ -24,7 +28,8 @@
             android:layout_height="20dp"
             android:layout_margin="5dp"
             android:gravity="center"
-            android:text="@string/hello_blank_fragment" />
+            android:text="@string/hello_blank_fragment"
+            tools:ignore="MissingConstraints" />
 
         <TextView
             android:id="@+id/Desctext"
@@ -78,14 +83,13 @@
             android:fontFamily="@font/arima_madurai"
             android:padding="5dp"
             android:shadowColor="@android:color/darker_gray"
-            android:shadowDx="11"
-            android:shadowDy="11"
             android:text="@string/contenttxt" />
 
         <com.github.barteksc.pdfviewer.PDFView
             android:id="@+id/pdfContentviewerpage"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="500dp"
+            />
 
         <TextView
             android:id="@+id/pricetext"
@@ -119,7 +123,6 @@
             android:layout_margin="5dp"
             android:foregroundGravity="center_vertical|center_horizontal|center"
             android:gravity="center_vertical|center_horizontal"
-
             android:text="@string/updatebtn" />
     </LinearLayout>
 </ScrollView>

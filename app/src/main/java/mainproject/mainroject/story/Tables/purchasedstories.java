@@ -7,7 +7,7 @@ import java.util.Date;
  */
 
 public class purchasedstories {
-    private String purchasername,story_name,Story_Author,Story_Desc,Story_Content,Story_ImgUrl,StorySrc,strytype;
+    private String Story_Publishers,purchasername,story_name,Story_Author,Story_Desc,Story_Content,Story_ImgUrl,StorySrc,strytype;
     private Date purchaseDate;
     public purchasedstories(){}
     public purchasedstories(String story_name, String story_author, String story_desc, String story_content, String story_imgUrl,String strysrc) {
@@ -89,5 +89,13 @@ public class purchasedstories {
 
     public void setPurchaseDate(Date purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public String getStory_Publishers() {
+        return Story_Publishers;
+    }
+
+    public void setStory_Publishers(String story_Publishers) {
+        Story_Publishers = story_Publishers;
     }
 }

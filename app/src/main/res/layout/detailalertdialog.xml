@@ -111,14 +111,21 @@
 
             </LinearLayout>
         </LinearLayout>
-
         <TextView
 
-            android:id="@+id/Author"
+            android:id="@+id/Authors"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margin"
             android:hint="authorName"
+
+            android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+
+            android:id="@+id/publishers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/text_margin"
 
             android:textAppearance="?attr/textAppearanceListItem" />
 
@@ -248,9 +255,9 @@ android:hint="Description"
             <Button
                 android:id="@+id/checkingbtn"
                 android:layout_width="150dp"
-                android:gravity="end"
+                android:gravity="center"
                 android:layout_height="wrap_content"
-                android:text="@string/check_story_for_20_sec"
+                android:text="check story"
                 android:textColor="@android:color/holo_orange_light" />
         </LinearLayout>
     </LinearLayout>

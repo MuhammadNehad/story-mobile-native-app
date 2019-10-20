@@ -229,8 +229,7 @@ try {
     }
 
     public void gotoEmailVerify(View view) {
-
-    }
+         }
 /*
 public void onClick(View v)
 {

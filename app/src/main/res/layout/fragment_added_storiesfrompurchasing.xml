@@ -10,7 +10,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/userpurchasedstries"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
+        android:layout_height="match_parent"
         android:layout_margin="10dp"
         tools:listitem="@layout/purchasedstoriesnew" />
 </FrameLayout>

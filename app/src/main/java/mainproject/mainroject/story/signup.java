@@ -1,12 +1,20 @@
 package mainproject.mainroject.story;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
+import java.text.DateFormat;
 import java.util.Calendar;
 
 import static mainproject.mainroject.story.HashCode.SHA1;
@@ -47,30 +55,31 @@ public class signup extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private  String email1;
     private  String password1;
+
+    DatePickerDialog.OnDateSetListener mDateSetListener;
     private DatabaseReference dataTable;
     FirebaseUser user = null;
     final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
     final DatabaseReference myRef = mydatabase.getReference().child("UserDetail");
     FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
     Query CheckEmail= myRef.orderByChild("Email").equalTo(email1);
-
+    boolean uDNAMeFound = false,usersEmailFound =false;
     public boolean checkExistedUSerEmail(final String useremail){
         final boolean[] Found = {true};
-        Query UserEmailExistance = myRef.orderByChild("Email");
+        Query UserEmailExistance = myRef.orderByChild("Email").equalTo(useremail.trim());
         UserEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot d: dataSnapshot.getChildren()) {
+                Log.d("signup",String.valueOf(dataSnapshot.getChildrenCount()));
+                if (dataSnapshot.getChildrenCount()>0)
+                {
 
-                    Log.d(TAG2, "onDataChange: "+d.child("Email").getValue());
-                    if(String.valueOf(d.getValue()) == useremail){
+                    usersEmailFound=true;
 
-                        Found[0] = false;
+                }else{
+//                    Found[0]=false;
+                    usersEmailFound=false;
 
-                    }else {
-                        Found[0]= true;
-
-                    }
                 }
 
 
@@ -84,7 +93,34 @@ public class signup extends AppCompatActivity {
         return Found[0];
     }
 
+    public boolean checkExistedUSerDisplayName(final String username){
+        final boolean[] Found = {false};
+        Query UserEmailExistance = myRef.orderByKey().equalTo(username.trim());
+        UserEmailExistance.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                Log.d("signup",String.valueOf(dataSnapshot.getChildrenCount()));
+                if(dataSnapshot.getChildrenCount()>0)
+                {
+                    Found[0]=true;
+                    uDNAMeFound=true;
+                }else{
+                    Found[0]=false;
+                    uDNAMeFound=false;
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return Found[0];
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +129,7 @@ public class signup extends AppCompatActivity {
 //        progressDialog.setMessage("Please wait");
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.activity_signup);
+
 
         textView=findViewById(R.id.errormsg);
         username=(EditText)findViewById(R.id.UserName);
@@ -106,6 +143,49 @@ public class signup extends AppCompatActivity {
 
 
         final FirebaseUser finalUser = user;
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int months, int day) {
+                months= months+1;
+                birthdate.setText(year+"-"+months+"-"+day);
+            }
+        };
+        username.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkExistedUSerDisplayName(charSequence.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkExistedUSerEmail(charSequence.toString());
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,20 +212,21 @@ public class signup extends AppCompatActivity {
 
 
 
+                if(!uDNAMeFound){
                     if(UserName.isEmpty()) {
                         username.setError("required");
-                    }
+                    }else
                  if(EMAIL.isEmpty()) {
                         email.setError("required");
-                    }
+                    }else
                  if(Name.isEmpty()) {
                         name.setError("required");
-                    }
+                    }else
                  if(Password.isEmpty()) {
                         password.setError("required");
                     }
-                    else if(!UserName.isEmpty()) {
-                  if(checkExistedUSerEmail(EMAIL)){
+                    else{
+                  if(!usersEmailFound){
                      if (Password.equals(confirmPassword)) {
 
 //                         Toast.makeText(signup.this, myRefchildemil.toString(), Toast.LENGTH_LONG).show();
@@ -223,74 +304,17 @@ public class signup extends AppCompatActivity {
 
 
                     }
- /*               HashMap<String,String> datamap = new HashMap<String, String>();
-                datamap.put("Name",Name);
-                datamap.put("UserName",UserName);
-                datamap.put("Email",EMAIL);
-                datamap.put("Password",Password);*/
-
-//              datamap.put("Name",Name);
-
-//
- /*               myRef.push().setValue(datamap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()){
-                                        Toast.makeText(signup.this,"data Has been registered", Toast.LENGTH_LONG).show();
-
-                                    }else {
-                                        Toast.makeText(signup.this,"Error",Toast.LENGTH_LONG).show();
-                                    }
-
-*/
 
 
 
+            }else{
+                    username.setError("existed");
+                }
             }
         });
 
     }
-    public void checkuser(){
 
-    }
-//    public boolean checkuserExistance(String mail, DataSnapshot dataSnapshot)
-//    {
-//        Log.d(TAG,"CheckIfUsenameExisteds: checking if "+ mail +" alreadyexisrts" );
-//    User user =new User();
-//    for(DataSnapshot ds: dataSnapshot.getChildren()){
-//
-//        Log.d(TAG,"CheckIfUsenameExisteds: datasnapshot "+ ds);
-//        user.setMail(ds.getValue(User.class).getMail());
-//    }
-//    return true;}
-
-//    ///*
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//        updateUI(currentUser);
-//    }
-//
-//    private void updateUI(FirebaseUser currentUser) {
-//        maincontent Main = new maincontent();
-//
-//        TextView useremail = Main.findViewById(R.id.email_user);
-//        TextView userusername = Main.findViewById(R.id.username);
-//
-//        if(currentUser!= null)
-//
-//        {
-//            useremail.setText(getString(R.string.firebase_database_url,currentUser.getEmail()));
-//            userusername.setText(getString(R.string.firebase_database_url,currentUser.getUid()));
-//
-//        }else
-//        {
-//
-//        }
-//    }
-//*/
     public void gotoLogin(View view) {
     Intent intent = new Intent(signup.this, LoginForm.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -312,34 +336,19 @@ public class signup extends AppCompatActivity {
         finish();
 
     }
-  /*  private void createAccount(String email1,String password1)
+
+    public void showDatePiker(View v)
     {
-        Log.d(TAG,"CreateAccont:"+email1);
+        final Calendar c = Calendar.getInstance();
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
-        mAuth.createUserWithEmailAndPassword(email1, password1)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.d(TAG, "createUserWithEmail:success");
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(signup.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                            updateUI(null);
-                        }
+        DatePickerDialog dialog = new DatePickerDialog(this,android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                                    mDateSetListener,year,month,day);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
 
-                        // ...
-                    }
-                });
     }
-*/}
-/* Map fanoutObject =new hashmap();
-    Map updatemap =new hashmap();
-    updatemap.put(old,new);
 
- */
+}

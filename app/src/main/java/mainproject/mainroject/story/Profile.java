@@ -187,7 +187,7 @@ public class Profile extends Fragment {
                             Picasso.with(imgupload.getContext()).load(imgurl).fit().into(imgupload);
                             //                            urlimg.setText(dataSnapshot.getValue(User.class).getName());
                         } else {
-                            Toast.makeText(getContext(), "Profile form", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getContext(), "Profile form", Toast.LENGTH_LONG).show();
                             //    throw new IllegalArgumentException("Path must not be empty.");
                         }
                     }

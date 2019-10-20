@@ -1,14 +1,23 @@
 package mainproject.mainroject.story;
 
 
+import android.graphics.Canvas;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnDrawListener;
+import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
+import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
+import com.github.barteksc.pdfviewer.listener.OnRenderListener;
+import com.github.barteksc.pdfviewer.listener.OnTapListener;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -33,9 +42,15 @@ PDFView pdfView;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_pdfview, container, false);
     pdfView =(PDFView)view.findViewById(R.id.pdfviewerpage);
-    int pagescount = pdfView.getPageCount();
+//    int pagescount = pdfView.getPageCount();
     Bundle bundle =getArguments();
-    new Retrievepdffile().execute(bundle.getString("StoryCont"));
+        String strLink = bundle.getString("StoryCont");
+
+        Log.d("pdfViews",strLink);
+        assert bundle != null;
+
+        new Retrievepdffile().execute(strLink);
+
     return view;}
 class Retrievepdffile extends AsyncTask<String,Void,InputStream>
 {
@@ -57,7 +72,11 @@ class Retrievepdffile extends AsyncTask<String,Void,InputStream>
 
     @Override
     protected void onPostExecute(InputStream inputStream) {
-        pdfView.fromStream(inputStream).load();
+        pdfView.fromStream(inputStream).password(null)
+                .defaultPage(0)
+                .enableSwipe(true)
+                .swipeHorizontal(false)
+                .enableDoubletap(true).load();
     }
 }
 }

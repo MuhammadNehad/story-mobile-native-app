@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="mainproject.mainroject.story">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
+    <!--<uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" /> <!-- <uses-permission android:name="android.permission.LOCATION_HARDWARE" /> -->
@@ -15,22 +15,22 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".resetPassword"></activity>
 
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        android:icon="@drawable/applicationnewlogo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/white_border"
+
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+
         <meta-data
             android:name="android.support.FILE_PROVIDER_PATHS"
             android:resource="@xml/file_paths" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,24 +41,41 @@
             android:name=".LoginForm"
             android:label="@string/title_activity_login_form"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="mainproject.mainroject.story.MainActivity" />
         </activity>
-        <activity android:name=".signup" />
+        <activity android:name=".signup"
+
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"/>
         <activity
             android:name=".maincontent"
-            android:label="@string/title_activity_maincontent">
+            android:label="@string/title_activity_maincontent"
+
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="mainproject.mainroject.story.LoginForm" />
         </activity>
         <activity
             android:name=".Main2Activity"
+
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"
             android:theme="@style/Base.Theme.AppCompat.Dialog.Alert" />
-        <activity android:name=".checkstoryfromact" />
-        <activity android:name=".checkedpdf" />
+        <activity android:name=".checkstoryfromact"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"/>
+        <activity android:name=".checkedpdf"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboardHidden|orientation"/>
     </application>
 
 </manifest>

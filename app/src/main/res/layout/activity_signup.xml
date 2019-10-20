@@ -98,6 +98,7 @@
             android:hint="@string/birthdate"
             android:ems="10"
             android:padding="3dp"
+            android:onClick="showDatePiker"
             android:inputType="date" />
 
         <Button

@@ -59,8 +59,9 @@ public class maincontent extends AppCompatActivity {
     SearchView searchView;
     Toolbar tb;
     protected static PayPalConfiguration config = new PayPalConfiguration()
-            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-            .clientId(paypalconfig.paypal_client_Id);
+            .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
+            .acceptCreditCards(true)
+            .clientId(paypalconfig.paypal_client_live_Id_key);
 
     private ArrayList<String> datas = new ArrayList<>();
     private ArrayList<String> keys = new ArrayList<>();
@@ -134,11 +135,6 @@ public class maincontent extends AppCompatActivity {
 
                     );
                 }
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 Toast.makeText(this,String.valueOf(provider),Toast.LENGTH_LONG).show();
 
                 continue;
@@ -156,6 +152,8 @@ public class maincontent extends AppCompatActivity {
 //                        Log.d(TAG,"Location: "+country_name);
                         Toast.makeText(this,country_name,Toast.LENGTH_LONG).show();
                     }
+                    Toast.makeText(this,String.valueOf(addresses) ,Toast.LENGTH_LONG).show();
+
                 }catch (IOException e){
                     e.printStackTrace();
                 }
@@ -190,29 +188,6 @@ public class maincontent extends AppCompatActivity {
 //        intent2.putExtra(PayPalService.EXTRA_RECEIVER_EMAIL,config);
 
         startService(intent2);
-//        Intent intent =getIntent();
-
-        //mTextMessage.setOnClickListener(new View.OnClickListener() {
-//    @Override
-//    public void onClick(View v) {
-
-//        mAuth.getInstance().signOut(getApplicationContext()).addOnCompleteListener(new OnCompleteListener<Void>() {
-//         public void onComplete(@NonNull Task<Void> task) {
-//
-//             Intent intent = new Intent(maincontent.this, LoginForm.class);
-//             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-//             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//             startActivity(intent);
-//             finish();
-//         // ...
-//     }
-//    });
-
-
-//    }
-//});
-//        FirebaseAuth.getInstance().signOut();
         fragmentManager.beginTransaction().replace(R.id.content, new ItemFragment(),"itemsFrag").commit();
 
         Toolbar tb =(Toolbar)findViewById(R.id.tb);
@@ -276,6 +251,7 @@ public class maincontent extends AppCompatActivity {
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
+                finish();
                 return true;
             case R.id.update_bar:
 
@@ -301,9 +277,9 @@ viewpageradapter viewpas = new viewpageradapter(this);
         {
             case MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:{
                 if(grantResults.length>0 &&  grantResults[0]== PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(this,"Permission Granted",Toast.LENGTH_LONG).show();
+                    Log.d(TAG,"Permission Granted");
                 }else{
-                    Toast.makeText(this,"Permission Failed",Toast.LENGTH_LONG).show();
+                    Log.d(TAG,"Permission Failed");
 
                 }
                 return;

@@ -1,6 +1,7 @@
 package mainproject.mainroject.story;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -44,6 +45,8 @@ public class userstories extends Fragment {
     FirebaseRecyclerAdapter<PDFFILES, userstories.blogholder> fbra1;
     Query query;
     FirebaseRecyclerOptions<Stories> option;
+    ProgressDialog mprogress;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -53,6 +56,7 @@ public class userstories extends Fragment {
         RecyclerView.LayoutManager manager = new GridLayoutManager(getContext(),3);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(manager);
+
 //          recyclerView.addItemDecoration();
 
         query= FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("Author").equalTo(auth.getCurrentUser().getDisplayName());
@@ -98,7 +102,7 @@ public class userstories extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull userstories.blogholder holder, int position, @NonNull final Stories model) {
+            protected void onBindViewHolder(@NonNull userstories.blogholder holder, final int position, @NonNull final Stories model) {
 //                holder.setContent(model.getStory_content());
 //                holder.setAuthor(model.getAuthor());
 //
@@ -117,6 +121,7 @@ public class userstories extends Fragment {
                 bundle.putString("StoryIMG", model.getLogoUrl());
                 bundle.putString("StoryPrc", model.getStory_price());
                 bundle.putString("StoryType", model.getStorySavingsrc());
+                bundle.putString("StoryKey", getRef(position).getKey());
                 FragmentManager fragmentManager1 = getFragmentManager();
                 updatestorycontent usc = new updatestorycontent();
                 usc.setArguments(bundle);
@@ -238,8 +243,8 @@ public class userstories extends Fragment {
 
 
         public void setAuthor(String author) {
-            Authors = (TextView)mview.findViewById(R.id.Author);
-            Authors.setText(author);
+//            Authors = (TextView)mview.findViewById(R.id.Author);
+//            Authors.setText(author);
         }
         public void setStorytype(String storytypetext) {
             storytype =(TextView)mview.findViewById(R.id.StOrYtYpE);

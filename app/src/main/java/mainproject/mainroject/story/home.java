@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +21,7 @@ import android.support.v7.view.menu.MenuView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,6 +68,13 @@ import java.util.Hashtable;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.google.android.gms.vision.Frame;
+
+import com.google.android.gms.common.api.CommonStatusCodes;
+
+
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -128,35 +137,36 @@ public class home extends Fragment {
     String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
             ,"Historic Plays","Farce","Solo Theatre","Epic"};
 
-    EditText editText;
+    EditText editText, prices,storydesc,Storyname,AuthorsOfBook;
     Button pdfupload;
-    EditText prices;
     ImageButton StryCovers;
-    EditText storydesc;
-    EditText Storyname;
     ImageView img;
     TextView text;
     Button btnSubmitStory;
     FirebaseAuth mAuth;
     private String userName;
      Uri selectedFileURI=null;
-    String Filepath;
+    String Filepath,CoverPath;
     public static final int PAYPAL_REQUEST_CODE1 = 7171;
     PayPalConfiguration config2 = new PayPalConfiguration()
-            .environment(PayPalConfiguration.ENVIRONMENT_SANDBOX)
-            .defaultUserEmail("mnmfas-facilitator@gmail.com").acceptCreditCards(true);
+            .environment(PayPalConfiguration.ENVIRONMENT_PRODUCTION)
+            .defaultUserEmail(paypalconfig.Live_paypal_Publiser_Email)
+            .clientId(paypalconfig.paypal_client_live_Id_key)
+            .acceptCreditCards(true);
+
     private AlertDialog.Builder StoryDetailsl;
       String subCategoryName;
+    String AuthorName;
 
 
     public home() {
 
     }
 //    paypalconfig pc = new paypalconfig();
+    final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
     private DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("Images");
     final DatabaseReference mypdfStoryRef = FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails");
-    final DatabaseReference myStoryRef = FirebaseDatabase.getInstance().getReference().child("StoriesDetails");
-    final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
+    final DatabaseReference myStoryRef = mydatabase.getReference().child("StoriesDetails");
     FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
     final DatabaseReference myRef = mydatabase.getReference().child("UserDetail");
     String currentU;
@@ -295,6 +305,8 @@ public class home extends Fragment {
         changeForm=(Button)inflate.findViewById(R.id.closingpages);
         pdfstrydescription =(EditText)inflate.findViewById(R.id.pdfstrydescription);
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
+        AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
+
         // TODO:StoryPages
 //        fragmentManager.beginTransaction().replace(R.id.content2, child).commit();
         spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,stryMainCategory);
@@ -349,34 +361,14 @@ public class home extends Fragment {
 
         this.selectingitem =spitems[0];
 
-        int[] story = {viewpa.getItemPosition(viewPager)};
-        for (  int i=0;
-            i<= viewpa.getCount();
-            i++
-             ) {
-
-        }
-
         // end view pager
         StoryImg =(MenuView.ItemView) inflate.findViewById(R.id.StoryImg);
         btnSubmitStory =inflate.findViewById(R.id.submitStory);
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-//            viewpa.editText.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-//                @Override
-//                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-//
-//                }
-//            });
-//        }
+
         $pricebox =inflate.findViewById(R.id.pricebox);
-//int sda = R.drawable.edittxt_img;
-//        EditText editText = inflate.findViewById(R.id.userEntry);
-        //        img=inflate.findViewById(R.id.imagesuseradd);
-//        String userEmail1 =su.EMAIL;
 
         Storyname=inflate.findViewById(R.id.story_name);
-//        text=inflate.findViewById(R.id.EntryOutPut);
 
         logoupload = inflate.findViewById(R.id.story_logo);
 
@@ -394,6 +386,7 @@ public class home extends Fragment {
         });
          userEmail = currentuser.getEmail();
          userName = currentuser.getDisplayName();
+         AuthorName = AuthorsOfBook.getText().toString();
         final DatabaseReference myRefchild = myRef.getRef();
         final int price = 100;
         appentries.setOnClickListener(new View.OnClickListener() {
@@ -444,7 +437,7 @@ public class home extends Fragment {
 
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("application/pdf");
-                startActivityForResult( Intent.createChooser(intent, "Select a File to Upload"), 1);
+                startActivityForResult( Intent.createChooser(intent, "Select a PDF File to Upload"), 1);
 
             }
         });
@@ -472,7 +465,11 @@ public class home extends Fragment {
         {
             mProgress.setMessage("Uploading");
             mProgress.show();
-            mProgress.setCancelable(false);
+
+            Thread uploadingBookCover = new Thread(){
+                @Override
+                public void run(){
+
 
             StorageReference mstr = myStorage.child("Photos").child(userEmail).child("storylogo").child(uri.getLastPathSegment());
             mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -484,9 +481,12 @@ public class home extends Fragment {
 //                    Picasso.with(getActivity()).load(downloaduri).fit().into(logoupload);
 
                     myStoryRef.child(StRurl).child("LogoUrl").setValue(downloaduri.toString());
-mProgress.dismiss();
+            mProgress.dismiss();
                 }
             });
+                }
+            };
+            uploadingBookCover.start();
         }
     }
     private void startposting2(final String StRurl){
@@ -496,22 +496,28 @@ mProgress.dismiss();
         {
             mProgress.setMessage("Uploading");
             mProgress.show();
-            mProgress.setCancelable(false);
-
-            StorageReference mstr = myStorage.child("Photos").child(userEmail).child("storylogo").child(uri.getLastPathSegment());
-            mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            Thread uploadingBookCover = new Thread(){
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public void run() {
+                    StorageReference mstr = myStorage.child("Photos").child(userEmail).child("storylogo").child(uri.getLastPathSegment());
+                    mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
 
-                    Uri downloaduri = taskSnapshot.getDownloadUrl();
+                            Uri downloaduri = taskSnapshot.getDownloadUrl();
 //                    Picasso.with(getActivity()).load(downloaduri).fit().into(logoupload);
 
-                    myStoryRef.child(StRurl).child("LogoUrl").setValue(downloaduri.toString());
+                            myStoryRef.child(StRurl).child("LogoUrl").setValue(downloaduri.toString());
 
-                    mProgress.dismiss();
+                            mProgress.dismiss();
+                        }
+                    });
                 }
-            });
+            };
+            uploadingBookCover.start();
+
+
         }
     }
     public void selecttypes(){
@@ -536,11 +542,12 @@ mProgress.dismiss();
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
     }
 
-    String AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,StryTypes,subCategories;
-    public void addingstdataafterpaying(String Authors, String Descrip, String price11, String ImgUrl1, String STOryNAme, String STRCOntEnT, String STRYSrC, String selectingtype, String subCategoryName)
-    {   this.AuthoRs =Authors;
+    String publisheR,AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,StryTypes,subCategories;
+    public void addingstdataafterpaying(String publisher,String Authors, String Descrip, String price11, String ImgUrl1, String STOryNAme, String STRCOntEnT, String STRYSrC, String selectingtype, String subCategoryName)
+    {   this.publisheR =publisher;
         this.DescriP = Descrip;
         this.pRICe =price11;
+        this.AuthoRs = Authors;
         this.IMGUrL = ImgUrl1;
         this.StorYNamE = STOryNAme;
         this.StRContEnT = STRCOntEnT;
@@ -576,99 +583,6 @@ mProgress.dismiss();
                oneTimeDialogPDFs=true;
 
                checkExistedpaypalEmail(v,detaildialog,stryDescri,storyNaMe);
-//                pdfFunSub(stryDescri, storyNaMe);
-//                final String fileprice = prices.getText().toString().trim();
-//                mypdfStoryRef.addChildEventListener(new ChildEventListener() {
-//
-//                    @Override
-//                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                        if(storyNaMe == null){Toast.makeText(getContext(), "Story should have a Title", Toast.LENGTH_LONG).show();}
-//                        else {
-//
-//                            if(dataSnapshot.hasChild(storyNaMe)){
-//                                Toast.makeText(getContext(), "Story Title is Existed, please change it", Toast.LENGTH_LONG).show();
-//                            }if(!dataSnapshot.hasChild(storyNaMe)){
-//                                if(Float.parseFloat(fileprice)>=0) {
-//
-////                                    final DatabaseReference Story_Content = mypdfStoryRef.child(storyNaMe);
-////                                    final DatabaseReference Story_price = mypdfStoryRef.child(storyNaMe);
-////                                    final DatabaseReference fk = mypdfStoryRef.child(storyNaMe);
-////                                    final DatabaseReference Stdesc = mypdfStoryRef.child(storyNaMe);
-////                                    mypdfStoryRef.child(storyNaMe).setValue(storyNaMe);
-//
-////                                    final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
-////                                    select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
-////                                        @Override
-////                                        public void onClick(DialogInterface dialog, int which) {
-//
-//                                            addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),stryDescri,fileprice,uri.getLastPathSegment(),storyNaMe,selectedFileURI.getLastPathSegment(),"PDFSTORY",getSelectingitem());
-//
-////                            Bundle stdata = new Bundle();
-////                            stdata.putString("Authorize",Author1);
-////                            stdata.putString("STORYNAME",storyNAME);
-////                            stdata.putString("STCONTENT",storyCoNtEnT);
-////                            stdata.putString("STDESCRIbE",Desc);
-////                            stdata.putString("IMGURL",ImgUrl);
-////                            stdata.putString("STSOURC",StrySrc);
-//                                            amount_to_pay="5.0";
-//                                            PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay),"USD"," " ,PayPalPayment.PAYMENT_INTENT_SALE);
-////                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
-//
-//                                            Intent intent =new Intent(getContext(), PaymentActivity.class);
-//                                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
-////                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
-////                            intent.putExtra("Authorize",Author1);
-////                            intent.putExtra("STORYNAME",storyNAME);
-////                            intent.putExtra("STCONTENT",storyCoNtEnT);
-////                            intent.putExtra("STDESCRIbE",Desc);
-////                            intent.putExtra("IMGURL",ImgUrl);
-////                            intent.putExtra("STSOURC",StrySrc);
-//                                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment);
-////                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
-//                                            startActivityForResult(intent,PAYPAL_REQUEST_CODE1);
-////ItemFragment ite = new ItemFragment();
-////ite.setArguments(stdata);
-////                                            dialog.dismiss();
-////                                        }
-////                                    });
-////                                    AlertDialog alertDialog1 = select.create();
-////                                    alertDialog1.show();
-//
-//                                }
-//                                else if(TextUtils.isEmpty(fileprice)){
-//                                    prices.setError("can't be Empty");
-//                                    Toast.makeText(getContext(), "Add a value to price", Toast.LENGTH_SHORT).show();
-//                                }else if(Float.parseFloat(fileprice)<0){
-//                                    prices.setError("can't be Less than 0");
-//                                    Toast.makeText(getContext(), "Price Value Should be positive ", Toast.LENGTH_SHORT).show();
-//
-//                                }}
-//
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//
-//                    }
-//
-//
-//                });
             }
         });
 
@@ -679,103 +593,79 @@ mProgress.dismiss();
     public void pdfFunSub(final String stryDescri, final String storyNaMe)
     {
         final String fileprice = prices.getText().toString().trim();
-        myStoryRef.addChildEventListener(new ChildEventListener() {
 
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Toast.makeText(getContext(),"You Submitting Story",Toast.LENGTH_LONG).show();
+         myStoryRef.addChildEventListener(new ChildEventListener() {
 
-                if(oneTimeDialogPDFs){
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                if(storyNaMe == null){Toast.makeText(getContext(), "Story should have a Title", Toast.LENGTH_LONG).show();}
-                else {
 
-                    if(dataSnapshot.hasChild(storyNaMe)){
-                        Toast.makeText(getContext(), "Story Title is Existed, please change it", Toast.LENGTH_LONG).show();
-                    }if(!dataSnapshot.hasChild(storyNaMe)){
-                        if(Float.parseFloat(fileprice)>=0) {
+                        if (oneTimeDialogPDFs) {
 
-//                                    final DatabaseReference Story_Content = mypdfStoryRef.child(storyNaMe);
-//                                    final DatabaseReference Story_price = mypdfStoryRef.child(storyNaMe);
-//                                    final DatabaseReference fk = mypdfStoryRef.child(storyNaMe);
-//                                    final DatabaseReference Stdesc = mypdfStoryRef.child(storyNaMe);
-//                                    mypdfStoryRef.child(storyNaMe).setValue(storyNaMe);
+                            if (Filepath != null && !Filepath.isEmpty()) {
+                                if (CoverPath != null && !CoverPath.isEmpty()) {
+                                    if (storyNaMe == null || storyNaMe.isEmpty()) {
+                                        Toast.makeText(getContext(), "Story should have a Title", Toast.LENGTH_LONG).show();
+                                    } else {
 
-//                                    final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
-//                                    select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
 
-                            addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),stryDescri,fileprice,uri.getLastPathSegment(),storyNaMe,selectedFileURI.getLastPathSegment(),"PDFSTORY",getSelectingitem(),selectingSubCategory);
+                                            if (Float.parseFloat(fileprice) > 0) {
 
-//                            Bundle stdata = new Bundle();
-//                            stdata.putString("Authorize",Author1);
-//                            stdata.putString("STORYNAME",storyNAME);
-//                            stdata.putString("STCONTENT",storyCoNtEnT);
-//                            stdata.putString("STDESCRIbE",Desc);
-//                            stdata.putString("IMGURL",ImgUrl);
-//                            stdata.putString("STSOURC",StrySrc);
-                            amount_to_pay="5.0";
-                            PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay),"USD"," " ,PayPalPayment.PAYMENT_INTENT_SALE);
-//                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
 
-                            Intent intent =new Intent(getContext(), PaymentActivity.class);
-                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
-//                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
-//                            intent.putExtra("Authorize",Author1);
-//                            intent.putExtra("STORYNAME",storyNAME);
-//                            intent.putExtra("STCONTENT",storyCoNtEnT);
-//                            intent.putExtra("STDESCRIbE",Desc);
-//                            intent.putExtra("IMGURL",ImgUrl);
-//                            intent.putExtra("STSOURC",StrySrc);
-                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment);
-//                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
-                            startActivityForResult(intent,PAYPAL_REQUEST_CODE1);
-//ItemFragment ite = new ItemFragment();
-//ite.setArguments(stdata);
-//                                            dialog.dismiss();
-//                                        }
-//                                    });
-//                                    AlertDialog alertDialog1 = select.create();
-//                                    alertDialog1.show();
-                            oneTimeDialogPDFs=false;
+                                                addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),AuthorsOfBook.getText().toString(), stryDescri, fileprice, uri.getLastPathSegment(), storyNaMe, selectedFileURI.getLastPathSegment(), "PDFSTORY", getSelectingitem(), selectingSubCategory);
+
+                                                amount_to_pay = "0.1";
+                                                PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", " ", PayPalPayment.PAYMENT_INTENT_SALE);
+
+                                                Intent intent = new Intent(getContext(), PaymentActivity.class);
+                                                intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config2);
+
+                                                intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
+                                                startActivityForResult(intent, PAYPAL_REQUEST_CODE1);
+                                                oneTimeDialogPDFs = false;
+                                            } else if (TextUtils.isEmpty(fileprice)) {
+                                                prices.setError("can't be Empty");
+                                                Toast.makeText(getContext(), "Add a value to price", Toast.LENGTH_SHORT).show();
+                                            } else if (Float.parseFloat(fileprice) <= 0) {
+                                                prices.setError("can't be 0 or Less than 0");
+                                                Toast.makeText(getContext(), "Price Value Should be more than zero", Toast.LENGTH_SHORT).show();
+
+                                            }
+
+                                    }
+                                } else {
+                                    Toast.makeText(getContext(), "add cover image", Toast.LENGTH_LONG).show();
+
+                                }
+                            } else {
+                                Toast.makeText(getContext(), "you must select pdf File", Toast.LENGTH_LONG).show();
+                            }
                         }
-                        else if(TextUtils.isEmpty(fileprice)){
-                            prices.setError("can't be Empty");
-                            Toast.makeText(getContext(), "Add a value to price", Toast.LENGTH_SHORT).show();
-                        }else if(Float.parseFloat(fileprice)<0){
-                            prices.setError("can't be Less than 0");
-                            Toast.makeText(getContext(), "Price Value Should be positive ", Toast.LENGTH_SHORT).show();
+                    }
 
-                        }}
-                }
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                }
+                    }
 
-            }
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    }
 
-            }
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                    }
 
-            }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
+                    }
 
 
-        });
+                });
+
     }
 
     @Override
@@ -785,6 +675,12 @@ mProgress.dismiss();
 
 
             uri = data.getData();
+            File cover = new File(uri.toString());
+//            uploadedCoverName = cover.getName();
+//            tokens = new StringTokenizer(uploadedFileName, ":");
+//            first = tokens.nextToken();
+//            file_1 = tokens.nextToken().trim();
+            CoverPath = cover.getPath();
 
             Picasso.with(getActivity()).load(uri).fit().into(logoupload);
 //            FileDownloadTask img_name = mstr.getFile(Uri.parse(uri.getLastPathSegment()));
@@ -802,17 +698,34 @@ mProgress.dismiss();
                     e.printStackTrace();
                 }
                 File file = new File(selectedFileURI.toString());
+
                 Log.d("", "File : " + file.getName());
                 uploadedFileName = file.getName();
                 tokens = new StringTokenizer(uploadedFileName, ":");
                 first = tokens.nextToken();
 //            file_1 = tokens.nextToken().trim();
+                Filepath = file.getPath();
                 filename.setText(file.getPath());
-                Filepath = selectedFileURI.getLastPathSegment();
+//                Filepath = selectedFileURI.getLastPathSegment();
 //                child.child("OwnerEmail").setValue(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 //                child.child("FileName").setValue(file.getName());
 
             }
+        }else if(resultCode == Camera_Request)
+        {
+            Bitmap image = BitmapFactory.decodeResource(getContext().getResources(),(int) data.getExtras().get("data"));
+
+            BarcodeDetector detector = new BarcodeDetector.Builder(getContext())
+                    .setBarcodeFormats(Barcode.DATA_MATRIX)
+                    .build();
+            if(!detector.isOperational())
+            {
+                return;
+            }
+            Frame frame = new Frame.Builder().setBitmap(image).build();
+            SparseArray<Barcode> barcodes = detector.detect(frame);
+            Barcode thiscode =barcodes.valueAt(0);
+            String barcode = thiscode.rawValue;
         }
        if (requestCode == PAYPAL_REQUEST_CODE1) {
            if (resultCode == Activity.RESULT_OK) {
@@ -851,9 +764,10 @@ mProgress.dismiss();
                                restrictdata(Pdf_Story_Name.getKey());
                                startposting2(Pdf_Story_Name.getKey());
                                Pdf_Story_Name.child("storyNaMe").setValue(StorYNamE);
-                               Pdf_Story_Name.child("Author").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                               Pdf_Story_Name.child("publishers").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                Story_Content.child("story_content").setValue(FileUrl);
-                               Pdf_Story_Name.child("story_price").setValue(pRICe);
+                               Pdf_Story_Name.child("Author").setValue(AuthorName);
+
                                Pdf_Story_Name.child("LogoSrc").setValue(uri.getLastPathSegment());
                                Pdf_Story_Name.child("Likes").setValue(0);
                                Pdf_Story_Name.child("disLikes").setValue(0);
@@ -891,6 +805,13 @@ mProgress.dismiss();
        {Toast.makeText(getContext(), "cancel", Toast.LENGTH_SHORT).show(); }
            }
     }
+    int Camera_Request = 123;
+
+    public void readISBN(View v)
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,Camera_Request);
+    }
     public void shortstoriesProgress(){
 
         final String prices = $pricebox.getText().toString().trim();
@@ -915,45 +836,23 @@ mProgress.dismiss();
                             Toast.makeText(getContext(), "short Stories Content Should be less than or equal  3000 char(100 line)", Toast.LENGTH_SHORT).show();
                         } else {
 
-//                            if (Float.parseFloat(prices) <= 10) {
                                 final String fk1 = userName.toString().trim();
-//                                    final DatabaseReference Story_Content = myStoryRef.child(story_Name);
-//                                    final DatabaseReference Story_price = myStoryRef.child(story_Name);
-//                                    final DatabaseReference fk = myStoryRef.child(story_Name);
-//                                    final DatabaseReference Stdesc = myStoryRef.child(story_Name);
-//                                    myStoryRef.child(story_Name).setValue(story_Name);
+
 
                                 final AlertDialog.Builder select = new AlertDialog.Builder(getContext());
                                 AlertDialog alertDialog1 = null;
                                 select.setPositiveButton("Paypal", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        addingstdataafterpaying(fk1, story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem(), selectingSubCategory);
-//                            Bundle stdata = new Bundle();
-//                            stdata.putString("Authorize",Author1);
-//                            stdata.putString("STORYNAME",storyNAME);
-//                            stdata.putString("STCONTENT",storyCoNtEnT);
-//                            stdata.putString("STDESCRIbE",Desc);
-//                            stdata.putString("IMGURL",ImgUrl);
-//                            stdata.putString("STSOURC",StrySrc);
-                                        amount_to_pay = String.valueOf("2.0");
+                                        addingstdataafterpaying(fk1,AuthorsOfBook.getText().toString(), story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem(), selectingSubCategory);
+                                        amount_to_pay = "2.0";
                                         PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", "Story org", PayPalPayment.PAYMENT_INTENT_SALE);
 //                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
 
                                         Intent intent = new Intent(getContext(), PaymentActivity.class);
                                         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config2);
-//                            intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION,config2);
-//                            intent.putExtra("Authorize",Author1);
-//                            intent.putExtra("STORYNAME",storyNAME);
-//                            intent.putExtra("STCONTENT",storyCoNtEnT);
-//                            intent.putExtra("STDESCRIbE",Desc);
-//                            intent.putExtra("IMGURL",ImgUrl);
-//                            intent.putExtra("STSOURC",StrySrc);
                                         intent.putExtra(PaymentActivity.EXTRA_PAYMENT, payPalPayment);
-//                            intent.putExtra(PaymentActivity.EXTRA_PAYMENT,payPalPayment1);
                                         startActivityForResult(intent, PAYPAL_REQUEST_CODE1);
-//ItemFragment ite = new ItemFragment();
-//ite.setArguments(stdata);
                                         dialog.dismiss();
 
                                     }
@@ -962,7 +861,6 @@ mProgress.dismiss();
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
 
-//                                            paymentDialog(Author1, Desc, price1, ImgUrl, storyNAME,storyCoNtEnT,StrySrc,price);
                                         dialog.dismiss();
 
                                     }
@@ -1023,23 +921,29 @@ mProgress.dismiss();
         {
             mProgress.setMessage("Uploading");
             mProgress.show();
-            mProgress.setCancelable(false);
 //
             File file = new File(selectedFileURI.getPath());
 
-            StorageReference mstrr = mstr2.child(selectedFileURI.getLastPathSegment());
-            mstrr.putFile(selectedFileURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            Thread uploadingPDF = new Thread(){
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public void run() {
+                    StorageReference mstrr = mstr2.child(selectedFileURI.getLastPathSegment());
+                    mstrr.putFile(selectedFileURI).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
-                    downloaduri = taskSnapshot.getDownloadUrl();
+                            downloaduri = taskSnapshot.getDownloadUrl();
 
-                    String stryname =Storyname.getText().toString().trim();
-                    myStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
+                            String stryname = Storyname.getText().toString().trim();
+                            myStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
 //                    Submitingpdf(sdr,snm,downloaduri.toString());
-            mProgress.dismiss();
+                            mProgress.dismiss();
+                        }
+                    });
                 }
-            });
+            };
+            uploadingPDF.start();
+
         }
     }
 
