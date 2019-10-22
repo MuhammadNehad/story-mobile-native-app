@@ -10,6 +10,7 @@ import java.util.Date;
 
 public class User {
     private String Email,Name,Password,UserImg,userpaypalacc,PhoneNumber, Totalpvmsgs;
+    private Double storageUserSize;
     private Date RegisterDate;
     private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes;
     User() {
@@ -100,5 +101,21 @@ public class User {
 
     public void setTotalVotesTo(int totalVotesTo) {
         TotalVotesTo = totalVotesTo;
+    }
+
+    public Double getStorageUserSize() {
+        return storageUserSize;
+    }
+
+    public void setStorageUserSize(Double storageUserSize) {
+        this.storageUserSize = storageUserSize;
+    }
+
+    public Date getRegisterDate() {
+        return RegisterDate;
+    }
+
+    public void setRegisterDate(Date registerDate) {
+        RegisterDate = registerDate;
     }
 }

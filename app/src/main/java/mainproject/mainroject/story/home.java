@@ -6,11 +6,15 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,6 +23,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.menu.MenuView;
 import android.text.TextUtils;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.SparseArray;
@@ -30,6 +35,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -38,7 +45,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.github.barteksc.pdfviewer.util.FileUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -49,6 +58,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
@@ -57,6 +67,7 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.squareup.picasso.Picasso;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -86,24 +97,50 @@ public class home extends Fragment {
     Button pdfslct;
     private StringTokenizer tokens;
     private String first;
-    private String file_1;
-    private BreakIterator txt_file_name_1;
-
-    String[] strytypes = {"Science","Horror","Action","Religious","Politics"};
     TextView filename;
     StorageReference  myStorage = FirebaseStorage.getInstance().getReference();
-    StorageReference mstr2 = myStorage.child("PDFuploads").child(FirebaseAuth.getInstance().getCurrentUser().getEmail()).child("StoryDetail");
     private Uri downloaduri = null;
     DatabaseReference child;
+    FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
+    final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
+    final DatabaseReference myStoryRef = mydatabase.getReference().child("StoriesDetails");
+    final DatabaseReference myRef = mydatabase.getReference().child("UserDetail");
+    String currentU;
+    String currentUDN = currentuser != null ? currentuser.getDisplayName() : null;
+    String currentUEmail = currentuser != null ? currentuser.getEmail() : null;
+    StorageReference mstr2 = myStorage.child("PDFuploads").child(String.valueOf(currentUEmail)).child("StoryDetail");
+    StorageReference mstrPDFSize = myStorage.child("Photos").child(String.valueOf(currentUEmail));
+    private ProgressDialog mProgress;
+    Uri uri = null;
+    ImageButton logoupload;
+    String story_Name;
+    String userEmail = null;
+    ViewPager viewPager;
+    viewpageradapter viewpa;
+    EditText $pricebox,pdfstrydescription;
+    MenuView.ItemView StoryImg;
+    private static final int Gallery_intent1 = 2;
+    String strytitle;
+    String amount_to_pay="";
+    Button appentries,pdfentries,changeForm;
+    LinearLayout pdfform,transform,appentryprice;
+    EditText storydesc2 ;
+    Spinner typespinner;
+    Dictionary<String,String[]> spinnerDividers =new Hashtable<String, String[]>();
+    ArrayAdapter<String> spinnerAdapter;
+    ArrayAdapter<String> spinnerDividersAdapter;
+    CheckBox aggrementCheckBox;
+    String selectingitem;
+    String selectingSubCategory;
+    boolean AgreementChecked =false;
+    long maxSize= 1024;
+    long maxfilesize = 100;
+    boolean submitShortStories=false;
+    boolean submitPDFStories=false;
+    boolean oneTimeDialog=false;
+    boolean oneTimeDialogPDFs=false;
 
     private AlertDialog.Builder StoryDetails2;
-
-    FragmentTransaction fragmentTransaction;
-    FragmentManager fragmentManager = getFragmentManager();
-
-    DatabaseReference muserref = FirebaseDatabase.getInstance().getReference().child("UserDetail");
-//    DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("PDFFILES");
-//    private Uri selectedFileURI =null;
 
     String[] mimeTypes =
         {"application/msword","application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .doc & .docx
@@ -137,13 +174,9 @@ public class home extends Fragment {
     String[] Theatres={"Tragedy","Drama","Fringe","Immersive","Melodrama","Autobiographicals","Comedy"
             ,"Historic Plays","Farce","Solo Theatre","Epic"};
 
-    EditText editText, prices,storydesc,Storyname,AuthorsOfBook;
+    EditText prices,Storyname,AuthorsOfBook;
     Button pdfupload;
-    ImageButton StryCovers;
-    ImageView img;
-    TextView text;
     Button btnSubmitStory;
-    FirebaseAuth mAuth;
     private String userName;
      Uri selectedFileURI=null;
     String Filepath,CoverPath;
@@ -162,52 +195,6 @@ public class home extends Fragment {
     public home() {
 
     }
-//    paypalconfig pc = new paypalconfig();
-    final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
-    private DatabaseReference mimgref = FirebaseDatabase.getInstance().getReference().child("Images");
-    final DatabaseReference mypdfStoryRef = FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails");
-    final DatabaseReference myStoryRef = mydatabase.getReference().child("StoriesDetails");
-    FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
-    final DatabaseReference myRef = mydatabase.getReference().child("UserDetail");
-    String currentU;
-    String currentUDN =currentuser.getDisplayName();
-    LoginForm loginForm;
-    Query fk;
-    signup su;
-    private ProgressDialog mProgress;
-    String strydescr;
-    Uri uri = null;
-    private Uri uri2 = null;
-    private Uri uri3 = null;
-
-    ImageButton logoupload;
-    String story_Name;
-    String userEmail = null;
-    ViewPager viewPager;
-    viewpageradapter viewpa;
-    EditText $pricebox,pdfstrydescription;
-    MenuView.ItemView StoryImg;
-    private static final int Gallery_intent1 = 2;
-    private static final int Gallery_intent2 = 3;
-    private static final int Gallery_intent3 =4;
-    String strytitle;
-    String amount_to_pay="";
-    Button appentries,pdfentries,changeForm;
-    LinearLayout pdfform,transform,appentryprice;
-    EditText storydesc2 ;
-    Spinner typespinner;
-    Dictionary<String,String[]> spinnerDividers =new Hashtable<String, String[]>();
-    ArrayAdapter<String> spinnerAdapter;
-    ArrayAdapter<String> spinnerDividersAdapter;
-
-    SharedPreferences sharedPreferences;
-    String selectingitem;
-    String selectingSubCategory;
-
-    boolean submitShortStories=false;
-    boolean submitPDFStories=false;
-    boolean oneTimeDialog=false;
-    boolean oneTimeDialogPDFs=false;
 
     public boolean checkExistedpaypalEmail(final View view, final View inflate, final String stryDescri, final String storyNaMe){
         final boolean[] Found = {false};
@@ -280,14 +267,39 @@ public class home extends Fragment {
         this.selectingitem = selectingitem;
     }
 
+    public void  calculateUserStorageSize(){
+        myRef.child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("storageUserSize")) {
+                    long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
+                    maxSize = maxSize - sizeOfuserStorage;
+                    Toast.makeText(getContext(),String.valueOf(maxSize)+" "+ String.valueOf(sizeOfuserStorage),Toast.LENGTH_LONG).show();
+                }else{
+                    myRef.child("storageUserSize").setValue(0);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        calculateUserStorageSize();
         // Inflate the layout for this fragment
         final View inflate = inflater.inflate(R.layout.fragment_home, container, false);
+//        calculateUserStorageSize();
         typespinner =(Spinner)inflate.findViewById(R.id.addingstoriestypes);
         subCategory =(Spinner)inflate.findViewById(R.id.addingSubCategories);
-        //        storydesc = view.findViewById(R.id.strydescription);
+
         spinnerDividers.put(stryMainCategory[0],Education);
         spinnerDividers.put(stryMainCategory[1],MoviesAndSeries);
         spinnerDividers.put(stryMainCategory[2],Theatres);
@@ -306,9 +318,17 @@ public class home extends Fragment {
         pdfstrydescription =(EditText)inflate.findViewById(R.id.pdfstrydescription);
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
         AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
+        aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
 
-        // TODO:StoryPages
-//        fragmentManager.beginTransaction().replace(R.id.content2, child).commit();
+        if(Integer.parseInt(String.valueOf(maxSize)) ==0)
+        {
+            Toast.makeText(getContext(),"max limit have been Exceeded",Toast.LENGTH_LONG).show();
+        }else{
+            Toast.makeText(getContext(),"You still have" + String.valueOf(maxSize) +"MB",Toast.LENGTH_LONG).show();
+
+        }
+
+        AgreementChecked =aggrementCheckBox.isChecked();
         spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,stryMainCategory);
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -322,6 +342,7 @@ public class home extends Fragment {
         viewPager = (ViewPager)inflate.findViewById(R.id.storypages);
         viewpa =new viewpageradapter(getContext());
         viewPager.setAdapter(viewpa);
+
         // Spinners Selected Items
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -348,7 +369,7 @@ public class home extends Fragment {
                 try {
                     selectingSubCategory = spinnerDividers.get(subCategoryName)[i];
                 }catch(Exception ex){
-                    Toast.makeText(getContext(),ex.getMessage(),Toast.LENGTH_SHORT).show();
+                    Log.d("subCat",ex.getMessage());
 
                 }
                 }
@@ -423,6 +444,14 @@ public class home extends Fragment {
             }
         });
 
+        aggrementCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                AgreementChecked = aggrementCheckBox.isChecked();
+
+            }
+        });
+
         btnSubmitStory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -446,10 +475,13 @@ public class home extends Fragment {
             public void onClick(View v) {
                 strytitle =  Storyname.getText().toString();
                String strydescr =  pdfstrydescription.getText().toString();
-//    strydescr.replace(null, "no desc");
 
-    Submitingpdf(strydescr, strytitle);
-
+                if(AgreementChecked) {
+                    Submitingpdf(strydescr, strytitle);
+                }
+                else{
+                    aggrementCheckBox.setError("you must accept The Agreement");
+                }
             }
         });
         logoupload.setImageDrawable(imground);
@@ -457,6 +489,11 @@ public class home extends Fragment {
         return inflate;
     }
 
+    public void readISBN(View v)
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent,Camera_Request);
+    }
 
     private void startposting(final String StRurl){
         String storytitle = Storyname.getText().toString().trim();
@@ -520,26 +557,12 @@ public class home extends Fragment {
 
         }
     }
-    public void selecttypes(){
 
-    }
     private void getPDF() {
-        //for greater than lolipop versions we need the permissions asked on runtime
-        //so if the permission is not available user will go to the screen to allow storage permission
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(getContext(),
-//                Manifest.permission.READ_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                    Uri.parse("package:" + getPackageName()));
-//            startActivity(intent);
-//            return;
-//        }
-
-        //creating an intent for file chooser
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);
+        startActivityForResult(Intent.createChooser(intent, "Select PDF"), 1);
     }
 
     String publisheR,AuthoRs,DescriP,pRICe,IMGUrL,StorYNamE, StRContEnT,StrYsRc,StryTypes,subCategories;
@@ -614,7 +637,7 @@ public class home extends Fragment {
 
                                                 addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),AuthorsOfBook.getText().toString(), stryDescri, fileprice, uri.getLastPathSegment(), storyNaMe, selectedFileURI.getLastPathSegment(), "PDFSTORY", getSelectingitem(), selectingSubCategory);
 
-                                                amount_to_pay = "0.1";
+                                                amount_to_pay = "5";
                                                 PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", " ", PayPalPayment.PAYMENT_INTENT_SALE);
 
                                                 Intent intent = new Intent(getContext(), PaymentActivity.class);
@@ -668,6 +691,7 @@ public class home extends Fragment {
 
     }
 
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -675,40 +699,76 @@ public class home extends Fragment {
 
 
             uri = data.getData();
-            File cover = new File(uri.toString());
-//            uploadedCoverName = cover.getName();
-//            tokens = new StringTokenizer(uploadedFileName, ":");
-//            first = tokens.nextToken();
-//            file_1 = tokens.nextToken().trim();
-            CoverPath = cover.getPath();
+            Cursor returndata = getContext().getContentResolver().query(uri,null,null,null,null);
+            assert returndata != null;
+            int sizeIndex = returndata.getColumnIndex(OpenableColumns.SIZE);
+            returndata.moveToFirst();
 
-            Picasso.with(getActivity()).load(uri).fit().into(logoupload);
-//            FileDownloadTask img_name = mstr.getFile(Uri.parse(uri.getLastPathSegment()));
-//            DatabaseReference imgnames = mimgref.child(uri.getLastPathSegment());
-//            DatabaseReference imgdate = mimgref.child();
+            Double ImageSize=((Double.parseDouble(String.valueOf(returndata.getLong(sizeIndex)))/1000)/1000);
+//                Formatter.formatFileSize(getContext(), returndata.getLong(sizeIndex))
+            Log.d("FileSize", String.valueOf(ImageSize));
 
-//            imgnames.child("ImgSize").setValue(mstr.getBytes(Long.parseLong(img_name.toString())));
+            if(maxSize>100){
+                maxfilesize= 100;
+            }else if(Integer.parseInt(String.valueOf(maxSize))<100)
+            {
+                maxfilesize =maxSize;
+            }else{
+                maxfilesize =0;
+                Toast.makeText(getContext(),"you have reached storage limit",Toast.LENGTH_LONG).show();
+            }
+            if(ImageSize < maxSize) {
+
+                File cover = new File(uri.toString());
+                CoverPath = cover.getPath();
+                filesFilters filters = new filesFilters(cover);
+                if(filters.accept(cover)) {
+                    Picasso.with(getActivity()).load(uri).fit().into(logoupload);
+                }else{
+                    Toast.makeText(getContext(),"please, upload a real Image",Toast.LENGTH_LONG).show();
+                }
+                }
             }
         else if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 selectedFileURI = data.getData();
-                try {
-                    String path = String.valueOf(FileUtils.fileFromAsset(getContext(),selectedFileURI+ "-pdfview.pdf"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                File file = new File(selectedFileURI.toString());
+                Cursor returndata = getContext().getContentResolver().query(selectedFileURI,null,null,null,null);
+                int sizeIndex = returndata.getColumnIndex(OpenableColumns.SIZE);
+                returndata.moveToFirst();
 
-                Log.d("", "File : " + file.getName());
-                uploadedFileName = file.getName();
-                tokens = new StringTokenizer(uploadedFileName, ":");
-                first = tokens.nextToken();
+                assert selectedFileURI != null;
+
+
+                Double fileSize=((Double.parseDouble(String.valueOf(returndata.getLong(sizeIndex)))/1000)/1000);
+//                Formatter.formatFileSize(getContext(), returndata.getLong(sizeIndex))
+                    Log.d("FileSize", String.valueOf(fileSize));
+
+                if(maxSize>100){
+                    maxfilesize= 100;
+                }else if(Integer.parseInt(String.valueOf(maxSize))<100)
+                {
+                    maxfilesize =maxSize;
+                }else{
+                    maxfilesize =0;
+                    Toast.makeText(getContext(),"you have reached storage limit",Toast.LENGTH_LONG).show();
+                }
+                    if(fileSize<maxSize ){
+                    File file = new File(selectedFileURI.toString());
+                    Log.d("", "File : " + file.getName());
+                    uploadedFileName = file.getName();
+                    tokens = new StringTokenizer(uploadedFileName, ":");
+                    first = tokens.nextToken();
 //            file_1 = tokens.nextToken().trim();
-                Filepath = file.getPath();
-                filename.setText(file.getPath());
+                    Filepath = file.getPath();
+                    filename.setText(file.getPath());
 //                Filepath = selectedFileURI.getLastPathSegment();
 //                child.child("OwnerEmail").setValue(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 //                child.child("FileName").setValue(file.getName());
+                }else{
+                    filename.setError("max size is 100 Mbytes");
+                        Toast.makeText(getContext(),"max size is 100 Mbytes",Toast.LENGTH_LONG).show();
+
+                }
 
             }
         }else if(resultCode == Camera_Request)
@@ -763,11 +823,10 @@ public class home extends Fragment {
                                final DatabaseReference Pdf_Story_Name  = myStoryRef.push();
                                restrictdata(Pdf_Story_Name.getKey());
                                startposting2(Pdf_Story_Name.getKey());
+
                                Pdf_Story_Name.child("storyNaMe").setValue(StorYNamE);
                                Pdf_Story_Name.child("publishers").setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-//                Story_Content.child("story_content").setValue(FileUrl);
                                Pdf_Story_Name.child("Author").setValue(AuthorName);
-
                                Pdf_Story_Name.child("LogoSrc").setValue(uri.getLastPathSegment());
                                Pdf_Story_Name.child("Likes").setValue(0);
                                Pdf_Story_Name.child("disLikes").setValue(0);
@@ -805,13 +864,10 @@ public class home extends Fragment {
        {Toast.makeText(getContext(), "cancel", Toast.LENGTH_SHORT).show(); }
            }
     }
+
     int Camera_Request = 123;
 
-    public void readISBN(View v)
-    {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,Camera_Request);
-    }
+
     public void shortstoriesProgress(){
 
         final String prices = $pricebox.getText().toString().trim();
@@ -824,6 +880,8 @@ public class home extends Fragment {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     if(oneTimeDialog) {
+
+
                     String storiesname = String.valueOf(dataSnapshot.child("storyNaMe").getValue());
 
                     if (dataSnapshot.hasChild(story_Name)) {
@@ -847,7 +905,6 @@ public class home extends Fragment {
                                         addingstdataafterpaying(fk1,AuthorsOfBook.getText().toString(), story_description, prices, uri.getLastPathSegment(), story_Name, story_content, "AppCreationStory", getSelectingitem(), selectingSubCategory);
                                         amount_to_pay = "2.0";
                                         PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", "Story org", PayPalPayment.PAYMENT_INTENT_SALE);
-//                            PayPalPayment payPalPayment1 = new PayPalPayment(new BigDecimal((90*Integer.parseInt(amount_to_pay))/100),"USD","Pay to"+Author1 ,PayPalPayment.PAYMENT_INTENT_SALE);
 
                                         Intent intent = new Intent(getContext(), PaymentActivity.class);
                                         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, config2);
@@ -870,9 +927,6 @@ public class home extends Fragment {
                                 alertDialog1 = select.create();
                                 alertDialog1.show();
                                 oneTimeDialog=false;
-//                            } else if (Float.parseFloat(prices) > 10) {
-//                                Toast.makeText(getContext(), "Price should be lower than or equal to 10 $", Toast.LENGTH_LONG).show();
-//                            }
                         }
                     }
                     }
@@ -909,14 +963,6 @@ public class home extends Fragment {
         inflater.inflate(R.menu.mainmenu, menu);
     }
     public void restrictdata(final String dt){
-        final String storytitle11 = Storyname.getText().toString().trim();
-        String storycontent1 = storydesc2.getText().toString().trim();
-
-//        String storytitle = Storyname.getText().toString().trim();
-//        String storycontent = viewpa.editText.getText().toString().trim();
-
-//
-
         if(selectedFileURI!=null)
         {
             mProgress.setMessage("Uploading");
@@ -935,8 +981,22 @@ public class home extends Fragment {
                             downloaduri = taskSnapshot.getDownloadUrl();
 
                             String stryname = Storyname.getText().toString().trim();
+                            final long curuploadfileSize = taskSnapshot.getBytesTransferred();
                             myStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
 //                    Submitingpdf(sdr,snm,downloaduri.toString());
+                            myRef.child(currentUDN).child("storageUserSize").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Double curSize= Double.parseDouble(String.valueOf(dataSnapshot.getValue()));
+                                    myRef.child(currentUDN).child("storageUserSize").setValue(curSize+curuploadfileSize);
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
                             mProgress.dismiss();
                         }
                     });

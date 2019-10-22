@@ -778,7 +778,9 @@ public class ItemFragment extends Fragment {
         final TextView publishersText = (TextView) detaildialog.findViewById(R.id.publishers);
         TextView Authors = (TextView) detaildialog.findViewById(id.Authors);
         TextView storyNAme = (TextView) detaildialog.findViewById(R.id.stname);
-        Picasso.with(getContext()).load(ImgUrl).fit().into(cover);
+        if(!ImgUrl.isEmpty() && !ImgUrl.equals(null) && !ImgUrl.equals(" ")) {
+            Picasso.with(getContext()).load(ImgUrl).fit().into(cover);
+        }
         final TextView comtxt = (TextView) detaildialog.findViewById(R.id.commentstxt1);
         final ListView comlist =(ListView)detaildialog.findViewById(R.id.commentslist);
         final EditText comentry =(EditText)detaildialog.findViewById(R.id.usernewcomment);
