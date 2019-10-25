@@ -87,12 +87,19 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import static android.app.Activity.RESULT_OK;
 
 public class home extends Fragment {
 
+    public home() {
 
+    }
 //editText
+    public static EditText ISBNEDITText;
     String uploadedFileName;
     Button pdfslct;
     private StringTokenizer tokens;
@@ -120,9 +127,10 @@ public class home extends Fragment {
     EditText $pricebox,pdfstrydescription;
     MenuView.ItemView StoryImg;
     private static final int Gallery_intent1 = 2;
+    private static final int CapturingISBNAndEAN = 21099;
     String strytitle;
     String amount_to_pay="";
-    Button appentries,pdfentries,changeForm;
+    Button appentries,pdfentries,changeForm,capturingISBNAndEAN;
     LinearLayout pdfform,transform,appentryprice;
     EditText storydesc2 ;
     Spinner typespinner;
@@ -132,6 +140,9 @@ public class home extends Fragment {
     CheckBox aggrementCheckBox;
     String selectingitem;
     String selectingSubCategory;
+    boolean storyFound = false;
+    boolean sameStory = false;
+
     boolean AgreementChecked =false;
     long maxSize= 1024;
     long maxfilesize = 100;
@@ -192,9 +203,7 @@ public class home extends Fragment {
     String AuthorName;
 
 
-    public home() {
 
-    }
 
     public boolean checkExistedpaypalEmail(final View view, final View inflate, final String stryDescri, final String storyNaMe){
         final boolean[] Found = {false};
@@ -274,9 +283,9 @@ public class home extends Fragment {
                 if(dataSnapshot.hasChild("storageUserSize")) {
                     long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
                     maxSize = maxSize - sizeOfuserStorage;
-                    Toast.makeText(getContext(),String.valueOf(maxSize)+" "+ String.valueOf(sizeOfuserStorage),Toast.LENGTH_LONG).show();
+                    Log.d("FileSIZE",String.valueOf(maxSize)+" "+ String.valueOf(sizeOfuserStorage));
                 }else{
-                    myRef.child("storageUserSize").setValue(0);
+                    myRef.child(currentUDN).child("storageUserSize").setValue(0);
                 }
 
             }
@@ -306,6 +315,7 @@ public class home extends Fragment {
         spinnerDividers.put(stryMainCategory[3],MoviesAndSeries);
         spinnerDividers.put(stryMainCategory[4],literature);
 
+        ISBNEDITText = (EditText) inflate.findViewById(R.id.ISBN);
         pdfslct =(Button)inflate.findViewById(R.id.selectpdffile);
         pdfupload =(Button)inflate.findViewById(R.id.uploadpdffile);
         filename = (TextView)inflate.findViewById(R.id.uploadedfilename);
@@ -319,7 +329,7 @@ public class home extends Fragment {
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
         AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
         aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
-
+        capturingISBNAndEAN = (Button) inflate.findViewById(R.id.captureIsbnAndEAN);
         if(Integer.parseInt(String.valueOf(maxSize)) ==0)
         {
             Toast.makeText(getContext(),"max limit have been Exceeded",Toast.LENGTH_LONG).show();
@@ -343,6 +353,16 @@ public class home extends Fragment {
         viewpa =new viewpageradapter(getContext());
         viewPager.setAdapter(viewpa);
 
+        capturingISBNAndEAN.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext().getApplicationContext(),barcodeScannerActivity.class);
+                startActivityForResult(intent,CapturingISBNAndEAN );
+
+//                startActivity(intent);
+            }
+        });
         // Spinners Selected Items
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -410,6 +430,7 @@ public class home extends Fragment {
          AuthorName = AuthorsOfBook.getText().toString();
         final DatabaseReference myRefchild = myRef.getRef();
         final int price = 100;
+
         appentries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -489,11 +510,6 @@ public class home extends Fragment {
         return inflate;
     }
 
-    public void readISBN(View v)
-    {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,Camera_Request);
-    }
 
     private void startposting(final String StRurl){
         String storytitle = Storyname.getText().toString().trim();
@@ -863,10 +879,50 @@ public class home extends Fragment {
        }else if(resultCode == Activity.RESULT_CANCELED)
        {Toast.makeText(getContext(), "cancel", Toast.LENGTH_SHORT).show(); }
            }
+       else if(requestCode == CapturingISBNAndEAN)
+       {
+//           onPostExecute();
+       }
     }
 
     int Camera_Request = 123;
 
+    protected void onPostExecute(String result)
+    {
+        try{
+
+            JSONObject resultObject = new JSONObject(result);
+            JSONArray bookArray = resultObject.getJSONArray("items");
+            JSONObject bookObject = bookArray.getJSONObject(0);
+            JSONObject volumeObject = bookObject.getJSONObject("volumeInfo");
+            StringBuilder authorBuilder= new StringBuilder("");
+            JSONArray authorsArray = volumeObject.getJSONArray("authors");
+            try {
+                if(Storyname.getText().toString().trim() != volumeObject.get("title"))
+                {
+                    Storyname.setError("Not Same Name");
+                    sameStory = false;
+
+                }
+                if(authorsArray.length() >0)
+                {
+                    for(int a=0; a<authorsArray.length();a++)
+                    {
+
+                    }
+                }
+            }catch (JSONException jse)
+            {
+                jse.printStackTrace();
+                Toast.makeText(getContext(), "Sorry we can not find this book, try another ISBN or EAN", Toast.LENGTH_SHORT).show();
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Sorry we can not find this book, try another ISBN or EAN", Toast.LENGTH_SHORT).show();
+            storyFound = false;
+        }
+    }
 
     public void shortstoriesProgress(){
 

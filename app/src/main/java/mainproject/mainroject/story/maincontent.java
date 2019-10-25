@@ -204,22 +204,6 @@ public class maincontent extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater =getMenuInflater();
         menuInflater.inflate(R.menu.mainmenu,menu);
-//        MenuItem searchitem =menu.findItem(R.id.SearchIcon);
-//        searchView = (SearchView) searchitem.getActionView();
-//        searchView.setQueryHint("Search Name");
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-////         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        searchView.setOnQueryTextListener((SearchView.OnQueryTextListener) maincontent.this);
               return true;
     }
 

@@ -78,8 +78,10 @@
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:hint="BookAuthor"
+            android:layout_margin="5dp"
             android:background="@drawable/custom_edittext"
             android:defaultFocusHighlightEnabled="true"
+
             android:ems="3"
             android:fontFamily="sans-serif-condensed"
             android:singleLine="true"
@@ -123,6 +125,79 @@
                 tools:targetApi="o" />
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/generate"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="left|center"
+
+                    android:layout_marginEnd="20dp"
+                    android:visibility="gone"
+                    android:layout_marginRight="20dp"
+                    tools:ignore="RtlHardcoded" />
+
+                <Button
+                    android:id="@+id/captureIsbnAndEAN"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="left|center_vertical"
+
+                    android:layout_marginEnd="10dp"
+
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/capturing_icon"
+                    tools:ignore="RtlHardcoded" />
+                <EditText
+                    android:id="@+id/ISBN"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="ISBN"
+                    android:background="@drawable/normaledittextsty"
+                    android:editable="false"
+                    android:inputType="none"
+                    android:padding="2dp"
+                    />
+                <EditText
+                    android:id="@+id/EAN"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:hint="EAN"
+                    android:background="@drawable/normaledittextsty"
+                    android:editable="false"
+                    android:inputType="none"
+                    android:padding="2dp"
+                    />
+                </LinearLayout>
+            <TextView
+                android:id="@+id/ISBNhint"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:gravity="center"
+                android:text="make sure that you have captured Valid ISBN AND EAN"/>
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+                <CheckBox
+                    android:id="@+id/check_agreementBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_weight="1"
+                     />
+
+            </LinearLayout>
+            <LinearLayout
 
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -140,7 +215,7 @@
 
                 <TextView
                     android:id="@+id/uploadedfilename"
-                    android:layout_width="100dp"
+                    android:layout_width="200dp"
                     android:layout_height="50dp"
                     android:gravity="center_vertical"
 
@@ -160,46 +235,7 @@
                     android:background="@drawable/ic_file_upload_black_24dp"
                     tools:ignore="RtlHardcoded" />
             </LinearLayout>
-            <LinearLayout
 
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-
-                <CheckBox
-                    android:id="@+id/check_agreementBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-
-                    android:layout_weight="1"
-                     />
-
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <Button
-                    android:id="@+id/generate"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left|center"
-
-                    android:layout_marginEnd="20dp"
-
-                    android:layout_marginRight="20dp"
-                    tools:ignore="RtlHardcoded" />
-                <EditText
-                    android:id="@+id/ISBN"
-                    android:layout_width="100dp"
-                    android:layout_height="30dp"
-                    android:onClick="readISBN"
-
-                    />
-            </LinearLayout>
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"
