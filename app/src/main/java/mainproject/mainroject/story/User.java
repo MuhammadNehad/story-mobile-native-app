@@ -12,6 +12,7 @@ public class User {
     private String Email,Name,Password,UserImg,userpaypalacc,PhoneNumber, Totalpvmsgs;
     private Double storageUserSize;
     private Date RegisterDate;
+    private boolean disclaimerchecked,policiesAndTermsChecked;
     private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes;
     User() {
     }
@@ -117,5 +118,21 @@ public class User {
 
     public void setRegisterDate(Date registerDate) {
         RegisterDate = registerDate;
+    }
+
+    public boolean isPoliciesAndTermsChecked() {
+        return policiesAndTermsChecked;
+    }
+
+    public void setPoliciesAndTermsChecked(boolean policiesAndTermsChecked) {
+        this.policiesAndTermsChecked = policiesAndTermsChecked;
+    }
+
+    public boolean isDisclaimerchecked() {
+        return disclaimerchecked;
+    }
+
+    public void setDisclaimerchecked(boolean disclaimerchecked) {
+        this.disclaimerchecked = disclaimerchecked;
     }
 }

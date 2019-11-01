@@ -9,8 +9,13 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.pdf.PdfDocument;
+import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
@@ -22,8 +27,17 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.ViewPager;
 import android.support.v7.view.menu.MenuView;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.text.format.Formatter;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Patterns;
 import android.util.SparseArray;
@@ -44,7 +58,10 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.util.FileUtils;
+import com.google.android.gms.ads.internal.gmsg.HttpClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -68,15 +85,23 @@ import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.text.AttributedCharacterIterator;
 import java.text.BreakIterator;
 import java.util.Calendar;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import java.util.jar.Attributes;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.android.gms.vision.Frame;
@@ -125,6 +150,7 @@ public class home extends Fragment {
     ViewPager viewPager;
     viewpageradapter viewpa;
     EditText $pricebox,pdfstrydescription;
+    public static EditText EANEDITBOX;
     MenuView.ItemView StoryImg;
     private static final int Gallery_intent1 = 2;
     private static final int CapturingISBNAndEAN = 21099;
@@ -137,15 +163,16 @@ public class home extends Fragment {
     Dictionary<String,String[]> spinnerDividers =new Hashtable<String, String[]>();
     ArrayAdapter<String> spinnerAdapter;
     ArrayAdapter<String> spinnerDividersAdapter;
-    CheckBox aggrementCheckBox;
     String selectingitem;
     String selectingSubCategory;
+    LinearLayout codeslist;
     boolean storyFound = false;
     boolean sameStory = false;
 
     boolean AgreementChecked =false;
-    long maxSize= 1024;
+    static long maxSize= 1024;
     long maxfilesize = 100;
+    int PDFpagesNumbers = 0;
     boolean submitShortStories=false;
     boolean submitPDFStories=false;
     boolean oneTimeDialog=false;
@@ -299,10 +326,60 @@ public class home extends Fragment {
 
     }
 
+    public void clickableText(String text, CheckBox ch, final String Type)
+    {
+        SpannableString ss =new SpannableString(text);
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(@NonNull View view) {
+
+                Log.d("clickableText",String.valueOf(view));
+                if(Type.equals("PP"))
+                {
+                    Intent pp = new Intent(getContext().getApplicationContext(),privacy_policy.class);
+                    startActivity(pp);
+                }else if(Type.equals("TC"))
+                {
+                    Intent pp = new Intent(getContext().getApplicationContext(),terms_and_conditions.class);
+                    startActivity(pp);
+
+                }else{
+                    AlertDialog.Builder builder =new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Story Application is assumed to help booksellers in selling virtual copies for books" +
+                            "." +
+                            " It is intended for you as your books store." +
+                            " Story app is intended for informational, educational and research purposes only." +
+                            "" +
+                            "Books seller must make sure their books are available to be sold legally. " +
+                            "Any book violates Policies and Terms, is vulnerable to be deleted.")
+                            .setTitle("DisClaimer");
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            }
+
+            @Override
+            public void updateDrawState(@NonNull TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(true);
+            }
+        };
+//        for(String t : Type) {
+            int start = Type.equals("PP") ? 33 : Type.equals("TC") ? 60 : 34;
+            int end = Type.equals("PP") ? 50 : Type.equals("TC") ? 80 : 43;
+            ss.setSpan(clickableSpan,start,end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        }
+
+
+        ch.setText(ss);
+        ch.setMovementMethod(LinkMovementMethod.getInstance());
+        ch.setHighlightColor(Color.TRANSPARENT);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        calculateUserStorageSize();
         // Inflate the layout for this fragment
         final View inflate = inflater.inflate(R.layout.fragment_home, container, false);
 //        calculateUserStorageSize();
@@ -316,6 +393,7 @@ public class home extends Fragment {
         spinnerDividers.put(stryMainCategory[4],literature);
 
         ISBNEDITText = (EditText) inflate.findViewById(R.id.ISBN);
+        EANEDITBOX= (EditText) inflate.findViewById(R.id.EAN);
         pdfslct =(Button)inflate.findViewById(R.id.selectpdffile);
         pdfupload =(Button)inflate.findViewById(R.id.uploadpdffile);
         filename = (TextView)inflate.findViewById(R.id.uploadedfilename);
@@ -328,8 +406,14 @@ public class home extends Fragment {
         pdfstrydescription =(EditText)inflate.findViewById(R.id.pdfstrydescription);
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
         AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
-        aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
         capturingISBNAndEAN = (Button) inflate.findViewById(R.id.captureIsbnAndEAN);
+        codeslist = (LinearLayout) inflate.findViewById(R.id.codeslist);
+
+        ISBNEDITText.setWidth((codeslist.getWidth()/(17/8)));
+        EANEDITBOX.setWidth((codeslist.getWidth()/(17/8)));
+
+//        aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
+//        DisClaimer =(CheckBox) inflate.findViewById(R.id.disclaimerBox);
         if(Integer.parseInt(String.valueOf(maxSize)) ==0)
         {
             Toast.makeText(getContext(),"max limit have been Exceeded",Toast.LENGTH_LONG).show();
@@ -338,7 +422,8 @@ public class home extends Fragment {
 
         }
 
-        AgreementChecked =aggrementCheckBox.isChecked();
+
+//        AgreementChecked =aggrementCheckBox.isChecked();
         spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,stryMainCategory);
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -358,9 +443,8 @@ public class home extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext().getApplicationContext(),barcodeScannerActivity.class);
-                startActivityForResult(intent,CapturingISBNAndEAN );
+                startActivityForResult(intent,CapturingISBNAndEAN);
 
-//                startActivity(intent);
             }
         });
         // Spinners Selected Items
@@ -431,6 +515,22 @@ public class home extends Fragment {
         final DatabaseReference myRefchild = myRef.getRef();
         final int price = 100;
 
+        AuthorsOfBook.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                onPostExecute(ISBNEDITText.getText().toString());
+            }
+        });
         appentries.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -465,13 +565,6 @@ public class home extends Fragment {
             }
         });
 
-        aggrementCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                AgreementChecked = aggrementCheckBox.isChecked();
-
-            }
-        });
 
         btnSubmitStory.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -494,14 +587,16 @@ public class home extends Fragment {
         pdfupload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                strytitle =  Storyname.getText().toString();
-               String strydescr =  pdfstrydescription.getText().toString();
 
-                if(AgreementChecked) {
-                    Submitingpdf(strydescr, strytitle);
-                }
-                else{
-                    aggrementCheckBox.setError("you must accept The Agreement");
+                if(storyFound && sameStory)
+                {
+                    strytitle =  Storyname.getText().toString();
+                   String strydescr =  pdfstrydescription.getText().toString();
+
+                        Submitingpdf(strydescr, strytitle);
+                }else{
+                    Toast.makeText(getContext(), "scan ISBN and EAN First", Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -738,11 +833,11 @@ public class home extends Fragment {
                 File cover = new File(uri.toString());
                 CoverPath = cover.getPath();
                 filesFilters filters = new filesFilters(cover);
-                if(filters.accept(cover)) {
+//                if(filters.accept(cover)) {
                     Picasso.with(getActivity()).load(uri).fit().into(logoupload);
-                }else{
+//                }else{
                     Toast.makeText(getContext(),"please, upload a real Image",Toast.LENGTH_LONG).show();
-                }
+//                }
                 }
             }
         else if (requestCode == 1) {
@@ -758,7 +853,7 @@ public class home extends Fragment {
                 Double fileSize=((Double.parseDouble(String.valueOf(returndata.getLong(sizeIndex)))/1000)/1000);
 //                Formatter.formatFileSize(getContext(), returndata.getLong(sizeIndex))
                     Log.d("FileSize", String.valueOf(fileSize));
-
+//                PDFpagesNumbers =  Integer.parseInt(String.valueOf(Integer.parseInt(String.valueOf(fileSize))/0.7));
                 if(maxSize>100){
                     maxfilesize= 100;
                 }else if(Integer.parseInt(String.valueOf(maxSize))<100)
@@ -769,8 +864,10 @@ public class home extends Fragment {
                     Toast.makeText(getContext(),"you have reached storage limit",Toast.LENGTH_LONG).show();
                 }
                     if(fileSize<maxSize ){
+
                     File file = new File(selectedFileURI.toString());
-                    Log.d("", "File : " + file.getName());
+
+                        Log.d("", "File : " + file.getName());
                     uploadedFileName = file.getName();
                     tokens = new StringTokenizer(uploadedFileName, ":");
                     first = tokens.nextToken();
@@ -803,6 +900,11 @@ public class home extends Fragment {
             Barcode thiscode =barcodes.valueAt(0);
             String barcode = thiscode.rawValue;
         }
+        else if(requestCode == CapturingISBNAndEAN)
+        {
+
+            onPostExecute(ISBNEDITText.getText().toString().trim());
+        }
        if (requestCode == PAYPAL_REQUEST_CODE1) {
            if (resultCode == Activity.RESULT_OK) {
                PaymentConfirmation confirmation = data.getParcelableExtra(PaymentActivity.EXTRA_RESULT_CONFIRMATION);
@@ -829,7 +931,8 @@ public class home extends Fragment {
                                Story_Name.child("subCategory").setValue(subCategories);
                                Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
                                Story_Name.child("StrCatSearchObj").setValue(StryTypes+subCategories);
-
+                               Story_Name.child("ISBN").setValue(ISBNEDITText.getText().toString());
+                               Story_Name.child("EAN").setValue(EANEDITBOX.getText().toString());
                                $pricebox.setText(null);
                                Storyname.setText(null);
                                Toast.makeText(getContext(), "Story have been Submitted successfully", Toast.LENGTH_LONG).show();
@@ -853,6 +956,8 @@ public class home extends Fragment {
                                Pdf_Story_Name.child("StorySavingsrc").setValue("PDFSTORY");
                                Pdf_Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
                                Pdf_Story_Name.child("StrCatSearchObj").setValue(StryTypes+subCategories);
+                               Pdf_Story_Name.child("ISBN").setValue(ISBNEDITText.getText().toString());
+                               Pdf_Story_Name.child("EAN").setValue(EANEDITBOX.getText().toString());
 
                                prices.setText(null);
                                Storyname.setText(null);
@@ -879,24 +984,74 @@ public class home extends Fragment {
        }else if(resultCode == Activity.RESULT_CANCELED)
        {Toast.makeText(getContext(), "cancel", Toast.LENGTH_SHORT).show(); }
            }
-       else if(requestCode == CapturingISBNAndEAN)
-       {
-//           onPostExecute();
-       }
+
     }
 
     int Camera_Request = 123;
 
     protected void onPostExecute(String result)
     {
+        BufferedReader responseReader=null;
+//        DefaultHttpClient client= new DefaultHttpClient();
+//        HttpGet httpGet = new HttpGet("https://www.googleapis.com/books/v1/volumes?q=isbn:" +result);
+//        ResponseHandler<String> responseHandler =new BasicResponseHandler();
+
+        String responseBody = null;
+        String lines = null;
+        HttpURLConnection connection = null;
+        StringBuilder  builder = new StringBuilder();
+//        GoogleApiRequest g =new GoogleApiRequest();
+        AsyncTask<String, Object, JSONObject> resultObjectneed = new GoogleApiRequest().execute(result);
+
+        //        try {
+//            try {
+//                URL url = new URL("https://www.googleapis.com/books/v1/volumes?q=isbn:" + result);
+//                connection = (HttpURLConnection) url.openConnection();
+//                connection.setRequestMethod("GET");
+//                connection.setReadTimeout(5000);
+//                connection.setConnectTimeout(5000);
+//                responseReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+//
+////            responseBody = client.execute(httpGet,responseHandler);
+//            } catch (MalformedURLException e) {
+//                e.printStackTrace();
+//            } catch (ProtocolException e) {
+//                e.printStackTrace();
+//            }
+////            int response = connection.getResponseCode();
+////            if (response != 200) {
+////            Log.w(getClass().getName(),"GoogleBooksApi request Failed");
+////            connection.disconnect();
+////
+////
+////            }
+//            lines= responseReader.readLine();
+//            while (lines!= null)
+//            {
+//                builder.append(lines);
+//                lines= responseReader.readLine();
+//            }
+//            responseBody = builder.toString();
+//            Log.d(getClass().getName(),responseBody);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        Log.d("isbn Result",result);
+
+        Log.d(getClass().getName(),"GoogleBooksAPI ISBN:" +result );
+
         try{
 
-            JSONObject resultObject = new JSONObject(result);
-            JSONArray bookArray = resultObject.getJSONArray("items");
+//            JSONObject resultObject = new JSONObject(responseBody);
+//            connection.disconnect();
+            Log.d("isbn Result", String.valueOf(resultObjectneed.get()));
+
+            JSONArray bookArray = resultObjectneed.get().getJSONArray("items");
             JSONObject bookObject = bookArray.getJSONObject(0);
             JSONObject volumeObject = bookObject.getJSONObject("volumeInfo");
             StringBuilder authorBuilder= new StringBuilder("");
             JSONArray authorsArray = volumeObject.getJSONArray("authors");
+            Log.d("Checking books",String.valueOf(bookObject));
             try {
                 if(Storyname.getText().toString().trim() != volumeObject.get("title"))
                 {
@@ -904,21 +1059,37 @@ public class home extends Fragment {
                     sameStory = false;
 
                 }
+                if(Storyname.getText().toString().trim() != volumeObject.get("pageCount"))
+                {
+                    Toast.makeText(getContext(),"Make Sure you Uploading Same Book",Toast.LENGTH_LONG).show();
+                    sameStory = false;
+
+                }
                 if(authorsArray.length() >0)
                 {
                     for(int a=0; a<authorsArray.length();a++)
                     {
+                        if(a>0) authorBuilder.append(", ");
+                        authorBuilder.append(authorsArray.getString(a));
+                    }
+                    if(!authorBuilder.toString().equals(AuthorsOfBook.getText().toString()))
+                    {
+                        sameStory = false;
+                        AuthorsOfBook.setError("Make Sure you wrote same authors,add [', '] between authers names");
 
                     }
                 }
             }catch (JSONException jse)
             {
                 jse.printStackTrace();
+
                 Toast.makeText(getContext(), "Sorry we can not find this book, try another ISBN or EAN", Toast.LENGTH_SHORT).show();
 
             }
         }catch (Exception e){
             e.printStackTrace();
+            Log.d("isbn Result",e.getMessage()+" there is some thing wrong");
+
             Toast.makeText(getContext(), "Sorry we can not find this book, try another ISBN or EAN", Toast.LENGTH_SHORT).show();
             storyFound = false;
         }

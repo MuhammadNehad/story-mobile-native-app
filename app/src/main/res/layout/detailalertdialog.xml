@@ -203,6 +203,7 @@ android:hint="Description"
                     android:layout_height="30dp"
                     android:background="@color/BlackCo"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:text="load more"
                     android:textColor="@color/Whitecolor" />
             </LinearLayout>

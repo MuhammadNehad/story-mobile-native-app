@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class Stories {
     private String publishers, Author, storyNaMe,  Logosrc, LogoUrl, story_content, story_price, CoverUrl,STDESC,stRating,StrType,StrNameTypeSearch,StorySavingsrc
-            ,subCategory,StrCatSearchObj;
+            ,subCategory,StrCatSearchObj,ISBN,EAN;
     private Date publishDate;
     int numofrankers;
 
@@ -183,5 +183,21 @@ public class Stories {
 
     public void setPublishers(String publishers) {
         this.publishers = publishers;
+    }
+
+    public String getISBN() {
+        return ISBN;
+    }
+
+    public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+    }
+
+    public String getEAN() {
+        return EAN;
+    }
+
+    public void setEAN(String EAN) {
+        this.EAN = EAN;
     }
 }

@@ -37,8 +37,12 @@ import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
@@ -101,10 +105,36 @@ public class maincontent extends AppCompatActivity {
 
     public maincontent() {
     }
+    final FirebaseDatabase mydatabase=FirebaseDatabase.getInstance();
+    final DatabaseReference myRef = mydatabase.getReference().child("UserDetail");
+    FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
+    String currentUDN = currentuser != null ? currentuser.getDisplayName() : null;
+
+
+    public void  calculateUserStorageSize(){
+        myRef.child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("storageUserSize")) {
+                    long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
+                    home.maxSize = home.maxSize - sizeOfuserStorage;
+                    Log.d("FileSIZE",String.valueOf(home.maxSize)+" "+ String.valueOf(sizeOfuserStorage));
+                }else{
+                    myRef.child(currentUDN).child("storageUserSize").setValue(0);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
 
     home h = new home();
-    ItemFragment itemFragment = new ItemFragment();
-
     String img;
     String storytitle, price;
     ItemFragment it = new ItemFragment();
@@ -120,6 +150,7 @@ public class maincontent extends AppCompatActivity {
         geocoder = new Geocoder(getApplicationContext());
 
         mDatabase = FirebaseDatabase.getInstance().getReference("UserDetail");
+        calculateUserStorageSize();
         for (String provider :
                 locationManager.getAllProviders()) {
 
@@ -149,8 +180,7 @@ public class maincontent extends AppCompatActivity {
                     if(addresses != null && addresses.size()>0)
                     {
                         country_name =addresses.get(0).getCountryName();
-//                        Log.d(TAG,"Location: "+country_name);
-                        Toast.makeText(this,country_name,Toast.LENGTH_LONG).show();
+                        Log.d(TAG,"Location: "+country_name);
                     }
                     Toast.makeText(this,String.valueOf(addresses) ,Toast.LENGTH_LONG).show();
 

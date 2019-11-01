@@ -103,10 +103,11 @@
 
         <Button
             android:id="@+id/signup_btn"
-            android:layout_width="100dp"
+            android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_margin="5dp"
+            android:layout_marginVertical="5dp"
+            android:layout_marginHorizontal="50dp"
             android:background="@android:drawable/dialog_holo_light_frame"
             android:text="SignUp" />
 
@@ -127,5 +128,29 @@
             android:layout_height="wrap_content"
             android:textColor="@color/Bisque" />
 
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+
+            <CheckBox
+                android:id="@+id/check_agreementBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By clicking this, you accept Our Privacies Policies"
+                android:layout_weight="1"
+                />
+            <CheckBox
+                android:id="@+id/disclaimerBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By clicking this, you accept Our Disclaimer"
+                android:layout_weight="1"
+                />
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

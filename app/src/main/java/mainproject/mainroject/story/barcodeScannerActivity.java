@@ -1,10 +1,12 @@
 package mainproject.mainroject.story;
 
 
+import android.Manifest;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -53,6 +55,7 @@ public class barcodeScannerActivity extends AppCompatActivity implements
             mCameraId = -1;
         }
 
+        ActivityCompat.requestPermissions(barcodeScannerActivity.this,new String[]{Manifest.permission.CAMERA},-1);
 //        ViewGroup contentFrame = (ViewGroup) findViewById(R.id.content_frame);
         mScannerView = new ZBarScannerView(this);
         setupFormats();
@@ -68,6 +71,7 @@ public class barcodeScannerActivity extends AppCompatActivity implements
         mScannerView.startCamera(mCameraId);
         mScannerView.setFlash(mFlash);
         mScannerView.setAutoFocus(mAutoFocus);
+        mScannerView.resumeCameraPreview(this);
     }
 
     @Override
@@ -94,6 +98,7 @@ public class barcodeScannerActivity extends AppCompatActivity implements
 
     @Override
     public void handleResult(Result rawResult) {
+
         try {
 //            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 //            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
@@ -107,7 +112,10 @@ public class barcodeScannerActivity extends AppCompatActivity implements
                 home.ISBNEDITText.setText(rawResult.getContents());
 
                 Toast.makeText(barcodeScannerActivity.this,"ISBN Checked",Toast.LENGTH_LONG).show();
+                if(!EANCHECKED)
+                {
 
+                }
 //        onBackPressed();
             }
         }
@@ -115,11 +123,27 @@ public class barcodeScannerActivity extends AppCompatActivity implements
             if (rawResult.getBarcodeFormat().getName().contains("EAN")) {
                 EANCHECKED = true;
                 EANCODE = rawResult.getContents();
-                home.ISBNEDITText.setText(rawResult.getContents());
+                home.EANEDITBOX.setText(rawResult.getContents());
 //        onBackPressed();
                 Toast.makeText(barcodeScannerActivity.this,"EAN Checked",Toast.LENGTH_LONG).show();
+                if(!ISBNCHECKED)
+                {
+                    mScannerView.resumeCameraPreview(this);
+
+                }
 
             }
+        }
+        if(!EANCHECKED || !ISBNCHECKED)
+        {
+            mScannerView.resumeCameraPreview(this);
+
+        }
+
+        if(EANCHECKED && ISBNCHECKED)
+        {
+            onBackPressed();
+            finish();
         }
 
     }
@@ -160,6 +184,7 @@ public class barcodeScannerActivity extends AppCompatActivity implements
         mScannerView.startCamera(mCameraId);
         mScannerView.setFlash(mFlash);
         mScannerView.setAutoFocus(mAutoFocus);
+
     }
 
 
