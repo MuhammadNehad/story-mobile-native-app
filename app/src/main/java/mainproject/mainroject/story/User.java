@@ -10,8 +10,9 @@ import java.util.Date;
 
 public class User {
     private String Email,Name,Password,UserImg,userpaypalacc,PhoneNumber, Totalpvmsgs;
-    private Double storageUserSize;
+    private Double storageUserSize,maxUserStorageSize;
     private Date RegisterDate;
+    private String birthDate;
     private boolean disclaimerchecked,policiesAndTermsChecked;
     private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes;
     User() {
@@ -134,5 +135,21 @@ public class User {
 
     public void setDisclaimerchecked(boolean disclaimerchecked) {
         this.disclaimerchecked = disclaimerchecked;
+    }
+
+    public Double getMaxUserStorageSize() {
+        return maxUserStorageSize;
+    }
+
+    public void setMaxUserStorageSize(Double maxUserStorageSize) {
+        this.maxUserStorageSize = maxUserStorageSize;
+    }
+
+    public String getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(String birthDate) {
+        this.birthDate = birthDate;
     }
 }

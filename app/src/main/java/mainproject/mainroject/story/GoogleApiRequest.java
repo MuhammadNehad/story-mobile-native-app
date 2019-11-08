@@ -46,7 +46,7 @@ class GoogleApiRequest extends AsyncTask<String, Object, JSONObject> {
         }
         Log.d(getClass().getName(),"GoogleBooksAPI ISBN:" + strings[0]);
 
-        String apiUrlSting = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + String.valueOf("0735619670");
+        String apiUrlSting = "https://www.googleapis.com/books/v1/volumes?q=isbn:" + strings[0];
         Log.d(getClass().getName(),"GoogleBooksAPI ISBN:" +apiUrlSting );
 
         try{

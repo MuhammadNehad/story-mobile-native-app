@@ -10,9 +10,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,20 +18,16 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.os.ConfigurationCompat;
 import android.support.v4.widget.ListViewAutoScrollHelper;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -60,8 +54,6 @@ import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.firebase.ui.database.SnapshotParser;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -143,6 +135,8 @@ public class ItemFragment extends Fragment {
         return currentamount;
     }
     private double newamount=1;
+
+    final Dictionary<Object,Object> dictionary = new Hashtable<Object, Object>();
     private int total_items_to_Load=2;
     int mCurrentpage=1;
 
@@ -425,6 +419,14 @@ public class ItemFragment extends Fragment {
                 @Override
                 protected void onBindViewHolder(@NonNull blogholder holder, int position, @NonNull final Stories model) {
 
+
+                    dictionary.put("publisher",model.getPublishers());
+                    dictionary.put("storyName",model.getStoryNaMe());
+                    dictionary.put("Img",model.getLogoUrl());
+                    dictionary.put("Category",model.getStrType());
+                    dictionary.put("lastKey",getRef(position).getKey());
+
+                    Log.d("listcount", String.valueOf(((Hashtable<Object, Object>) dictionary).elements()));
                     if(fbra.getItemCount()==0)
                     {
                         nobookText.setVisibility(View.VISIBLE);
@@ -447,7 +449,7 @@ public class ItemFragment extends Fragment {
                             Stories stories = fbra.getItem(finalPosition);
                             bookkey = getRef(finalPosition).getKey();
 
-                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
+                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey, new int[]{stories.getLikes(), stories.getDislikes(), stories.getReports()});
                         }
                     });
                 }
@@ -577,7 +579,7 @@ public class ItemFragment extends Fragment {
 
                         }
 
-                        showDetailsDialog(stories.getPublishers(),stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey);
+                        showDetailsDialog(stories.getPublishers(),stories.getAuthor() ,stories.getSTDESC(), stories.getStory_price(),stories.getLogoUrl(),stories.getStoryNaMe(),stories.getStory_content(),(  stories.getStorySavingsrc() == null ? "AppCreationStory" : stories.getStorySavingsrc()),bookkey, new int[]{stories.getLikes(), stories.getDislikes(), stories.getReports()});
                     }
                 });
             }
@@ -593,42 +595,6 @@ public class ItemFragment extends Fragment {
             loading.setMessage("no stories for that type");
             loading.show();
         }
-        final Dictionary<Object,Object> dictionary = new Dictionary<Object, Object>() {
-            @Override
-            public int size() {
-                return this.size();
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return true;
-            }
-
-            @Override
-            public Enumeration keys() {
-                return null;
-            }
-
-            @Override
-            public Enumeration elements() {
-                return null;
-            }
-
-            @Override
-            public Stories get(Object o) {
-                return null;
-            }
-
-            @Override
-            public Object put(Object o, Object o2) {
-                return null;
-            }
-
-            @Override
-            public Stories remove(Object o) {
-                return null;
-            }
-        };
         assert query12 != null;
 
         option = new FirebaseRecyclerOptions.Builder<Stories>()
@@ -653,6 +619,9 @@ public class ItemFragment extends Fragment {
                     dictionary.put("storyName",model.getStoryNaMe());
                     dictionary.put("Img",model.getLogoUrl());
                     dictionary.put("Category",model.getStrType());
+                    dictionary.put("lastKey",getRef(position).getKey());
+
+                    Log.d("listcount", String.valueOf(((Hashtable<Object, Object>) dictionary).elements()));
                     if(fbra.getItemCount()==0)
                     {
                         nobookText.setVisibility(View.VISIBLE);
@@ -675,7 +644,7 @@ public class ItemFragment extends Fragment {
                             Stories stories = fbra.getItem(finalPosition);
                             bookkey = getRef(finalPosition).getKey();
 
-                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc()== null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey);
+                            showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc()== null ? "AppCreationStory" : stories.getStorySavingsrc()), bookkey, new int[]{stories.getLikes(), stories.getDislikes(), stories.getReports()});
                         }
                     });
                 }
@@ -731,7 +700,7 @@ public class ItemFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         Stories stories = fbra.getItem(position);
-                        showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null?"AppCreationStory":stories.getStorySavingsrc().trim()), bookkey);
+                        showDetailsDialog(stories.getPublishers(),stories.getAuthor(), stories.getSTDESC(), stories.getStory_price(), stories.getLogoUrl(), stories.getStoryNaMe(), stories.getStory_content(), (stories.getStorySavingsrc() == null?"AppCreationStory":stories.getStorySavingsrc().trim()), bookkey, new int[]{stories.getLikes(), stories.getDislikes(), stories.getReports()});
                     }
                 });
             }
@@ -750,7 +719,7 @@ public class ItemFragment extends Fragment {
         }
 
         DatabaseReference commentsdb = mydatabase.getReference().child("comments");
-    public void showDetailsDialog(final String publishers,final String Author1, final String Desc, final String price1, final String ImgUrl, final String storyNAME, final String storyCoNtEnT, final String StrySrc, final String bookkeys){
+    public void showDetailsDialog(final String publishers, final String Author1, final String Desc, final String price1, final String ImgUrl, final String storyNAME, final String storyCoNtEnT, final String StrySrc, final String bookkeys, int[] rankings){
         checkExistedpaypalEmail(publishers);
         final String[] publisherData= new String[6];
 
@@ -792,9 +761,15 @@ public class ItemFragment extends Fragment {
         final Button comments1 = (Button) detaildialog.findViewById(R.id.commentsbtn);
 
         final Button checkingbtn =(Button)detaildialog.findViewById(id.checkingbtn);
-
+        final TextView totallikes = (TextView) detaildialog.findViewById(id.totallikes);
+        final TextView totaldislikes = (TextView) detaildialog.findViewById(id.totaldislikes);
+        final TextView totalreports = (TextView) detaildialog.findViewById(id.totalreports);
 
         price.setText(price1);
+        totallikes.setText(String.valueOf(rankings[0]));
+        totaldislikes.setText(String.valueOf(rankings[1]));
+        totalreports.setText(String.valueOf(rankings[2]));
+
         CurUserLinks.orderByKey().equalTo(publishers).addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -816,10 +791,10 @@ public class ItemFragment extends Fragment {
         comlayout.setVisibility(GONE);
         final AlertDialog alertDialog = StoryDetailsl.create();
         price.setText(price1);
-        FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(curAuthDN)&& dataSnapshot.hasChild(bookkeys)) {
+                if(dataSnapshot.hasChild(bookkeys)) {
                 checkingbtn.setEnabled(false);
                     checkingbtn.setText("You Have Checked it once");
                 }
@@ -834,23 +809,25 @@ public class ItemFragment extends Fragment {
         checkingbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseDatabase.getInstance().getReference().child("Views").child(bookkeys+StrySrc).addListenerForSingleValueEvent(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference().addListenerForSingleValueEvent(new ValueEventListener() {
            @Override
            public void onDataChange(DataSnapshot dataSnapshot) {
-            if(!dataSnapshot.hasChild(bookkeys+StrySrc)) {
+           if(dataSnapshot.hasChild("Views")){
+            if(dataSnapshot.child("Views").hasChild(FirebaseAuth.getInstance().getCurrentUser().getDisplayName())) {
+                if(!dataSnapshot.child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).hasChild(bookkeys)) {
                 if (StrySrc.equals("AppCreationStory")) {
-                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
 //                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 //                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(StrySrc);
                     Intent shortappstory = new Intent(getContext(), checkstoryfromact.class);
                     shortappstory.putExtra("CoNtEnT", storyCoNtEnT);
-                    shortappstory.putExtra("StRyNaMe", storyCoNtEnT);
+                    shortappstory.putExtra("StRyNaMe", storyNAME);
                     shortappstory.putExtra("bookKey", bookkeys);
                     startActivity(shortappstory);
 
                 }
                 if (StrySrc.equals("PDFSTORY")) {
-                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
 
                     Intent shortpdfstory = new Intent(getContext(), checkedpdf.class);
                     shortpdfstory.putExtra("CoNtEnT", storyCoNtEnT);
@@ -859,10 +836,59 @@ public class ItemFragment extends Fragment {
 
                     startActivity(shortpdfstory);
 
-                }
-            }else {
+                }}else {
                 Toast.makeText(getContext(),"you have already viewed this book",Toast.LENGTH_LONG).show();
             }
+                }else{
+                if (StrySrc.equals("AppCreationStory")) {
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
+//                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+//                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(StrySrc);
+                    Intent shortappstory = new Intent(getContext(), checkstoryfromact.class);
+                    shortappstory.putExtra("CoNtEnT", storyCoNtEnT);
+                    shortappstory.putExtra("StRyNaMe", storyNAME);
+                    shortappstory.putExtra("bookKey", bookkeys);
+                    startActivity(shortappstory);
+
+                }
+                if (StrySrc.equals("PDFSTORY")) {
+                    FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
+
+                    Intent shortpdfstory = new Intent(getContext(), checkedpdf.class);
+                    shortpdfstory.putExtra("CoNtEnT", storyCoNtEnT);
+                    shortpdfstory.putExtra("StRyNaMe", storyNAME);
+                    shortpdfstory.putExtra("bookKey", bookkeys);
+
+                    startActivity(shortpdfstory);
+
+                }
+                }
+            }
+            else{
+               if (StrySrc.equals("AppCreationStory")) {
+                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
+//                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+//                   FirebaseDatabase.getInstance().getReference().child("Views").push().setValue(StrySrc);
+                   Intent shortappstory = new Intent(getContext(), checkstoryfromact.class);
+                   shortappstory.putExtra("CoNtEnT", storyCoNtEnT);
+                   shortappstory.putExtra("StRyNaMe", storyNAME);
+                   shortappstory.putExtra("bookKey", bookkeys);
+                   startActivity(shortappstory);
+
+               }
+               if (StrySrc.equals("PDFSTORY")) {
+                   FirebaseDatabase.getInstance().getReference().child("Views").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName()).child(bookkeys).setValue(true);
+
+                   Intent shortpdfstory = new Intent(getContext(), checkedpdf.class);
+                   shortpdfstory.putExtra("CoNtEnT", storyCoNtEnT);
+                   shortpdfstory.putExtra("StRyNaMe", storyCoNtEnT);
+                   shortpdfstory.putExtra("bookKey", bookkeys);
+
+                   startActivity(shortpdfstory);
+
+               }
+            }
+
            }
 
            @Override

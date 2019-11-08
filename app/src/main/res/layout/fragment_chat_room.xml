@@ -13,6 +13,7 @@
 
     <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/refreshrecycler"
+        android:visibility="gone"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_above="@id/messageedit"
@@ -24,6 +25,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:hint="@string/your_message"
+            android:visibility="gone"
             android:fillViewport="true"
             tools:listitem="@layout/chatcontentview" />
 
@@ -35,6 +37,7 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="40dp"
+        android:visibility="gone"
         android:background="@color/Azure"
         android:hint="your message" />
 
@@ -42,10 +45,17 @@
         android:id="@+id/sendmesg"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:visibility="gone"
         android:layout_alignBottom="@id/messageedit"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:src="@android:drawable/stat_notify_chat" />
+<TextView
+    android:id="@+id/comingSoon3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:text="@string/coming_soon"/>
     <RelativeLayout
         android:id="@+id/pmNoteView"
         android:layout_width="40dp"

@@ -77,7 +77,7 @@ public class ChatRoom extends Fragment {
     MyAdapter customrecyclerviewAdapter;
     List<chatdatabaseinserver> getchatdata = new ArrayList<chatdatabaseinserver>();
     RelativeLayout pmNoteViewID;
-
+    TextView comingSoon3;
     ImageButton sendthemessage;
     EditText writethemessage;
     TextView privtemessagenum;
@@ -146,10 +146,12 @@ public class ChatRoom extends Fragment {
         messageviews =chatroom.findViewById(R.id.msgstxt);
         sendername = chatroom.findViewById(R.id.msgownertext);
         fab = chatroom.findViewById(R.id.notifications);
+        comingSoon3 = chatroom.findViewById(R.id.comingSoon3);
         fabopent = AnimationUtils.loadAnimation(getContext(), R.anim.translation);
         fabclose = AnimationUtils.loadAnimation(getContext(), R.anim.returnvalueoftranslation);
         rotate = AnimationUtils.loadAnimation(getContext(), R.anim.rotate);
         rerotate = AnimationUtils.loadAnimation(getContext(), R.anim.antirotate);
+
         LayoutInflater vi1= getLayoutInflater();
         chalist.setItemAnimator(new DefaultItemAnimator());
         chalist.addItemDecoration(new DividerItemDecoration(getContext(),LinearLayoutManager.VERTICAL));
@@ -313,7 +315,7 @@ private void refreshing(){
         this.mLastKey=LastKey;
 
     }
-    
+
     private void loadMoreData(){
         chatdatabase.orderByKey().endAt(mLastKey).limitToLast(7).addChildEventListener(new ChildEventListener() {
             @Override

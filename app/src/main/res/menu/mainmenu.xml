@@ -13,14 +13,27 @@
         <!--android:visible="false"-->
         <!--android:title="Search bar"-->
         <!--app:showAsAction="always" />-->
+
+
+    <item
+        android:id="@+id/update_bar"
+        android:icon="@android:drawable/ic_menu_edit"
+        android:title="update profile"
+        app:showAsAction="withText|collapseActionView" />
+    <!--<item-->
+        <!--android:id="@+id/about_us"-->
+        <!--android:icon="@android:drawable/ic_dialog_info"-->
+        <!--android:title="about us"-->
+        <!--android:visible="false"-->
+        <!--app:showAsAction="withText|collapseActionView" />-->
+    <item
+        android:id="@+id/contact_us"
+        android:icon="@android:drawable/ic_menu_send"
+        android:title="Contact us"
+        app:showAsAction="withText|collapseActionView" />
     <item
         android:id="@+id/signout_bar"
         android:icon="@android:drawable/ic_lock_lock"
         android:title="Signout"
-        app:showAsAction="withText|collapseActionView" />
-    <item
-        android:id="@+id/update_bar"
-        android:icon="@android:drawable/ic_lock_lock"
-        android:title="update profile"
         app:showAsAction="withText|collapseActionView" />
 </menu>

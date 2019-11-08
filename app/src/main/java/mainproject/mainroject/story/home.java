@@ -120,6 +120,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class home extends Fragment {
 
+    CheckBox DisClaimer;
+
     public home() {
 
     }
@@ -309,8 +311,14 @@ public class home extends Fragment {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("storageUserSize")) {
                     long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
-                    maxSize = maxSize - sizeOfuserStorage;
-                    Log.d("FileSIZE",String.valueOf(maxSize)+" "+ String.valueOf(sizeOfuserStorage));
+                    if(dataSnapshot.hasChild("maxUserStorageSize")) {
+                        long maxsizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+                        maxSize = maxsizeOfuserStorage - sizeOfuserStorage;
+                        Log.d("FileSIZE", String.valueOf(maxSize) + " " + String.valueOf(sizeOfuserStorage));
+                    }else{
+                        maxSize = maxSize- sizeOfuserStorage;
+                        myRef.child(currentUDN).child("maxUserStorageSize").setValue(1024);
+                    }
                 }else{
                     myRef.child(currentUDN).child("storageUserSize").setValue(0);
                 }
@@ -349,9 +357,13 @@ public class home extends Fragment {
                             "." +
                             " It is intended for you as your books store." +
                             " Story app is intended for informational, educational and research purposes only." +
-                            "" +
-                            "Books seller must make sure their books are available to be sold legally. " +
-                            "Any book violates Policies and Terms, is vulnerable to be deleted.")
+                            " Any other use makes user vulnerable to be disabled or deleted." +
+                            " Books seller must make sure their books are available to be sold legally. " +
+                            " Any book violates Policies and Terms, is vulnerable to be deleted." +
+                            " Story app owner is not responsible for copyrights of books, and trustiness of Book." +
+                            " purchasers are allowed to check books before buying it."+
+                            "\n"+"we are trying to reduce illegal works through Story App so we checking ISBN and EAN codes."+
+                            " and publishers take full responsiblity for publishing illegal books")
                             .setTitle("DisClaimer");
 
                     AlertDialog dialog = builder.create();
@@ -408,9 +420,12 @@ public class home extends Fragment {
         AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
         capturingISBNAndEAN = (Button) inflate.findViewById(R.id.captureIsbnAndEAN);
         codeslist = (LinearLayout) inflate.findViewById(R.id.codeslist);
+        DisClaimer = (CheckBox) inflate.findViewById(R.id.uploadingdisclaimerBox);
 
         ISBNEDITText.setWidth((codeslist.getWidth()/(17/8)));
         EANEDITBOX.setWidth((codeslist.getWidth()/(17/8)));
+
+        clickableText(DisClaimer.getText().toString(), DisClaimer, "DC");
 
 //        aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
 //        DisClaimer =(CheckBox) inflate.findViewById(R.id.disclaimerBox);
@@ -423,7 +438,15 @@ public class home extends Fragment {
         }
 
 
-//        AgreementChecked =aggrementCheckBox.isChecked();
+        AgreementChecked =DisClaimer.isChecked();
+        DisClaimer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                AgreementChecked =DisClaimer.isChecked();
+
+            }
+        });
+
         spinnerAdapter =new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,stryMainCategory);
 
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -588,7 +611,7 @@ public class home extends Fragment {
             @Override
             public void onClick(View v) {
 
-                if(storyFound && sameStory)
+                if( (storyFound && sameStory) || AgreementChecked)
                 {
                     strytitle =  Storyname.getText().toString();
                    String strydescr =  pdfstrydescription.getText().toString();
@@ -748,7 +771,7 @@ public class home extends Fragment {
 
                                                 addingstdataafterpaying(FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),AuthorsOfBook.getText().toString(), stryDescri, fileprice, uri.getLastPathSegment(), storyNaMe, selectedFileURI.getLastPathSegment(), "PDFSTORY", getSelectingitem(), selectingSubCategory);
 
-                                                amount_to_pay = "5";
+                                                amount_to_pay = "1";
                                                 PayPalPayment payPalPayment = new PayPalPayment(new BigDecimal(amount_to_pay), "USD", " ", PayPalPayment.PAYMENT_INTENT_SALE);
 
                                                 Intent intent = new Intent(getContext(), PaymentActivity.class);
@@ -931,8 +954,10 @@ public class home extends Fragment {
                                Story_Name.child("subCategory").setValue(subCategories);
                                Story_Name.child("publishDate").setValue(Calendar.getInstance().getTime());
                                Story_Name.child("StrCatSearchObj").setValue(StryTypes+subCategories);
-                               Story_Name.child("ISBN").setValue(ISBNEDITText.getText().toString());
-                               Story_Name.child("EAN").setValue(EANEDITBOX.getText().toString());
+                               if(!ISBNEDITText.getText().toString().isEmpty() && !EANEDITBOX.getText().toString().isEmpty()) {
+                                   Story_Name.child("ISBN").setValue(ISBNEDITText.getText().toString());
+                                   Story_Name.child("EAN").setValue(EANEDITBOX.getText().toString());
+                               }
                                $pricebox.setText(null);
                                Storyname.setText(null);
                                Toast.makeText(getContext(), "Story have been Submitted successfully", Toast.LENGTH_LONG).show();
@@ -1211,11 +1236,12 @@ public class home extends Fragment {
                             final long curuploadfileSize = taskSnapshot.getBytesTransferred();
                             myStoryRef.child(dt).child("story_content").setValue(downloaduri.toString());
 //                    Submitingpdf(sdr,snm,downloaduri.toString());
-                            myRef.child(currentUDN).child("storageUserSize").addValueEventListener(new ValueEventListener() {
+                            myRef.child(currentUDN).child("storageUserSize").addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     Double curSize= Double.parseDouble(String.valueOf(dataSnapshot.getValue()));
                                     myRef.child(currentUDN).child("storageUserSize").setValue(curSize+curuploadfileSize);
+                                    calculateUserStorageSize();
                                 }
 
                                 @Override

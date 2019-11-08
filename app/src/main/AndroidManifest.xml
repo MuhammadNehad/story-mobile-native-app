@@ -22,7 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".terms_and_conditions"></activity>
+        <activity android:name=".contact_Us"></activity>
+        <activity android:name=".aboutapp" />
+        <activity android:name=".terms_and_conditions" />
         <activity android:name=".privacy_policy" />
 
         <uses-library
@@ -43,8 +45,6 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:scheme="pp"/>
-                <data android:scheme="tc"/>
             </intent-filter>
         </activity>
         <activity

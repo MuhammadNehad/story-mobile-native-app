@@ -2,13 +2,16 @@ package mainproject.mainroject.story;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.OpenableColumns;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,9 +39,11 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.net.URI;
 
 import static android.app.Activity.RESULT_OK;
+import static mainproject.mainroject.story.home.maxSize;
 
 
 /**
@@ -76,6 +81,7 @@ public class Profile extends Fragment {
     private static final int CAMERA_REQUEST_CODE = 1;
 
     private OnFragmentInteractionListener mListener;
+    private long maxfilesize=0;
 
     public Profile() {
         // Required empty public constructor
@@ -168,11 +174,13 @@ public class Profile extends Fragment {
             @Override
             public void onClick(View v) {
 
-
-                Intent intent =new Intent(Intent.ACTION_PICK);
-                intent.setType("image/*");
-                startActivityForResult(intent,Gallery_intent);
-
+        if(maxSize > 0) {
+            Intent intent = new Intent(Intent.ACTION_PICK);
+            intent.setType("image/*");
+            startActivityForResult(intent, Gallery_intent);
+        }else{
+            Toast.makeText(getContext(),"You reached max Limit",Toast.LENGTH_LONG).show();
+        }
             }
         });
         if(curimg != null) {
@@ -238,6 +246,40 @@ public class Profile extends Fragment {
 //
 //}
 //    }
+
+    public void  calculateUserStorageSize(){
+        muserref.child(currentuser.getDisplayName()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("storageUserSize")) {
+                    long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
+
+                    if(dataSnapshot.hasChild("maxUserStorageSize")) {
+
+
+                        long maxsizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+
+                        maxSize = maxsizeOfuserStorage - sizeOfuserStorage;
+                        Log.d("FileSIZE", String.valueOf(maxSize) + " " + String.valueOf(sizeOfuserStorage));
+                    }else{
+                        maxSize = maxSize- sizeOfuserStorage;
+                        muserref.child(currentuser.getDisplayName()).child("maxUserStorageSize").setValue(1024);
+
+                    }
+                    }else{
+                    muserref.child(currentuser.getDisplayName()).child("storageUserSize").setValue(0);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
     Query query1 = muserref.orderByChild("Email").equalTo(currentU);
     String das;
     @Override
@@ -248,61 +290,90 @@ public class Profile extends Fragment {
             mProgress.setMessage("Uploading...");
             mProgress.show();
              uri =data.getData();
-//            Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
-            child = mimgref.push();
-            StorageReference mstr = mstr1.child(uri.getLastPathSegment());
-            mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            Cursor returndata = getContext().getContentResolver().query(uri,null,null,null,null);
+            assert returndata != null;
+            int sizeIndex = returndata.getColumnIndex(OpenableColumns.SIZE);
+            returndata.moveToFirst();
 
-                @Override
+            Double ImageSize=((Double.parseDouble(String.valueOf(returndata.getLong(sizeIndex)))/1000)/1000);
+//                Formatter.formatFileSize(getContext(), returndata.getLong(sizeIndex))
+            Log.d("FileSize", String.valueOf(ImageSize));
 
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getContext(), "Uploading Successful", Toast.LENGTH_LONG).show();
-                    mProgress.dismiss();
-                    downloaduri = taskSnapshot.getDownloadUrl();
-                    Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
-                    child.child("ImgUrl").setValue(downloaduri.toString());
-                    muserref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
+            if(maxSize>100){
+                maxfilesize= 100;
+            }else if(Integer.parseInt(String.valueOf(maxSize))<100)
+            {
+                maxfilesize = maxSize;
+            }else{
+                maxfilesize =0;
+                Toast.makeText(getContext(),"you have reached storage limit",Toast.LENGTH_LONG).show();
+            }
+            if(ImageSize < maxSize) {
 
-                }
-            });
+//                File cover = new File(uri.toString());
+//                CoverPath = cover.getPath();
+//                filesFilters filters = new filesFilters(cover);
+////                if(filters.accept(cover)) {
+//                Picasso.with(getActivity()).load(uri).fit().into(logoupload);
+////                }else{
+//                Toast.makeText(getContext(),"please, upload a real Image",Toast.LENGTH_LONG).show();
+//                }
 
-            imgpath = uri.getLastPathSegment();
-            child.child("OwnerEmail").setValue(currentU);
-            child.child("ImageName").setValue(imgpath);
+                child = mimgref.push();
+                final boolean[] fileuploaded = {true};
+                final boolean[] datasaved = {true};
+                StorageReference mstr = mstr1.child(uri.getLastPathSegment());
+                mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
-//            FileDownloadTask img_name = mstr.getFile(Uri.parse(uri.getLastPathSegment()));
+                    @Override
 
-//            imgnames = mimgref.child(child.toString().replace("#",",").replace(".",",").replace("$",",").replace("[",",").replace("]",","));
-//String img_names = String.valueOf(imgnames);
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(getContext(), "Uploading Successful", Toast.LENGTH_LONG).show();
+                        mProgress.dismiss();
+                        downloaduri = taskSnapshot.getDownloadUrl();
+                        final long curuploadfileSize = taskSnapshot.getBytesTransferred();
+                        if(fileuploaded[0]) {
+                            muserref.child(currentuser.getDisplayName()).child("storageUserSize").addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if(datasaved[0]) {
+                                    Double curSize = Double.parseDouble(String.valueOf(dataSnapshot.getValue()));
 
-//imgnames += img_names.replace(".",",");
-//            DatabaseReference imgdate = mimgref.child();
+                                    Log.d("checktheloop", "111");
+                                    Double lastval =curSize + ((curuploadfileSize/1024)/1024);
+                                        muserref.child(currentuser.getDisplayName()).child("storageUserSize").setValue(lastval);
+                                        calculateUserStorageSize();
+                                        datasaved[0] = false;
 
-//            downloaduri= taskSnapshot.getDownloadUrl();
-         //            imgpath.replace(".",",");
-//               das= String.valueOf(myStorage.getDownloadUrl());
-//           String downloaduripath = uri.getPhotoUrl() != null ? user.getPhotoUrl().toString() : null
+                                    }
+                                    fileuploaded[0] = false;
+                                }
 
-            //            child.child("ImgUrl").setValue(das);
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
 
-            //            imgnames.child("ImgSize").setValue(mstr.getBytes(Long.parseLong(img_name.toString())));
+                                }
+
+
+                            });
+                        }
+                        Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
+                        child.child("ImgUrl").setValue(downloaduri.toString());
+                        muserref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
+
+                    }
+                });
+
+                imgpath = uri.getLastPathSegment();
+                child.child("OwnerEmail").setValue(currentU);
+                child.child("ImageName").setValue(imgpath);
+
+            }
+             //            Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
+
 
         }
 
-//        if(requestCode==CAMERA_REQUEST_CODE && resultCode ==RESULT_OK)
-//        {
-//            mProgress.setMessage("uploading...");
-//            mProgress.show();
-//             Uri uricam=data.getData();
-//            StorageReference mstr = myStorage.child("Photos").child(uricam.getLastPathSegment());
-//            mstr.putFile(uricam).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    Toast.makeText(getContext(),"Uploading Successful",Toast.LENGTH_LONG).show();
-//                    mProgress.dismiss();
-//
-//                }
-//            });
 
         }
 private void getimg()

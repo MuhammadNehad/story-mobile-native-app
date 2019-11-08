@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -39,6 +40,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Map;
 
 import static mainproject.mainroject.story.HashCode.SHA1;
@@ -49,8 +53,6 @@ import static mainproject.mainroject.story.HashCode.SHA1;
  */
 public class updateProfile extends Fragment {
     private FirebaseUser user =FirebaseAuth.getInstance().getCurrentUser();
-
-    private AlertDialog.Builder StoryDetailsl;
     private EditText newnamebox,paypalbox;
     private Button acceptname;
     AlertDialog.Builder updateDetailsl;
@@ -66,10 +68,12 @@ public class updateProfile extends Fragment {
     public updateProfile() {
         // Required empty public constructor
     }
-
+    public static Dictionary<String,String> UserData = new Hashtable<String, String>();
     EditText AddPhoneNumberText;
+    TextView NameText;
 
 ImageButton NameEdit,PasswordEdit,UserNameedit,paypalbutton,AddingPhoneNumber;
+
 DatabaseReference userdetaildb = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
     Query qr1 = userdetaildb.child(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
@@ -83,8 +87,23 @@ DatabaseReference userdetaildb = FirebaseDatabase.getInstance().getReference().c
         AddPhoneNumberText =updatinprof.findViewById(R.id.PhoneNumber);
         AddingPhoneNumber=updatinprof.findViewById(R.id.AddingPhoneNumber);
         paypalbox = (EditText) updatinprof.findViewById(R.id.PaypalAcc);
+        NameText =(TextView) updatinprof.findViewById(R.id.Name);
         paypalbutton = (ImageButton) updatinprof.findViewById(R.id.AddingPaypal);
 
+        /**
+         *
+         * set Texts to TextBoxes
+         *
+         ***/
+        AddPhoneNumberText.setText(UserData.get("Phone"));
+        paypalbox.setText(UserData.get("paypalAcc"));
+        NameText.setText(UserData.get("Name"));
+
+        /**
+        *
+         * add Buttons Listeners
+         *
+        ***/
         paypalbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -98,8 +98,10 @@ public class updatestorycontent extends Fragment {
         mProgress.setMessage("updating...");
         bundle =getArguments();
         String type;
-        Picasso.with(getContext()).load(bundle.getString("StoryIMG")).fit().into(img);
-        titles.setText(bundle.getString("StoryName"));
+        if(!bundle.getString("StoryIMG").isEmpty()&& !bundle.getString("StoryIMG").equals(" ")) {
+            Picasso.with(getContext()).load(bundle.getString("StoryIMG")).fit().into(img);
+        }
+            titles.setText(bundle.getString("StoryName"));
         newdesc.setText(bundle.getString("StoryDesc"));
         newpric.setText(bundle.getString("StoryPrc"));
         String sKey  = bundle.getString("StoryKey");

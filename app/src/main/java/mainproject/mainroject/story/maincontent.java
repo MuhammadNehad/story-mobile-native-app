@@ -56,6 +56,8 @@ import com.paypal.android.sdk.payments.PayPalService;
 import com.paypal.android.sdk.payments.PaymentActivity;
 import com.paypal.android.sdk.payments.PaymentConfirmation;
 
+import static mainproject.mainroject.story.home.maxSize;
+
 public class maincontent extends AppCompatActivity {
     private static final String TAG = "Value";
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1 ;
@@ -110,6 +112,32 @@ public class maincontent extends AppCompatActivity {
     FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
     String currentUDN = currentuser != null ? currentuser.getDisplayName() : null;
 
+    public static void getCurUserDetails()
+    {
+        FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
+        String currentUDN = currentuser != null ? currentuser.getDisplayName() : null;
+
+        FirebaseDatabase.getInstance().getReference().child("UserDetail").child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("UserData", String.valueOf(dataSnapshot.getValue()));
+
+                updateProfile.UserData.put("Name", (String) dataSnapshot.child("Name").getValue());
+                updateProfile.UserData.put("Email", (String) dataSnapshot.child("Email").getValue());
+                updateProfile.UserData.put("paypalAcc", (String) dataSnapshot.child("userpaypalacc").getValue());
+                updateProfile.UserData.put("Phone", (String) dataSnapshot.child("PhoneNumber").getValue());
+                updateProfile.UserData.put("filledStorageSize", String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
+                updateProfile.UserData.put("MaxStorageSize", String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+                Log.d("UserData", String.valueOf(updateProfile.UserData.elements()));
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     public void  calculateUserStorageSize(){
         myRef.child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -117,8 +145,19 @@ public class maincontent extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("storageUserSize")) {
                     long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
-                    home.maxSize = home.maxSize - sizeOfuserStorage;
-                    Log.d("FileSIZE",String.valueOf(home.maxSize)+" "+ String.valueOf(sizeOfuserStorage));
+//                    maxUserStorageSize
+                    if(dataSnapshot.hasChild("maxUserStorageSize")) {
+
+
+                        long maxsizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+
+                        maxSize = maxsizeOfuserStorage - sizeOfuserStorage;
+                        Log.d("FileSIZE", String.valueOf(maxSize) + " " + String.valueOf(sizeOfuserStorage));
+                    }else{
+                        maxSize = maxSize- sizeOfuserStorage;
+                        myRef.child(currentUDN).child("maxUserStorageSize").setValue(1024);
+
+                    }
                 }else{
                     myRef.child(currentUDN).child("storageUserSize").setValue(0);
                 }
@@ -148,7 +187,7 @@ public class maincontent extends AppCompatActivity {
         setContentView(R.layout.activity_maincontent);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(getApplicationContext());
-
+        getCurUserDetails();
         mDatabase = FirebaseDatabase.getInstance().getReference("UserDetail");
         calculateUserStorageSize();
         for (String provider :
@@ -159,7 +198,9 @@ public class maincontent extends AppCompatActivity {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION))
-                {}
+                {
+
+                }
                 else{
                     ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 
@@ -273,7 +314,17 @@ public class maincontent extends AppCompatActivity {
 
                 fragmentTransaction.replace(R.id.content, new updateProfile(),null).addToBackStack(null).commit();
                 return true;
-             }
+
+//            case R.id.about_us:
+//                Intent intent1 = new Intent(this,aboutapp.class);
+//                startActivity(intent1);
+//                return true;
+            case R.id.contact_us:
+                Intent intent2 = new Intent(this,contact_Us.class);
+                startActivity(intent2);
+                return true;
+
+        }
         return true;
     }
 viewpageradapter viewpas = new viewpageradapter(this);

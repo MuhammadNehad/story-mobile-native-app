@@ -180,7 +180,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:gravity="center"
-                android:text="make sure that you have captured Valid ISBN AND EAN"/>
+                android:textSize="12sp"
+                android:text="make sure that you have captured Valid ISBN AND EAN, Or you accept our disclaimers by checking check box"/>
 
             <LinearLayout
 
@@ -213,14 +214,18 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="left|center"
-
                     android:layout_marginEnd="10dp"
-
                     android:layout_marginRight="10dp"
                     android:background="@drawable/ic_file_upload_black_24dp"
                     tools:ignore="RtlHardcoded" />
             </LinearLayout>
-
+            <CheckBox
+                android:id="@+id/uploadingdisclaimerBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="By clicking this, you accept Our Disclaimer"
+                android:layout_weight="1"
+                />
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"

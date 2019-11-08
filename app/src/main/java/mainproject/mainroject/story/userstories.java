@@ -59,7 +59,7 @@ public class userstories extends Fragment {
 
 //          recyclerView.addItemDecoration();
 
-        query= FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("Author").equalTo(auth.getCurrentUser().getDisplayName());
+        query= FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByChild("publishers").equalTo(auth.getCurrentUser().getDisplayName());
 //        Query query1= FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("Author").equalTo(auth.getCurrentUser().getDisplayName());
 
         option = new FirebaseRecyclerOptions.Builder<Stories>()
@@ -114,6 +114,7 @@ public class userstories extends Fragment {
             @Override
             public void onClick(View v) {
                 Bundle bundle = new Bundle();
+
                 bundle.putString("StoryName", model.getStoryNaMe());
                 bundle.putString("StoryDesc", model.getSTDESC());
                 bundle.putString("StoryCont", model.getStory_content());
@@ -139,13 +140,13 @@ public class userstories extends Fragment {
         return curuserstories;
     }
     public void shortcheckeditems(){
-        query =FirebaseDatabase.getInstance().getReference().child("Storiesdetails").orderByChild("Author").equalTo(auth.getCurrentUser().getDisplayName());
+        query =FirebaseDatabase.getInstance().getReference().child("Storiesdetails").orderByChild("publishers").equalTo(auth.getCurrentUser().getDisplayName());
         option = new FirebaseRecyclerOptions.Builder<Stories>()
                 .setQuery(query, Stories.class)
                 .build();
     }
     public void changecheckeditems(){
-        query =FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("Author").equalTo(auth.getCurrentUser().getDisplayName());
+        query =FirebaseDatabase.getInstance().getReference().child("pdfStoriesdetails").orderByChild("publishers").equalTo(auth.getCurrentUser().getDisplayName());
         FirebaseRecyclerOptions<PDFFILES> option1 = new FirebaseRecyclerOptions.Builder<PDFFILES>()
                 .setQuery(query, PDFFILES.class)
                 .build();
@@ -216,18 +217,20 @@ public class userstories extends Fragment {
 
         public void setMimgurl(final Context ctx, final String mimgurl) {
             cover= (ImageView) mview.findViewById(R.id.stryimg);
-            cover.setBackground(null);
-            Picasso.with(ctx).load(mimgurl).networkPolicy(NetworkPolicy.OFFLINE).fit().into(cover, new Callback() {
-                @Override
-                public void onSuccess() {
+            if(!mimgurl.isEmpty() && !mimgurl.equals(" ")) {
+                cover.setBackground(null);
+                Picasso.with(ctx).load(mimgurl).networkPolicy(NetworkPolicy.OFFLINE).fit().into(cover, new Callback() {
+                    @Override
+                    public void onSuccess() {
 
-                }
+                    }
 
-                @Override
-                public void onError() {
-                    Picasso.with(ctx).load(mimgurl).into(cover);
-                }
-            });
+                    @Override
+                    public void onError() {
+                        Picasso.with(ctx).load(mimgurl).into(cover);
+                    }
+                });
+            }
         }
 
 

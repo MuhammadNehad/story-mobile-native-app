@@ -390,6 +390,9 @@ public class signup extends AppCompatActivity {
                                                                                                                               curUserDataParent.child("Email").setValue(EMAIL);
                                                                                                                               curUserDataParent.child("Name").setValue(Name);
                                                                                                                               // TODO: Changeable
+//                                                                                                                              maxUserStorageSize
+                                                                                                                              curUserDataParent.child("maxUserStorageSize").setValue(1024);
+
                                                                                                                               curUserDataParent.child("UserImg").setValue("");
                                                                                                                               try {
                                                                                                                                   curUserDataParent.child("Password").setValue(SHA1(Password));

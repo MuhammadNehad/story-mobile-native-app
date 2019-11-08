@@ -19,6 +19,7 @@
             android:layout_height="150dp"
             android:layout_gravity="center"
             android:layout_margin="5dp"
+            android:background="@drawable/ic_image_black_24dp"
             android:contentDescription="@string/todo_storycover"
             tools:ignore="MissingConstraints" />
         <!-- TODO: Update blank fragment layout -->
