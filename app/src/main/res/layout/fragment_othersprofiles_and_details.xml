@@ -35,34 +35,35 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="right"
+                    android:layout_gravity="right"
                     android:orientation="horizontal">
 
                     <ImageButton
                         android:id="@+id/follow"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@color/fui_transparent"
+                        android:background="#00FF0000"
                         android:src="@drawable/follower" />
 
                     <ImageButton
                         android:id="@+id/votelike"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@color/fui_transparent"
+                        android:background="#00FF0000"
                         android:src="@drawable/like_thumb" />
 
                     <ImageButton
                         android:id="@+id/votedislike"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@color/fui_transparent"
+                        android:background="#00FF0000"
                         android:src="@drawable/dislike" />
 
                     <ImageButton
                         android:id="@+id/votehonest"
                         android:layout_width="50dp"
                         android:layout_height="50dp"
-                        android:background="@color/fui_transparent"
+                        android:background="#00FF0000"
                         android:src="@drawable/loyalty" />
 
                 </LinearLayout>
@@ -89,7 +90,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/trlist"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"

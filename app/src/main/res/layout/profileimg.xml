@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="wrap_content"
     android:background="#00ffffff"
     android:layout_height="wrap_content"
@@ -8,6 +8,6 @@
     android:id="@+id/profileimgs"
     android:layout_width="100dp"
     android:layout_height="100dp"
-    android:background="@drawable/edittxt_img"
+    android:background="@android:drawable/ic_menu_gallery"
     android:contentDescription="@string/profile_images" />
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

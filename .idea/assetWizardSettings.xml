@@ -91,7 +91,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="scalingPercent" value="75" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -102,11 +102,12 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundLayerName" value="ic_applogo_background" />
+                                      <entry key="backgroundColor" value="faf8ff" />
+                                      <entry key="backgroundLayerName" value="newic_applogo_background" />
                                       <entry key="foregroundImage" value="C:\Users\Muhammad\Downloads\untitled (19).png" />
-                                      <entry key="foregroundLayerName" value="ic_applogo_foreground" />
-                                      <entry key="outputName" value="applogobackground" />
-                                      <entry key="previewDensity" value="HIGH" />
+                                      <entry key="foregroundLayerName" value="newic_applogo_foreground" />
+                                      <entry key="outputName" value="newestapplogo" />
+                                      <entry key="previewDensity" value="XXXHIGH" />
                                     </map>
                                   </option>
                                 </PersistentState>

@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="mainproject.mainroject.story.checkedpdf"
-    android:background="@color/Wheat">
+    android:background="@color/Whitecolor"
+    tools:context="mainproject.mainroject.story.checkedpdf">
 
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/checkedpdfview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_margin="5dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

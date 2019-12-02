@@ -5,15 +5,16 @@
     >
 <EditText
     android:id="@+id/reportcontent"
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:background="@drawable/normaledittextsty"/>
 <Button
-    android:layout_margin="10dp"
+    android:layout_margin="5dp"
     android:layout_gravity="right"
     android:id="@+id/reportsubmit"
-    android:layout_width="100dp"
+    android:layout_width="match_parent"
     android:layout_height="50dp"
-    android:text="submit"/>
+    android:background="#FF0000"
+    android:text="@string/submit"/>
 </LinearLayout>

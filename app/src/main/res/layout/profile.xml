@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fui_transparent"
+    android:background="@color/White"
     android:gravity="center_vertical|center_horizontal"
 
     android:orientation="vertical"
@@ -22,43 +22,42 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:gravity="center"
-        android:text=""
-        android:visibility="gone" />
+        android:text="" />
 
     <Button
         android:id="@+id/totalcurrentuserimgs"
-        style="@style/FirebaseUI.Button.AccountChooser"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
+        android:layout_margin="10dp"
         android:text="photos" />
 
     <Button
         android:id="@+id/CurrentuserStories"
-        style="@style/FirebaseUI.Button.AccountChooser"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
+        android:layout_margin="10dp"
         android:text="owned stories" />
 
     <Button
         android:id="@+id/Purchasestorie"
-        style="@style/FirebaseUI.Button.AccountChooser"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
+        android:layout_margin="10dp"
         android:text="@string/purchased_stories" />
 
     <Button
         android:id="@+id/Fellows"
-        style="@style/FirebaseUI.Button.AccountChooser"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:background="@android:color/holo_red_light"

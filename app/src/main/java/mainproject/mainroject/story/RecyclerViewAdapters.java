@@ -1,11 +1,11 @@
 package mainproject.mainroject.story;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +24,7 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import mainproject.mainroject.story.Tables.chatdatabaseinserver;
 
 public class RecyclerViewAdapters extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

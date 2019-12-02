@@ -2,12 +2,12 @@ package mainproject.mainroject.story;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +49,8 @@ DatabaseReference userDetaildb= myfbdb.child("UserDetail").child(User);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(manager);
 //          recyclerView.addItemDecoration();
-            Query query= FirebaseDatabase.getInstance().getReference().child("Images").orderByChild("OwnerEmail").equalTo(auth.getCurrentUser().getEmail());
+    if(!auth.getCurrentUser().equals(null)) {
+        Query query = FirebaseDatabase.getInstance().getReference().child("Images").orderByChild("OwnerEmail").equalTo(auth.getCurrentUser().getEmail());
 
         option = new FirebaseRecyclerOptions.Builder<Images>()
                 .setQuery(query, Images.class)
@@ -82,12 +83,19 @@ DatabaseReference userDetaildb= myfbdb.child("UserDetail").child(User);
 
                     }
                 });
+                holder.mview.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+
+                        return true;
+                    }
+                });
             }
 
 
         };
         recyclerView.setAdapter(fbra);
-
+    }
         return view;
     }
 

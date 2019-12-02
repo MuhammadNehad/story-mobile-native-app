@@ -1,7 +1,6 @@
 package mainproject.mainroject.story;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,32 +11,29 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.PersistableBundle;
-import android.os.TokenWatcher;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.app.SearchManager;
-import android.support.v7.widget.SearchView;
+
+import androidx.appcompat.widget.SearchView;
 import android.widget.RelativeLayout;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,16 +41,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.paypal.android.sdk.payments.PayPalConfiguration;
 import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.paypal.android.sdk.payments.PayPalPayment;
-import com.paypal.android.sdk.payments.PayPalService;
-import com.paypal.android.sdk.payments.PaymentActivity;
-import com.paypal.android.sdk.payments.PaymentConfirmation;
 
 import static mainproject.mainroject.story.home.maxSize;
 
@@ -115,68 +105,78 @@ public class maincontent extends AppCompatActivity {
     public static void getCurUserDetails()
     {
         FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
-        String currentUDN = currentuser != null ? currentuser.getDisplayName() : null;
 
-        FirebaseDatabase.getInstance().getReference().child("UserDetail").child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("UserData", String.valueOf(dataSnapshot.getValue()));
+        String currentUDN = null;
+        if (currentuser != null) {
+            currentUDN = currentuser.getDisplayName();
+        }
 
-                updateProfile.UserData.put("Name", (String) dataSnapshot.child("Name").getValue());
-                updateProfile.UserData.put("Email", (String) dataSnapshot.child("Email").getValue());
-                updateProfile.UserData.put("paypalAcc", (String) dataSnapshot.child("userpaypalacc").getValue());
-                updateProfile.UserData.put("Phone", (String) dataSnapshot.child("PhoneNumber").getValue());
-                updateProfile.UserData.put("filledStorageSize", String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
-                updateProfile.UserData.put("MaxStorageSize", String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
-                Log.d("UserData", String.valueOf(updateProfile.UserData.elements()));
+        Log.d("UserData", String.valueOf(currentuser.getDisplayName()));
 
-            }
+        if (currentUDN != null) {
+            FirebaseDatabase.getInstance().getReference().child("UserDetail").child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Log.d("UserData", String.valueOf(dataSnapshot.getValue()));
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                    updateProfile.UserData.put("Name",  dataSnapshot.hasChild("Name")?(String) dataSnapshot.child("Name").getValue():"");
+                    updateProfile.UserData.put("Email", dataSnapshot.hasChild("Email")? (String) dataSnapshot.child("Email").getValue():"");
+                    updateProfile.UserData.put("paypalAcc", dataSnapshot.hasChild("userpaypalacc")?(String) dataSnapshot.child("userpaypalacc").getValue():"");
+                    updateProfile.UserData.put("Phone", dataSnapshot.hasChild("PhoneNumber")?(String) dataSnapshot.child("PhoneNumber").getValue():"");
+                    updateProfile.UserData.put("filledStorageSize", String.valueOf(dataSnapshot.hasChild("storageUserSize")? dataSnapshot.child("storageUserSize").getValue():0));
+                    updateProfile.UserData.put("MaxStorageSize", String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+                    Log.d("UserData", String.valueOf(updateProfile.UserData.elements()));
 
-            }
-        });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     public void  calculateUserStorageSize(){
-        myRef.child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("storageUserSize")) {
-                    long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
+        if(currentUDN !=null) {
+            myRef.child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChild("storageUserSize")) {
+                        long sizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("storageUserSize").getValue()));
 //                    maxUserStorageSize
-                    if(dataSnapshot.hasChild("maxUserStorageSize")) {
+                        if (dataSnapshot.hasChild("maxUserStorageSize")) {
 
 
-                        long maxsizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
+                            long maxsizeOfuserStorage = Long.parseLong(String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
 
-                        maxSize = maxsizeOfuserStorage - sizeOfuserStorage;
-                        Log.d("FileSIZE", String.valueOf(maxSize) + " " + String.valueOf(sizeOfuserStorage));
-                    }else{
-                        maxSize = maxSize- sizeOfuserStorage;
-                        myRef.child(currentUDN).child("maxUserStorageSize").setValue(1024);
+                            maxSize = maxsizeOfuserStorage - sizeOfuserStorage;
+                            Log.d("FileSIZE", String.valueOf(maxSize) + " " + String.valueOf(sizeOfuserStorage));
+                        } else {
+                            maxSize = maxSize - sizeOfuserStorage;
+                            myRef.child(currentUDN).child("maxUserStorageSize").setValue(1024);
 
+                        }
+                    } else {
+                        myRef.child(currentUDN).child("storageUserSize").setValue(0);
                     }
-                }else{
-                    myRef.child(currentUDN).child("storageUserSize").setValue(0);
+
                 }
 
-            }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+                }
+            });
+        }
 
 
     }
 
-    home h = new home();
+//    home h = new home();
     String img;
     String storytitle, price;
-    ItemFragment it = new ItemFragment();
+//    ItemFragment it = new ItemFragment();
     //EditText SearchET;
     FrameLayout fl;
 
@@ -185,17 +185,17 @@ public class maincontent extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maincontent);
+        Log.d("UserData", String.valueOf(currentUDN));
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(getApplicationContext());
-        getCurUserDetails();
         mDatabase = FirebaseDatabase.getInstance().getReference("UserDetail");
-        calculateUserStorageSize();
         for (String provider :
                 locationManager.getAllProviders()) {
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                // TODO: Consider calling
+                // TODO: Co4nsider calling
                 //    ActivityCompat#requestPermissions
                 if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION))
                 {
@@ -245,10 +245,12 @@ public class maincontent extends AppCompatActivity {
 
         fl =(FrameLayout)findViewById(R.id.content);
 
-        while (h.story_Name != null) {
-            storytitle = h.story_Name.toString();
-            break;
-        }
+//        while (h.story_Name != null) {
+//            storytitle = h.story_Name.toString();
+//            break;
+//        }
+        getCurUserDetails();
+        calculateUserStorageSize();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -289,6 +291,19 @@ public class maincontent extends AppCompatActivity {
 //        editor.putString("nameValue",h.$pricebox.getText().toString());
 //editor.commit();
 //    }
+
+    @Override
+    public void onBackPressed() {
+        if(ItemFragment.SearchBox.getVisibility()== View.VISIBLE)
+        {
+            ItemFragment.SearchBox.setVisibility(View.GONE);
+            ItemFragment.CategorySearch.setVisibility(View.VISIBLE);
+
+        }else{
+            super.onBackPressed();
+
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -333,7 +348,7 @@ viewpageradapter viewpas = new viewpageradapter(this);
 //            outState.putString(fl.getFocusedChild());
 
         super.onSaveInstanceState(outState, outPersistentState);
-        outState.putString("contentfromapp", h.viewpa.editText.getText().toString());
+//        outState.putString("contentfromapp", h.viewpa.editText.getText().toString());
     }
 
     @Override

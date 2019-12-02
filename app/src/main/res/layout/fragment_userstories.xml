@@ -2,16 +2,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fui_transparent"
+    android:background="@color/AliceBlue"
     tools:context="mainproject.mainroject.story.userstories">
 
     <!-- TODO: Update blank fragment layout -->
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/userstry"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
+        android:background="@color/White"
+        android:layout_margin="5dp"
         tools:listitem="@layout/ownerstories" />
 
     <Button

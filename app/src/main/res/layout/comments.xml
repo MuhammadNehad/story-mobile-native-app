@@ -23,14 +23,15 @@
         android:text="username"
         android:layout_margin="5dp"
         />
-    <TextView
-        android:autoLink="all"
-        android:textIsSelectable="true"
-        android:id="@+id/commentstxt1"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:text="comment"
-        android:background="@drawable/textview2"
-        android:layout_marginLeft="20dp"
-        /></LinearLayout>
+
+        <TextView
+            android:id="@+id/commentstxt1"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:autoLink="all"
+            android:background="@drawable/textview2"
+            android:padding="2dp"
+            android:text="comment"
+            android:textIsSelectable="true" /></LinearLayout>
 </LinearLayout>

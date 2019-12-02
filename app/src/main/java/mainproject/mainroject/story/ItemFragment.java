@@ -11,19 +11,20 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
-import android.support.v4.os.ConfigurationCompat;
-import android.support.v4.widget.ListViewAutoScrollHelper;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
+import androidx.core.os.ConfigurationCompat;
+import androidx.core.widget.ListViewAutoScrollHelper;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -75,7 +76,6 @@ import com.squareup.picasso.Picasso;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Locale;
 
@@ -121,7 +121,7 @@ public class ItemFragment extends Fragment {
     private AlertDialog.Builder Storyreports;
     int currentamount=5;
     float totalcount = 0;
-    private EditText SearchET;
+    public static EditText SearchET;
     private ArrayAdapter<String> spinnerAdapter;
     private Spinner typespinner;
     private LinearLayout search_btns;
@@ -261,8 +261,8 @@ public class ItemFragment extends Fragment {
     }
 //    RelativeLayout SearchBox;
     String passMainCatName="";
-    RelativeLayout SearchBox;
-    HorizontalScrollView CategorySearch;
+    static RelativeLayout SearchBox;
+    static HorizontalScrollView CategorySearch;
     LinearLayout.LayoutParams linearlayoutParams;
     int count = 0;
     TextView nobookText;
@@ -292,7 +292,7 @@ public class ItemFragment extends Fragment {
         convertingSearch = view.findViewById(id.convertSeaching);
         typespinner = view.findViewById(id.searchSubCategories);
         search_btns = view.findViewById(id.search_btns);
-        close_search =view.findViewById(id.close_search);
+//        close_search =view.findViewById(id.close_search);
         nobookText = view.findViewById(id.nobookText);
         /***** build LinearLayout Params ****/
         linearlayoutParams= new LinearLayout.LayoutParams(100,60);
@@ -371,14 +371,12 @@ public class ItemFragment extends Fragment {
                 }
             }
         });
-        close_search.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SearchBox.setVisibility(View.GONE);
-                CategorySearch.setVisibility(View.VISIBLE);
+//        close_search.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
 
-            }
-        });
+//            }
+//        });
         typespinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -506,10 +504,29 @@ public class ItemFragment extends Fragment {
         });
 
 
+        /****
+         * Control Back Button
+         *
+         */
 
+//        view.setOnKeyListener(new View.OnKeyListener() {
+//                @Override
+//                public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                    if(i == keyEvent.KEYCODE_BACK)
+//                    {
+//                        if(SearchBox.getVisibility()!= View.GONE) {
+//                            SearchBox.setVisibility(View.GONE);
+//                            CategorySearch.setVisibility(View.VISIBLE);
+//                        }
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
 
         return view;
     }
+
     public void loadingOtherData(){
         FirebaseDatabase.getInstance().getReference().child("StoriesDetails").orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -575,7 +592,7 @@ public class ItemFragment extends Fragment {
                         Stories stories = fbra.getItem(finalPosition);
                         try{
                             bookkey = getRef(finalPosition).getKey();
-                        }catch (Exception ex){
+                        }catch (Exception ignored){
 
                         }
 
@@ -622,7 +639,7 @@ public class ItemFragment extends Fragment {
                     dictionary.put("lastKey",getRef(position).getKey());
 
                     Log.d("listcount", String.valueOf(((Hashtable<Object, Object>) dictionary).elements()));
-                    if(fbra.getItemCount()==0)
+                    if(fbra.getItemCount()<=0)
                     {
                         nobookText.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(GONE);
@@ -656,7 +673,7 @@ public class ItemFragment extends Fragment {
         fbra.startListening();
         onStart();
     }
-    public void searching(Query searchstring) {
+    private void searching(Query searchstring) {
         try {
 
             Thread.sleep(100);
@@ -680,7 +697,7 @@ public class ItemFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull blogholder holder, final int position, @NonNull final Stories model) {
                 final String bookkey = getRef(position).getKey();
-                if(fbra.getItemCount()==0)
+                if(fbra.getItemCount()<=0)
                 {
                     nobookText.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(GONE);
@@ -1532,7 +1549,7 @@ if(increaserate)
             increaserate =false;
         }
     }
-    String[] Accounts ={"mnmfas@gmail.com", "mymeadd57@gmail.com"};
+    String[] Accounts ={"storyorg55@gmail.com"};
 
     public void reportcontent(final String storyNAME){
         Storyreports =new AlertDialog.Builder(getContext());

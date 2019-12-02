@@ -31,7 +31,7 @@
                 android:id="@+id/msgstxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/chatingformuser"
+                android:background="@color/LightBlue"
                 android:fontFamily="sans-serif-condensed"
                 android:gravity="center"
                 android:hint="@string/massage_content"

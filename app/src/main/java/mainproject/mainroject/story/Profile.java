@@ -7,15 +7,14 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.OpenableColumns;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -23,11 +22,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,9 +35,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
-import java.io.File;
-import java.net.URI;
 
 import static android.app.Activity.RESULT_OK;
 import static mainproject.mainroject.story.home.maxSize;
@@ -130,7 +124,7 @@ public class Profile extends Fragment {
         DatabaseReference curuser=muserref.child(currentuser.getDisplayName());
         curimg = curuser.orderByChild("UserImg");
 
-        TextView urlimg = view.findViewById(R.id.UserName);
+        final TextView urlName = view.findViewById(R.id.UserName);
         imgupload = (ImageButton) view.findViewById(R.id.imgupload);
         userimgbtn= (Button) view.findViewById(R.id.totalcurrentuserimgs);
         userstoriesbtn= (Button) view.findViewById(R.id.CurrentuserStories);
@@ -188,6 +182,7 @@ public class Profile extends Fragment {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     User user = dataSnapshot.getValue(User.class);
+                    urlName.setText(user.getName());
                     if(user.getUserImg()!=null) {
                         String imgurl = user.getUserImg();
                         if (!imgurl.isEmpty()) {
@@ -322,7 +317,7 @@ public class Profile extends Fragment {
                 child = mimgref.push();
                 final boolean[] fileuploaded = {true};
                 final boolean[] datasaved = {true};
-                StorageReference mstr = mstr1.child(uri.getLastPathSegment());
+                final StorageReference mstr = mstr1.child(uri.getLastPathSegment());
                 mstr.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
 
                     @Override
@@ -330,36 +325,39 @@ public class Profile extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Toast.makeText(getContext(), "Uploading Successful", Toast.LENGTH_LONG).show();
                         mProgress.dismiss();
-                        downloaduri = taskSnapshot.getDownloadUrl();
                         final long curuploadfileSize = taskSnapshot.getBytesTransferred();
-                        if(fileuploaded[0]) {
-                            muserref.child(currentuser.getDisplayName()).child("storageUserSize").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    if(datasaved[0]) {
-                                    Double curSize = Double.parseDouble(String.valueOf(dataSnapshot.getValue()));
+                        downloaduri = taskSnapshot.getDownloadUrl();
 
-                                    Log.d("checktheloop", "111");
-                                    Double lastval =curSize + ((curuploadfileSize/1024)/1024);
-                                        muserref.child(currentuser.getDisplayName()).child("storageUserSize").setValue(lastval);
-                                        calculateUserStorageSize();
-                                        datasaved[0] = false;
 
-                                    }
-                                    fileuploaded[0] = false;
+                                if(fileuploaded[0]) {
+                                    muserref.child(currentuser.getDisplayName()).child("storageUserSize").addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            if(datasaved[0]) {
+                                                Double curSize = Double.parseDouble(String.valueOf(dataSnapshot.getValue()));
+
+                                                Log.d("checktheloop", "111");
+                                                Double lastval =curSize + ((curuploadfileSize/1024)/1024);
+                                                muserref.child(currentuser.getDisplayName()).child("storageUserSize").setValue(lastval);
+                                                calculateUserStorageSize();
+                                                datasaved[0] = false;
+
+                                            }
+                                            fileuploaded[0] = false;
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+
+
+                                    });
                                 }
+                                Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
+                                child.child("ImgUrl").setValue(downloaduri.toString());
+                                muserref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-
-
-                            });
-                        }
-                        Picasso.with(getActivity()).load(downloaduri).fit().into(imgupload);
-                        child.child("ImgUrl").setValue(downloaduri.toString());
-                        muserref.child(currentuser.getDisplayName()).child("UserImg").setValue(downloaduri.toString());
 
                     }
                 });

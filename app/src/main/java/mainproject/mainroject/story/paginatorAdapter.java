@@ -1,7 +1,6 @@
 package mainproject.mainroject.story;
 
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 
 import com.google.firebase.database.ChildEventListener;
@@ -9,7 +8,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 import mainproject.mainroject.story.Tables.Stories;

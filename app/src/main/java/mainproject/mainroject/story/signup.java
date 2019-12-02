@@ -2,16 +2,13 @@ package mainproject.mainroject.story;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.Editable;
-import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -34,7 +31,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+//import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.ProviderQueryResult;
+
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,7 +45,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
@@ -56,7 +54,8 @@ public class signup extends AppCompatActivity {
     private static final String TAG ="Images" ;
     private static final String TAG2 ="Email" ;
 
-    private EditText username,name,password,confirmpassword,email,birthdate;
+    private EditText username,name,password,confirmpassword,email;
+    private TextView birthdate;
     private Button signup;
     private TextView textView;
     private String UserName;
@@ -266,7 +265,7 @@ public class signup extends AppCompatActivity {
         password=(EditText)findViewById(R.id.passwordsp);
         email=(EditText)findViewById(R.id.email_sp);
         confirmpassword=(EditText)findViewById(R.id.confirpasswordsp);
-        birthdate = (EditText)findViewById(R.id.birthdate);
+        birthdate = (TextView)findViewById(R.id.birthdate);
         signup=(Button)findViewById(R.id.signup_btn);
         textView=(TextView)findViewById(R.id.errormsg);
         aggrementCheckBox =(CheckBox) findViewById(R.id.check_agreementBox);
@@ -367,7 +366,9 @@ public class signup extends AppCompatActivity {
                                 name.setError("required");
                             } else if (Password.isEmpty()) {
                                 password.setError("required");
-                            } else {
+                            } else if(birthdatestr.isEmpty()) {
+                                birthdate.setError("select birthdate");
+                            }else{
                                 if (!usersEmailFound) {
                                     if (Password.equals(confirmPassword)) {
 
@@ -404,22 +405,30 @@ public class signup extends AppCompatActivity {
                                                                                                                               curUserDataParent.child("createdDate").setValue(Calendar.getInstance().getTime());
                                                                                                                               curUserDataParent.child("birthDate").setValue(birthdatestr);
                                                                                                                               curUserDataParent.child("disclaimerchecked").setValue(DisClaimerChecked);
-                                                                                                                              curUserDataParent.child("policiesAndTermsChecked").setValue(aggrementCheckBox);
-                                                                                                                              curUserDataParent.child("maxUserStorageSize").setValue(aggrementCheckBox);
-
+                                                                                                                              curUserDataParent.child("policiesAndTermsChecked").setValue(AgreementChecked);
+                                                                                                                              curUserDataParent.child("maxUserStorageSize").setValue(1024);
+                                                                                                                              Log.d("signing up", "onComplete: finished sign up data save");
                                                                                                                               FirebaseUser user = mAuth.getCurrentUser();
+
                                                                                                                               UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(UserName).build();
+                                                                                                                              Log.d("signing up", "onComplete: ");
+
+                                                                                                                              assert user != null;
                                                                                                                               user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                                                                                                                                   @Override
                                                                                                                                   public void onComplete(@NonNull Task<Void> task2) {
                                                                                                                                       if (task2.isSuccessful()) {
-                                                                                                                                          Log.d(TAG, "User profile updated.");
+                                                                                                                                          Log.d("signing up", "User profile updated.");
+                                                                                                                                          gotohome();
+
+                                                                                                                                      }else{
+
+                                                                                                                                          Log.d("signing up", "User profile Failed.");
                                                                                                                                       }
                                                                                                                                   }
                                                                                                                               });
                                                                                                                               Toast.makeText(signup.this, "SignUp Successful", Toast.LENGTH_LONG).show();
 
-                                                                                                                              gotohome();
                                                                                                                           }
                                                                                                                           if (!task.isSuccessful()) {
                                                                                                                               Toast.makeText(signup.this, "SignUp Failed", Toast.LENGTH_LONG).show();
@@ -431,6 +440,8 @@ public class signup extends AppCompatActivity {
                                                                                                                   e.printStackTrace();
                                                                                                               } catch (UnsupportedEncodingException e) {
                                                                                                                   e.printStackTrace();
+                                                                                                              }finally {
+
                                                                                                               }
                                                                                                           }
                                                                                                       }
@@ -472,16 +483,15 @@ public class signup extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if(intent.getScheme().equals("pp"))
-        {
+        super.onNewIntent(intent);
+        if (intent.getScheme().equals("pp")) {
             Log.d("Intents", "pp Clicked");
-            Intent pp = new Intent(signup.this,privacy_policy.class);
+            Intent pp = new Intent(signup.this, privacy_policy.class);
             startActivity(pp);
-        }else if(intent.getScheme().equals("tc"))
-        {
+        } else if (intent.getScheme().equals("tc")) {
             Log.d("Intents", "tc Clicked");
 
-            Intent pp = new Intent(signup.this,terms_and_conditions.class);
+            Intent pp = new Intent(signup.this, terms_and_conditions.class);
             startActivity(pp);
 
         }

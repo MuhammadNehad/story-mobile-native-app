@@ -5,8 +5,16 @@
 
     android:layout_height="match_parent"
     >
-
-    <android.support.v7.widget.RecyclerView
+    <ImageButton
+        android:id="@+id/deleteImg"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="5dp"
+        android:visibility="gone"/>
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pimgs"
         android:padding="5dp"
         android:layout_width="match_parent"

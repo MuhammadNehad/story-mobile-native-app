@@ -4,34 +4,32 @@
     android:layout_height="match_parent">
 
     <Button
-        android:text="Respect message"
-        android:layout_height="100dp"
-        android:layout_width="50dp"
         android:id="@+id/respect"
-        />
-    <Button
-    android:layout_height="100dp"
-    android:layout_width="50dp"
-    android:id="@+id/Likemsg"
-    android:text="Like"
-    />
-    <Button
+        android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_width="50dp"
-        android:id="@+id/disLikemsg"
-        android:text="disLike"
-        />
-    <Button
-        android:text="Rude message"
-        android:layout_height="100dp"
-        android:layout_width="50dp"
-        android:id="@+id/rudemsg"
-        />
+        android:text="Respect message" />
 
     <Button
-        android:text="Report message"
+        android:id="@+id/Likemsg"
+        android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:layout_width="50dp"
+        android:text="Like" />
+
+    <Button
+        android:id="@+id/disLikemsg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="disLike" />
+
+    <Button
+        android:id="@+id/rudemsg"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Rude message" />
+
+    <Button
         android:id="@+id/reportmsg"
-        />
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="Report message" />
 </LinearLayout>
