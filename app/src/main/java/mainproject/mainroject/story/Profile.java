@@ -65,7 +65,7 @@ public class Profile extends Fragment {
     private Uri downloaduri = null;
     String imgpath;
     String downloadurl;
-    private Button userimgbtn;
+    private Button userimgbtn,Fellows;
     private Button userstoriesbtn;
     private Button purchsedstoriesbtn;
     // TODO: Rename and change types of parameters
@@ -129,6 +129,7 @@ public class Profile extends Fragment {
         userimgbtn= (Button) view.findViewById(R.id.totalcurrentuserimgs);
         userstoriesbtn= (Button) view.findViewById(R.id.CurrentuserStories);
         purchsedstoriesbtn= (Button) view.findViewById(R.id.Purchasestorie);
+        Fellows = (Button) view.findViewById(R.id.Fellows);
         myStorage = FirebaseStorage.getInstance().getReference();
         mstr1 = myStorage.child("Photos").child(currentU).child("ProfileImages");
 //        Task<Uri> img =mstr1.getDownloadUrl();
@@ -175,6 +176,14 @@ public class Profile extends Fragment {
         }else{
             Toast.makeText(getContext(),"You reached max Limit",Toast.LENGTH_LONG).show();
         }
+            }
+        });
+        Fellows.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fragmentManager1 = getFragmentManager();
+                assert fragmentManager1 != null;
+                fragmentManager1.beginTransaction().replace(R.id.content,new followingsFragment(),null).addToBackStack(null).commit();
             }
         });
         if(curimg != null) {

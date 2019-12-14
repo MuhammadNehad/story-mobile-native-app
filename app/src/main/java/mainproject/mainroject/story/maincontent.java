@@ -105,15 +105,19 @@ public class maincontent extends AppCompatActivity {
     public static void getCurUserDetails()
     {
         FirebaseUser currentuser = FirebaseAuth.getInstance().getCurrentUser();
-
         String currentUDN = null;
+        DatabaseReference cudb = null;
         if (currentuser != null) {
             currentUDN = currentuser.getDisplayName();
+            cudb = FirebaseDatabase.getInstance().getReference().child("UserDetail").child(String.valueOf(currentUDN));
+
         }
 
         Log.d("UserData", String.valueOf(currentuser.getDisplayName()));
 
         if (currentUDN != null) {
+
+            final DatabaseReference finalCudb = cudb;
             FirebaseDatabase.getInstance().getReference().child("UserDetail").child(currentUDN).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -125,8 +129,62 @@ public class maincontent extends AppCompatActivity {
                     updateProfile.UserData.put("Phone", dataSnapshot.hasChild("PhoneNumber")?(String) dataSnapshot.child("PhoneNumber").getValue():"");
                     updateProfile.UserData.put("filledStorageSize", String.valueOf(dataSnapshot.hasChild("storageUserSize")? dataSnapshot.child("storageUserSize").getValue():0));
                     updateProfile.UserData.put("MaxStorageSize", String.valueOf(dataSnapshot.child("maxUserStorageSize").getValue()));
-                    Log.d("UserData", String.valueOf(updateProfile.UserData.elements()));
+                    updateProfile.UserData.put("Type", String.valueOf(dataSnapshot.hasChild("Type")? dataSnapshot.child("Type").getValue():0));
 
+                    Log.d("UserData", String.valueOf(updateProfile.UserData.elements()));
+                    if(dataSnapshot.hasChild("Type"))
+                    {
+                        int type =   Integer.parseInt(String.valueOf(dataSnapshot.child("Type").getValue()));
+                        if(dataSnapshot.hasChild("maxFreeTimes")){
+                            home.totalFreeTimes=Integer.parseInt(String.valueOf(dataSnapshot.child("maxFreeTimes").getValue()));
+                            if(dataSnapshot.hasChild("submittedFreeTimes")) {
+
+                                home.submittedFreeTimes = Integer.parseInt(String.valueOf(dataSnapshot.child("submittedFreeTimes").getValue()));
+                            }else{
+                                home.submittedFreeTimes = 0;
+
+                                finalCudb.child("submittedFreeTimes").setValue(0);
+                            }
+                         }else{
+                            finalCudb.child("maxFreeTimes").setValue(((type*2)+1));
+                            home.totalFreeTimes=((type*2)+1);
+                            if(dataSnapshot.hasChild("submittedFreeTimes")) {
+
+                                home.submittedFreeTimes = Integer.parseInt(String.valueOf(dataSnapshot.child("submittedFreeTimes").getValue()));
+                            }else{
+                                home.submittedFreeTimes = 0;
+
+                                finalCudb.child("submittedFreeTimes").setValue(0);
+                            }
+                        }
+                    }else{
+
+                        finalCudb.child("Type").setValue(0);
+                        int type = 0;
+                        if(dataSnapshot.hasChild("maxFreeTimes")){
+                            home.totalFreeTimes=Integer.parseInt(String.valueOf(dataSnapshot.child("maxFreeTimes").getValue()));
+                            if(dataSnapshot.hasChild("submittedFreeTimes")) {
+
+                                home.submittedFreeTimes = Integer.parseInt(String.valueOf(dataSnapshot.child("submittedFreeTimes").getValue()));
+                            }else{
+                                home.submittedFreeTimes = 0;
+
+                                finalCudb.child("submittedFreeTimes").setValue(0);
+                            }
+                        }else{
+                            finalCudb.child("maxFreeTimes").setValue(((type*2)+1));
+                            home.totalFreeTimes=((type*2)+1);
+                            if(dataSnapshot.hasChild("submittedFreeTimes")) {
+
+                                home.submittedFreeTimes = Integer.parseInt(String.valueOf(dataSnapshot.child("submittedFreeTimes").getValue()));
+                            }else{
+                                home.submittedFreeTimes = 0;
+
+                                finalCudb.child("submittedFreeTimes").setValue(0);
+                            }
+                        }
+
+                    }
                 }
 
                 @Override

@@ -407,6 +407,11 @@ public class signup extends AppCompatActivity {
                                                                                                                               curUserDataParent.child("disclaimerchecked").setValue(DisClaimerChecked);
                                                                                                                               curUserDataParent.child("policiesAndTermsChecked").setValue(AgreementChecked);
                                                                                                                               curUserDataParent.child("maxUserStorageSize").setValue(1024);
+                                                                                                                              curUserDataParent.child("Type").setValue(0);
+                                                                                                                              curUserDataParent.child("maxFreeTimes").setValue(1);
+                                                                                                                              curUserDataParent.child("submittedFreeTimes").setValue(0);
+
+
                                                                                                                               Log.d("signing up", "onComplete: finished sign up data save");
                                                                                                                               FirebaseUser user = mAuth.getCurrentUser();
 

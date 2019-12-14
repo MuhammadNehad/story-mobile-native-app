@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -295,8 +294,8 @@ public class ItemFragment extends Fragment {
 //        close_search =view.findViewById(id.close_search);
         nobookText = view.findViewById(id.nobookText);
         /***** build LinearLayout Params ****/
-        linearlayoutParams= new LinearLayout.LayoutParams(100,60);
-        linearlayoutParams.leftMargin = 5;
+        linearlayoutParams= new LinearLayout.LayoutParams(0,80,1.0f);
+        linearlayoutParams.leftMargin = 2;
 
 
 
@@ -313,13 +312,14 @@ public class ItemFragment extends Fragment {
 //        pdfrecyclerView.setHasFixedSize(true);
         recyclerView.setHasFixedSize(true);
 
+//        #80FAFAFF
         /*****  Prepare Search buttons     ****/
         for (int i = 0;i<stryMainCategory.length;i++) {
             btn[i] = new Button(getContext());
             btn[i].setText(stryMainCategory[i]);
             btn[i].setId(i+872912);
             btn[i].setTextColor(Color.BLACK);
-            btn[i].setBackgroundColor(Color.WHITE);
+            btn[i].setBackgroundColor(Color.parseColor("#80FAFAFF"));
             btn[i].setShadowLayer(1,111,111,Color.BLACK);
             btn[i].setHighlightColor(Color.RED);
             btn[i].setTextSize(10);
@@ -989,8 +989,10 @@ Query commentsquery = commentsdb.child(bookkeys).orderByChild("currentstoryname"
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String ds = String.valueOf(dataSnapshot.child("UserImg").getValue());
                  ((ImageView) v.findViewById(id.comterimg)).setImageDrawable(imground);
+                 if(!ds.isEmpty() && ds.equals(null)){
+                     ((ImageView) v.findViewById(id.comterimg)).setBackground(null);
                             Picasso.with(getContext()).load(ds).fit().into(((ImageView) v.findViewById(id.comterimg)));
-////                                                        }
+                                                        }
 ////                                                        .setImageURI(Uri.parse(commterimg));
 
                     }
@@ -1279,7 +1281,7 @@ for(DataSnapshot ds: dataSnapshot.getChildren()) {
                 reports.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        booksreport(dataSnapshot, bookkeys);
+                        reportcontent(dataSnapshot,bookkeys);
 
                     }
 
@@ -1431,16 +1433,18 @@ if(increaserate)
         if(dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
 
 //            reports.child(storyNAME).child(auth.getDisplayName()).removeValue();
-            reportcontent(rbookskeys);
+
 
             myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
                     if (!dataSnapshot.child("Reports").exists()) {
-                        int reportsCount = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
+                        if(!dataSnapshot.child("Reports").getValue().equals(null)) {
+                            int reportsCount = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
 
-                        myRef.child(rbookskeys).child("Reports").setValue(1);
+                            myRef.child(rbookskeys).child("Reports").setValue(1);
+                        }
                     }
                     else if (dataSnapshot.child("Reports").exists()) {
                         int reportsCount  = Integer.parseInt(String.valueOf(dataSnapshot.child("Reports").getValue()));
@@ -1455,7 +1459,7 @@ if(increaserate)
 
             increaserate =false;
         }else if(!dataSnapshot.child(rbookskeys).hasChild(auth.getDisplayName())){
-            reportcontent(rbookskeys);
+            reportcontent(dataSnapshot, rbookskeys);
             reports.child(rbookskeys).child(auth.getDisplayName()).setValue("RandomValue");
             myRef.child(rbookskeys).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -1551,7 +1555,7 @@ if(increaserate)
     }
     String[] Accounts ={"storyorg55@gmail.com"};
 
-    public void reportcontent(final String storyNAME){
+    public void reportcontent(final DataSnapshot dataSnapshot, final String storyNAME){
         Storyreports =new AlertDialog.Builder(getContext());
     LayoutInflater inflater = getLayoutInflater();
     final View reportdialog = inflater.inflate(layout.report,null);
@@ -1574,6 +1578,7 @@ if(increaserate)
             intent.putExtra(Intent.EXTRA_TEXT,Message);
             intent.setType("message/rfc822");
             startActivity(Intent.createChooser(intent,"choose an Email Client"));
+            booksreport(dataSnapshot,storyNAME );
 
 
         }

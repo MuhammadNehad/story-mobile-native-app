@@ -58,7 +58,7 @@ String[] sizes={"2","4","6","8","10","12","14","16","18","20","22","24","26","28
         return (view==(LinearLayout)object);
     }
     EditText editText,storydesc;
-    Button strycover,pdfslct, pdfupload;
+    Button strycover, pdfupload;
     TextView filename;
     ImageButton alignleft;
     ImageButton alignright;
@@ -78,7 +78,6 @@ String[] sizes={"2","4","6","8","10","12","14","16","18","20","22","24","26","28
         LinearLayout linearLayout2= view.findViewById(R.id.pdfform);
         editText = view.findViewById(R.id.userEntry);
         storydesc = view.findViewById(R.id.strydescription);
-        pdfslct =(Button)view.findViewById(R.id.selectpdffile);
         pdfupload =(Button)view.findViewById(R.id.uploadpdffile);
         filename = (TextView)view.findViewById(R.id.uploadedfilename);
         alignleft = (ImageButton)view.findViewById(R.id.textalignleft);

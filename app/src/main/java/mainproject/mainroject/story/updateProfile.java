@@ -57,6 +57,7 @@ public class updateProfile extends Fragment {
     ProgressDialog mprogress;
     private String TAG;
     String email = user.getEmail();
+    TextView storageSize;
     boolean Access;
    AlertDialog.Builder updateDetails2,updateDetails3;
 
@@ -84,7 +85,7 @@ DatabaseReference userdetaildb = FirebaseDatabase.getInstance().getReference().c
         paypalbox = (EditText) updatinprof.findViewById(R.id.PaypalAcc);
         NameText =(TextView) updatinprof.findViewById(R.id.Name);
         paypalbutton = (ImageButton) updatinprof.findViewById(R.id.AddingPaypal);
-
+        storageSize= (TextView) updatinprof.findViewById(R.id.storageSize);
         /**
          *
          * set Texts to TextBoxes
@@ -93,7 +94,7 @@ DatabaseReference userdetaildb = FirebaseDatabase.getInstance().getReference().c
         AddPhoneNumberText.setText(UserData.get("Phone"));
         paypalbox.setText(UserData.get("paypalAcc"));
         NameText.setText(UserData.get("Name"));
-
+        storageSize.setText(""+UserData.get("filledStorageSize")+"/"+UserData.get("MaxStorageSize")+"");
         /**
         *
          * add Buttons Listeners

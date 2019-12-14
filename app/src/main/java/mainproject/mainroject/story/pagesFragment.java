@@ -81,12 +81,12 @@ ImageButton StryCovers;
         View view = inflater.inflate(R.layout.pages, null);
     editText = view.findViewById(R.id.userEntry);
     storydesc = view.findViewById(R.id.strydescription);
-    pdfslct =(Button)view.findViewById(R.id.selectpdffile);
+//    pdfslct =(Button)view.findViewById(R.id.selectpdffile);
     pdfupload =(Button)view.findViewById(R.id.uploadpdffile);
     filename = (TextView)view.findViewById(R.id.uploadedfilename);
 
     pdfupload =(Button)view.findViewById(R.id.uploadpdffile);
-        pdfslct =(Button)view.findViewById(R.id.selectpdffile);
+//        pdfslct =(Button)view.findViewById(R.id.selectpdffile);
         storydesc = view.findViewById(R.id.strydescription);
         StryCovers =hm.logoupload;
         filename = (TextView)view.findViewById(R.id.uploadedfilename);
@@ -254,7 +254,7 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
             LinearLayout linearLayout2= view.findViewById(R.id.pdfform);
             editText = view.findViewById(R.id.userEntry);
             storydesc = view.findViewById(R.id.strydescription);
-            pdfslct =(Button)view.findViewById(R.id.selectpdffile);
+//            pdfslct =(Button)view.findViewById(R.id.selectpdffile);
             pdfupload =(Button)view.findViewById(R.id.uploadpdffile);
             filename = (TextView)view.findViewById(R.id.uploadedfilename);
             pdfslct.setOnClickListener(new View.OnClickListener() {

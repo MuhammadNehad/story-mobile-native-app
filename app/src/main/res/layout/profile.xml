@@ -11,8 +11,9 @@
     <!-- TODO: Update blank fragment layout -->
     <ImageButton
         android:id="@+id/imgupload"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:layout_weight="4"
         android:layout_gravity="center"
         android:background="@android:drawable/ic_menu_gallery"
         android:contentDescription="@string/profile_image" />
@@ -20,45 +21,47 @@
     <TextView
         android:id="@+id/UserName"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center"
         android:text="" />
 
     <Button
         android:id="@+id/totalcurrentuserimgs"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:text="photos" />
 
     <Button
         android:id="@+id/CurrentuserStories"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:text="owned stories" />
 
     <Button
         android:id="@+id/Purchasestorie"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/holo_red_light"
         android:gravity="center"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:text="@string/purchased_stories" />
 
     <Button
         android:id="@+id/Fellows"
         android:layout_width="match_parent"
-        android:layout_margin="10dp"
-        android:layout_height="50dp"
+        android:layout_margin="5dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:background="@android:color/holo_red_light"
         android:gravity="center"

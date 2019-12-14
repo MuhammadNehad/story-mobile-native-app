@@ -67,6 +67,7 @@
     <string name="message_sender_name">message sender name</string>
     <string name="birthdate">birthdate</string>
     <string name="termsLink">App <![CDATA[<a href="https://app-privacy-policy-generator.firebaseapp.com/"> Privacy Policy Generator</a>]]></string>
+    <string name="free_1_time">free (1 time)</string>
     <!--<string name="todo_storycover">TODO:StoryCover-->
 
 </resources>

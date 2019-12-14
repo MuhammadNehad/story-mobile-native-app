@@ -99,7 +99,7 @@ public class home extends Fragment {
 //editText
     public static EditText ISBNEDITText;
     String uploadedFileName;
-    Button pdfslct;
+    Button freeButton;
     private StringTokenizer tokens;
     private String first;
     TextView filename;
@@ -129,7 +129,8 @@ public class home extends Fragment {
     private static final int CapturingISBNAndEAN = 21099;
     String strytitle;
     String amount_to_pay="";
-    Button appentries,pdfentries,changeForm,capturingISBNAndEAN;
+    Button appentries,pdfentries,changeForm;
+    ImageButton capturingISBNAndEAN;
     LinearLayout pdfform,transform,appentryprice;
     EditText storydesc2 ;
     Spinner typespinner;
@@ -150,6 +151,8 @@ public class home extends Fragment {
     boolean submitPDFStories=false;
     boolean oneTimeDialog=false;
     boolean oneTimeDialogPDFs=false;
+    public static int submittedFreeTimes = 0;
+    public static int totalFreeTimes = 1;
 
     private AlertDialog.Builder StoryDetails2;
 
@@ -186,7 +189,7 @@ public class home extends Fragment {
             ,"Historic Plays","Farce","Solo Theatre","Epic"};
 
     EditText prices,Storyname,AuthorsOfBook;
-    Button pdfupload;
+    ImageButton pdfupload;
     Button btnSubmitStory;
     private String userName;
      Uri selectedFileURI=null;
@@ -377,19 +380,18 @@ public class home extends Fragment {
 
         ISBNEDITText = (EditText) inflate.findViewById(R.id.ISBN);
         EANEDITBOX= (EditText) inflate.findViewById(R.id.EAN);
-        pdfslct =(Button)inflate.findViewById(R.id.selectpdffile);
-        pdfupload =(Button)inflate.findViewById(R.id.uploadpdffile);
+        freeButton=(Button)inflate.findViewById(R.id.freeButton);
+        pdfupload =(ImageButton)inflate.findViewById(R.id.uploadpdffile);
         filename = (TextView)inflate.findViewById(R.id.uploadedfilename);
         appentries = (Button)inflate.findViewById(R.id.useAppentry);
         pdfentries =(Button)inflate.findViewById(R.id.uploadingpdfform);
         pdfform = (LinearLayout)inflate.findViewById(R.id.pdfform);
-        storydesc2= (EditText)inflate.findViewById(R.id.pdfstrydescription);
         transform= (LinearLayout)inflate.findViewById(R.id.transform);
         changeForm=(Button)inflate.findViewById(R.id.closingpages);
         pdfstrydescription =(EditText)inflate.findViewById(R.id.pdfstrydescription);
         appentryprice =(LinearLayout)inflate.findViewById(R.id.appentryprice);
         AuthorsOfBook =(EditText) inflate.findViewById(R.id.BookAuthors);
-        capturingISBNAndEAN = (Button) inflate.findViewById(R.id.captureIsbnAndEAN);
+        capturingISBNAndEAN = (ImageButton) inflate.findViewById(R.id.captureIsbnAndEAN);
         codeslist = (LinearLayout) inflate.findViewById(R.id.codeslist);
         DisClaimer = (CheckBox) inflate.findViewById(R.id.uploadingdisclaimerBox);
 
@@ -397,7 +399,9 @@ public class home extends Fragment {
         EANEDITBOX.setWidth((codeslist.getWidth()/(17/8)));
 
         clickableText(DisClaimer.getText().toString(), DisClaimer, "DC");
-
+        if(totalFreeTimes <= submittedFreeTimes) {
+            freeButton.setEnabled(false);
+        }
 //        aggrementCheckBox =(CheckBox) inflate.findViewById(R.id.check_agreementBox);
 //        DisClaimer =(CheckBox) inflate.findViewById(R.id.disclaimerBox);
         if(Integer.parseInt(String.valueOf(maxSize)) ==0)
@@ -426,7 +430,7 @@ public class home extends Fragment {
         Bitmap img = BitmapFactory.decodeResource(getResources(),R.drawable.imgstyle);
         RoundedBitmapDrawable imground = RoundedBitmapDrawableFactory.create(getResources(),img);
 
-        imground.setCornerRadius(25f);
+        imground.setCornerRadius(20f);
         final String[] spitems = new String[1];
         viewPager = (ViewPager)inflate.findViewById(R.id.storypages);
         viewpa =new viewpageradapter(getContext());
@@ -568,7 +572,7 @@ public class home extends Fragment {
                 checkExistedpaypalEmail(v,inflate, null, null);
             }
         });
-        pdfslct.setOnClickListener(new View.OnClickListener() {
+        filename.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -576,6 +580,22 @@ public class home extends Fragment {
                 intent.setType("application/pdf");
                 startActivityForResult( Intent.createChooser(intent, "Select a PDF File to Upload"), 1);
 
+            }
+        });
+        freeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if( (storyFound && sameStory) || AgreementChecked)
+                {
+                    strytitle =  Storyname.getText().toString();
+                    String strydescr =  pdfstrydescription.getText().toString();
+
+                    Submitingpdf(strydescr, strytitle);
+                    myRef.child(currentUDN).child("submittedFreeTimes").setValue(1);
+                }else{
+                    Toast.makeText(getContext(), "scan ISBN and EAN First", Toast.LENGTH_LONG).show();
+
+                }
             }
         });
         pdfupload.setOnClickListener(new View.OnClickListener() {
@@ -633,7 +653,6 @@ public class home extends Fragment {
     }
     private void startposting2(final String StRurl){
         String storytitle = Storyname.getText().toString().trim();
-        String storycontent = storydesc2.getText().toString().trim();
         if(uri!=null)
         {
             mProgress.setMessage("Uploading");
@@ -722,10 +741,6 @@ public class home extends Fragment {
     {
         final String fileprice = prices.getText().toString().trim();
 
-         myStoryRef.addChildEventListener(new ChildEventListener() {
-
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
 
                         if (oneTimeDialogPDFs) {
@@ -769,30 +784,6 @@ public class home extends Fragment {
                                 Toast.makeText(getContext(), "you must select pdf File", Toast.LENGTH_LONG).show();
                             }
                         }
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-
-
-                });
 
     }
 
@@ -839,6 +830,8 @@ public class home extends Fragment {
                 selectedFileURI = data.getData();
                 Cursor returndata = getContext().getContentResolver().query(selectedFileURI,null,null,null,null);
                 int sizeIndex = returndata.getColumnIndex(OpenableColumns.SIZE);
+                int fileNameIndex = returndata.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+
                 returndata.moveToFirst();
 
                 assert selectedFileURI != null;
@@ -867,7 +860,9 @@ public class home extends Fragment {
                     first = tokens.nextToken();
 //            file_1 = tokens.nextToken().trim();
                     Filepath = file.getPath();
-                    filename.setText(file.getPath());
+                    filename.setText(returndata.getString(fileNameIndex));
+                    filename.setTextSize(20f);
+                    filename.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icons8pdf48,0,0,0);
 //                Filepath = selectedFileURI.getLastPathSegment();
 //                child.child("OwnerEmail").setValue(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 //                child.child("FileName").setValue(file.getName());

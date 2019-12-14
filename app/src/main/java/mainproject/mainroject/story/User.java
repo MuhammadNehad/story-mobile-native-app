@@ -14,7 +14,7 @@ public class User {
     private Date RegisterDate;
     private String birthDate;
     private boolean disclaimerchecked,policiesAndTermsChecked;
-    private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes;
+    private int TotalVotesTo,TotalVotesAgainst,TotalHonestVotes,Type,maxFreeTimes,submittedFreeTimes;
     User() {
     }
 
@@ -151,5 +151,29 @@ public class User {
 
     public void setBirthDate(String birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public int getType() {
+        return Type;
+    }
+
+    public void setType(int type) {
+        Type = type;
+    }
+
+    public int getSubmittedFreeTimes() {
+        return submittedFreeTimes;
+    }
+
+    public void setSubmittedFreeTimes(int submittedFreeTimes) {
+        this.submittedFreeTimes = submittedFreeTimes;
+    }
+
+    public int getMaxFreeTimes() {
+        return maxFreeTimes;
+    }
+
+    public void setMaxFreeTimes(int maxFreeTimes) {
+        this.maxFreeTimes = maxFreeTimes;
     }
 }

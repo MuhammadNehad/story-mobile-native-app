@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/transparent"
     tools:context="mainproject.mainroject.story.home">
 
@@ -24,19 +25,17 @@
             android:id="@+id/titleview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="5dp">
+            android:orientation="horizontal">
 
 
             <EditText
                 android:id="@+id/story_name"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_gravity="center"
                 android:background="@color/Azure"
                 android:hint="story Name"
+                android:layout_margin="15dp"
                 android:inputType="text"
                 android:textSize="12sp"
                 android:maxLength="100"
@@ -48,7 +47,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_margin="5dp"
             android:text="main category"
             android:textAppearance="?attr/textAppearanceListItem" />
 
@@ -56,9 +55,7 @@
             android:id="@+id/addingstoriestypes"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
+            android:layout_margin="15dp"
             android:background="@drawable/normaledittextsty"
             android:dropDownSelector="@drawable/btn_homestyle"
             android:dropDownWidth="wrap_content"
@@ -69,7 +66,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_margin="5dp"
             android:text="sub category"
             android:textAppearance="?attr/textAppearanceListItem" />
 
@@ -77,13 +74,13 @@
             android:id="@+id/addingSubCategories"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:background="@drawable/normaledittextsty"
             android:dropDownSelector="@drawable/btn_homestyle"
             android:dropDownWidth="wrap_content"
             android:padding="5dp"
             android:popupBackground="@color/White"
-            android:spinnerMode="dropdown"
+            android:spinnerMode="dialog"
             android:ellipsize="marquee"/>
 
         <EditText
@@ -91,7 +88,7 @@
             android:layout_width="100dp"
             android:layout_height="50dp"
             android:hint="BookAuthor"
-            android:layout_margin="10dp"
+            android:layout_margin="15dp"
             android:background="@drawable/normaledittextsty"
             android:defaultFocusHighlightEnabled="true"
 
@@ -118,7 +115,7 @@
                 android:id="@+id/pdfstrydescription"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:layout_margin="10dp"
+                android:layout_margin="15dp"
                 android:background="@drawable/normaledittextsty"
                 android:defaultFocusHighlightEnabled="true"
                 android:ems="3"
@@ -154,23 +151,22 @@
                     android:layout_marginRight="20dp"
                     tools:ignore="RtlHardcoded" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/captureIsbnAndEAN"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left|center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
 
-                    android:layout_marginEnd="10dp"
-
-                    android:layout_marginRight="10dp"
-                    android:background="@drawable/capturing_icon"
-                    tools:ignore="RtlHardcoded" />
+                    android:layout_weight="1"
+                    android:background="@color/White"
+                    app:srcCompat="@drawable/icons8_barcode_80"
+                    />
                 <EditText
                     android:id="@+id/ISBN"
-                    android:layout_width="150dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
+                    android:layout_weight="1"
                     android:hint="ISBN"
-                    android:layout_margin="5dp"
+                    android:layout_margin="2dp"
                     android:background="@drawable/normaledittextsty"
                     android:editable="false"
                     android:inputType="none"
@@ -178,9 +174,10 @@
                     />
                 <EditText
                     android:id="@+id/EAN"
-                    android:layout_width="150dp"
+                    android:layout_width="0dp"
                     android:layout_height="50dp"
-                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:layout_margin="2dp"
                     android:hint="EAN"
                     android:background="@drawable/normaledittextsty"
                     android:editable="false"
@@ -188,6 +185,7 @@
                     android:padding="2dp"
                     />
                 </LinearLayout>
+
             <TextView
                 android:id="@+id/ISBNhint"
                 android:layout_width="match_parent"
@@ -203,33 +201,25 @@
                 android:gravity="center"
                 android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/selectpdffile"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_gravity="left|center"
-
-                    android:background="@drawable/attachment"
-                    tools:ignore="RtlHardcoded" />
-
                 <TextView
                     android:id="@+id/uploadedfilename"
-                    android:layout_width="wrap_content"
-                    android:layout_height="50dp"
-                    android:gravity="center_vertical"
-                    android:maxWidth="300dp"
-                    android:text="@string/file_name"
-                    android:textAlignment="center"
-                    android:textStyle="bold" />
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:background="@color/White"
+                    android:text="Upload File"
+                    android:textAlignment="center" />
 
-                <Button
+                <ImageButton
                     android:id="@+id/uploadpdffile"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="left|center"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@drawable/ic_file_upload_black_24dp"
+                    android:layout_weight="1"
+                    android:background="#80FAFAFF"
+                    app:srcCompat="@drawable/ic_file_upload_black_24dp"
                     tools:ignore="RtlHardcoded" />
             </LinearLayout>
             <CheckBox
@@ -239,6 +229,13 @@
                 android:text="By clicking this, you accept Our Disclaimer"
                 android:layout_weight="1"
                 />
+            <Button
+                android:id="@+id/freeButton"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:text="@string/free_1_time"
+                />
+
         </LinearLayout>
         <TextView
             android:layout_width="match_parent"

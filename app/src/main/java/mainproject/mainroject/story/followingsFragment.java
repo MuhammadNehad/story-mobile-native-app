@@ -12,9 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import mainproject.mainroject.story.dummy.DummyContent;
-import mainproject.mainroject.story.dummy.DummyContent.DummyItem;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import mainproject.mainroject.story.Tables.Followings;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +39,10 @@ public class followingsFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    Followings followings;
+    DatabaseReference followingsdatabase = FirebaseDatabase.getInstance().getReference().child("Cur_User_Followings");
+    FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+    List<User> followingsList = new ArrayList<User>();
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -61,8 +73,8 @@ public class followingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_followings_list, container, false);
-
-        // Set the adapter
+        RecyclerView listview = (RecyclerView) view.findViewById(R.id.list);
+//         Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
@@ -71,11 +83,59 @@ public class followingsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyfollowingsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setAdapter(new MyfollowingsRecyclerViewAdapter(followingsList, mListener,!followings.getCurUserFollowingName().equals(null)?followings.getCurUserFollowingName():" "));
         }
         return view;
     }
 
+    public void fetchfollowings(){
+        followingsdatabase.orderByChild("CurrentUserName").equalTo(firebaseUser.getDisplayName()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                for(DataSnapshot d :dataSnapshot.getChildren())
+                {
+//                    if(!followingsList.contains(d)) {
+                    FirebaseDatabase.getInstance().getReference()
+                            .child("UserDetails").orderByKey().equalTo(String.valueOf(d.child("CurUserFollowingNames").getValue()))
+                            .addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot2) {
+                                    User users= new User();
+                                    followingsList.add((User) dataSnapshot2.getValue());
+
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+//                        }
+                    }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -104,7 +164,7 @@ public class followingsFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnListFragmentInteractionListener {
+    public interface OnListFragmentInteractionListener<DummyItem> {
         // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
     }

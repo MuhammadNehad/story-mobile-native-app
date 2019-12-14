@@ -5,7 +5,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.json.JSONObject;
 
 import mainproject.mainroject.story.followingsFragment.OnListFragmentInteractionListener;
 import mainproject.mainroject.story.dummy.DummyContent.DummyItem;
@@ -17,14 +20,17 @@ import java.util.List;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyfollowingsRecyclerViewAdapter extends RecyclerView.Adapter<MyfollowingsRecyclerViewAdapter.ViewHolder> {
+public class MyfollowingsRecyclerViewAdapter<DummyItem> extends RecyclerView.Adapter<MyfollowingsRecyclerViewAdapter<DummyItem>.ViewHolder> {
 
     private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final String mContents;
 
-    public MyfollowingsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    int id =0;
+    public MyfollowingsRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener,String content) {
         mValues = items;
         mListener = listener;
+        mContents = content;
     }
 
     @Override
@@ -36,9 +42,10 @@ public class MyfollowingsRecyclerViewAdapter extends RecyclerView.Adapter<Myfoll
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        id++;
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mIdView.setText((CharSequence) holder.mItem.getClass().cast("Name"));
+        holder.mContentView.setText(mContents);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,6 +66,7 @@ public class MyfollowingsRecyclerViewAdapter extends RecyclerView.Adapter<Myfoll
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
+        public final ImageView mImgView;
         public final TextView mIdView;
         public final TextView mContentView;
         public DummyItem mItem;
@@ -68,6 +76,8 @@ public class MyfollowingsRecyclerViewAdapter extends RecyclerView.Adapter<Myfoll
             mView = view;
             mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
+            mImgView = (ImageView) view.findViewById(R.id.followingProfileImage);
+
         }
 
         @Override

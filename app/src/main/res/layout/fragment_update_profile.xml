@@ -10,151 +10,238 @@
     tools:context="mainproject.mainroject.story.updateProfile">
 
     <!-- TODO: Update blank fragment layout -->
-    <LinearLayout
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:background="#80FAFAFF">
 
-        <TextView
-            android:id="@+id/Name"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-            android:layout_marginLeft="10dp"
-            android:layout_weight="3"
-            android:background="@drawable/normaledittextsty"
-            android:gravity="center"
-            android:text="Name"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/TypeHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="type"
+                android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/Nameupadte"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:contentDescription="@string/todo_name_updates"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/Type"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:text="type" />
 
-        <TextView
+            <ImageButton
+                android:id="@+id/upgradeAcc"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                android:contentDescription="@string/todo_name_updates"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+        </TableRow>
 
-            android:id="@+id/password"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-            android:layout_marginLeft="10dp"
-            android:layout_weight="3"
-            android:background="@drawable/normaledittextsty"
-            android:gravity="center"
-            android:text="Password"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/NameHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="Name"
+                android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/passwordupdate"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_below="@id/UserName"
+            <TextView
+                android:id="@+id/Name"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
 
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
-    </LinearLayout>
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:text="Name" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:gravity="center"
-        android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/Nameupadte"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                android:contentDescription="@string/todo_name_updates"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+        </TableRow>
 
-        <TextView
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-            android:id="@+id/storageSize"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+            <TextView
+                android:id="@+id/passwordHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="password:"
+                android:textStyle="bold" />
 
-            android:layout_marginLeft="10dp"
-            android:layout_weight="3"
-            android:background="@drawable/normaledittextsty"
-            android:gravity="center"
-            android:text="StorageSize"
-            android:textStyle="bold" />
+            <TextView
 
-        <!--<ImageButton-->
-            <!--android:id="@+id/upgradeStorage"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="40dp"-->
-            <!--android:layout_below="@id/UserName"-->
+                android:id="@+id/password"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:text="Password" />
 
-            <!--android:layout_weight="1"-->
-            <!--app:srcCompat="@drawable/ic_edit_black_24dp" />-->
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/passwordupdate"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+        </TableRow>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-        <EditText
-            android:id="@+id/PhoneNumber"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+            <TextView
+                android:id="@+id/FilesSize"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="size"
+                android:textStyle="bold" />
 
-            android:layout_marginLeft="10dp"
-            android:layout_weight="3"
-            android:background="@drawable/normaledittextsty"
-            android:gravity="center"
-            android:hint="Add_PhoneNumber"
-            android:inputType="phone"
-            android:textStyle="bold" />
+            <TextView
 
-        <ImageButton
-            android:id="@+id/AddingPhoneNumber"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
-    </LinearLayout>
+                android:id="@+id/storageSize"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:text="Storage Size"
+                android:textStyle="bold" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+            <ImageButton
+                android:id="@+id/upgradeSizeOnly"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                android:contentDescription="@string/todo_name_updates"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+        </TableRow>
 
-        <EditText
-            android:id="@+id/PaypalAcc"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
 
-            android:layout_marginLeft="10dp"
-            android:layout_weight="3"
-            android:background="@drawable/normaledittextsty"
-            android:gravity="center"
-            android:hint="Add_Paypal_Account"
-            android:inputType="textEmailAddress"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/PhoneHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="Phone"
+                android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/AddingPaypal"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/ic_edit_black_24dp" />
-    </LinearLayout>
+            <EditText
+                android:id="@+id/PhoneNumber"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:hint="Add_PhoneNumber"
+                android:inputType="phone" />
+
+            <ImageButton
+                android:id="@+id/AddingPhoneNumber"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/paypalHeader"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"
+                android:background="#990000C8"
+                android:gravity="center"
+                android:text="Paypal"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/PaypalAcc"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="@color/White"
+                android:gravity="center"
+                android:hint="Add_Paypal_Account"
+                android:inputType="textEmailAddress" />
+
+            <ImageButton
+                android:id="@+id/AddingPaypal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="#80FAFAFF"
+                app:srcCompat="@drawable/ic_edit_black_24dp" />
+
+        </TableRow>
+    </TableLayout>
+
 
 </LinearLayout>
